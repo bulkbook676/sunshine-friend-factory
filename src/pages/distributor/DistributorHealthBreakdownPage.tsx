@@ -14,7 +14,7 @@ import DistributorBottomNav from "@/components/DistributorBottomNav";
 
 const DistributorHealthBreakdownPage = () => {
   const navigate = useNavigate();
-  const { products, orders } = useDistributor();
+  const { products, orders, ownExpenses } = useDistributor();
 
   // Inventory at cost
   const inventoryValue = products.reduce((s, p) => s + p.costPrice * p.currentStock, 0);
@@ -35,9 +35,16 @@ const DistributorHealthBreakdownPage = () => {
       0
     );
 
-  const totalAssets = inventoryValue + cashReceived + cashInPromise;
+  // Subtract any deposits already collected from outstanding goodwill
+  const goodwillDepositsCollected = orders.reduce(
+    (s, o) => s + (o.goodwillDeposits?.reduce((ss, d) => ss + d.amount, 0) ?? 0),
+    0
+  );
+  const adjustedCashInPromise = Math.max(0, cashInPromise - goodwillDepositsCollected);
+
+  const totalAssets = inventoryValue + cashReceived + adjustedCashInPromise + goodwillDepositsCollected;
   const totalCOGS = products.reduce((s, p) => s + p.costPrice * p.currentStock, 0);
-  const dailyExpenses = 0; // placeholder — distributor expenses not tracked yet
+  const dailyExpenses = ownExpenses.reduce((s, e) => s + e.amount, 0);
   const totalLiabilities = totalCOGS + dailyExpenses;
 
   const score =
@@ -96,18 +103,21 @@ const DistributorHealthBreakdownPage = () => {
               </div>
               <span className="text-sm font-medium text-success">{fmt(cashReceived)}</span>
             </div>
-            <div>
+            <button
+              onClick={() => navigate("/distributor/promises")}
+              className="w-full text-left active:opacity-80"
+            >
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <HandCoins className="w-3.5 h-3.5 text-primary" />
                   <span className="text-sm text-primary">Cash In Promise</span>
                 </div>
-                <span className="text-sm font-medium text-primary">{fmt(cashInPromise)}</span>
+                <span className="text-sm font-medium text-primary">{fmt(adjustedCashInPromise)} →</span>
               </div>
               <p className="text-[10px] text-muted-foreground ml-5 mt-0.5">
-                Goodwill orders outstanding
+                Tap to mark paid or record deposits
               </p>
-            </div>
+            </button>
             <div className="border-t border-border pt-2 flex justify-between">
               <span className="text-sm font-semibold text-foreground">Total Assets</span>
               <span className="text-base font-bold text-foreground">{fmt(totalAssets)}</span>

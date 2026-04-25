@@ -78,6 +78,10 @@ import DistributorReportsPage from "./pages/distributor/DistributorReportsPage";
 import DistributorNotificationsPage from "./pages/distributor/DistributorNotificationsPage";
 import DistributorSettingsPage from "./pages/distributor/DistributorSettingsPage";
 import DistributorProfileSelfPage from "./pages/distributor/DistributorProfileSelfPage";
+import DistributorPromiseTrackerPage from "./pages/distributor/DistributorPromiseTrackerPage";
+import DistributorRecordSalePage from "./pages/distributor/DistributorRecordSalePage";
+import DistributorLogExpensePage from "./pages/distributor/DistributorLogExpensePage";
+import DistributorExpensesHistoryPage from "./pages/distributor/DistributorExpensesHistoryPage";
 
 // Shared pages
 import FeedPage from "./pages/shared/FeedPage";
@@ -182,6 +186,10 @@ const App = () => (
                       <Route path="/distributor/profile" element={<DistributorProfileSelfPage />} />
                       <Route path="/distributor/owner/:id" element={<OwnerProfilePage />} />
                       <Route path="/distributor/feed" element={<FeedPage variant="owner" BottomNav={DistributorBottomNav} />} />
+                      <Route path="/distributor/promises" element={<DistributorPromiseTrackerPage />} />
+                      <Route path="/distributor/record-sale" element={<DistributorRecordSalePage />} />
+                      <Route path="/distributor/expenses" element={<DistributorExpensesHistoryPage />} />
+                      <Route path="/distributor/expenses/log" element={<DistributorLogExpensePage />} />
 
                       <Route path="*" element={<NotFound />} />
                     </Routes>

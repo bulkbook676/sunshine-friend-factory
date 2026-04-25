@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Bell, Settings, Zap, ClipboardList, AlertTriangle, Package, User } from "lucide-react";
+import { Bell, Settings, Zap, ClipboardList, AlertTriangle, Package, User, Plus, Receipt, TrendingUp } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
@@ -7,7 +7,7 @@ import DistributorBottomNav from "@/components/DistributorBottomNav";
 const DistributorDashboard = () => {
   const navigate = useNavigate();
   const { businessName } = useAuth();
-  const { products, orders } = useDistributor();
+  const { products, orders, ownSales, ownExpenses } = useDistributor();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
@@ -29,6 +29,38 @@ const DistributorDashboard = () => {
     (s, o) => s + o.items.reduce((ss, i) => ss + i.qty * i.unitPrice, 0),
     0
   );
+
+  // Stock movement signals (use today's own sales as movement proxy)
+  const todaysOwnSales = ownSales.filter((s) => new Date(s.date).toDateString() === today);
+  const unitsSoldByProduct = new Map<string, number>();
+  for (const sale of todaysOwnSales) {
+    for (const it of sale.items) {
+      unitsSoldByProduct.set(it.productId, (unitsSoldByProduct.get(it.productId) ?? 0) + it.qty);
+    }
+  }
+  const topMovers = [...products]
+    .map((p) => ({ ...p, soldToday: unitsSoldByProduct.get(p.id) ?? 0 }))
+    .sort((a, b) => b.soldToday - a.soldToday)
+    .slice(0, 3)
+    .filter((p) => p.soldToday > 0);
+
+  // Dead stock — for distributor, treat any product with zero own-sales in last 30d as candidate
+  const thirtyDaysAgo = Date.now() - 30 * 86400000;
+  const recentSoldIds = new Set(
+    ownSales.filter((s) => new Date(s.date).getTime() >= thirtyDaysAgo).flatMap((s) => s.items.map((i) => i.productId))
+  );
+  const deadStock = products.filter((p) => p.currentStock > 0 && !recentSoldIds.has(p.id));
+
+  // Restock — products at <50% of an inferred opening stock baseline (use 2x current as baseline floor)
+  const restockItems = products.filter((p) => {
+    if (p.currentStock <= 0) return false;
+    // Heuristic: if currentStock is small (<= 100) treat as low; production would use openingStock
+    return p.currentStock <= 100;
+  });
+
+  const todaysExpensesTotal = ownExpenses
+    .filter((e) => e.date === new Date().toISOString().split("T")[0])
+    .reduce((s, e) => s + e.amount, 0);
 
   return (
     <div className="app-shell dark bg-background">
@@ -73,6 +105,15 @@ const DistributorDashboard = () => {
           </div>
         </button>
 
+        {/* Record a Sale */}
+        <button
+          onClick={() => navigate("/distributor/record-sale")}
+          className="w-full bg-primary rounded-lg p-4 mb-4 flex items-center justify-center gap-2 active:opacity-80 transition-opacity"
+        >
+          <Plus className="w-5 h-5 text-primary-foreground" />
+          <span className="text-sm font-bold text-primary-foreground">Record a Sale</span>
+        </button>
+
         {/* AI Brief */}
         <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
@@ -86,6 +127,76 @@ const DistributorDashboard = () => {
             <strong> 2 businesses</strong> are due for goodwill repayment this week.
           </p>
         </div>
+
+        {/* Top Moving Products */}
+        {topMovers.length > 0 && (
+          <div className="mb-4">
+            <h2 className="text-sm font-semibold text-foreground mb-3">Top Moving Products</h2>
+            <div className="grid grid-cols-3 gap-2">
+              {topMovers.map((p) => (
+                <div key={p.id} className="bg-card rounded-lg p-3 border border-border text-center">
+                  <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-2">
+                    <TrendingUp className="w-4 h-4 text-success" />
+                  </div>
+                  <p className="text-xs font-medium text-foreground truncate">{p.name.split("(")[0].trim()}</p>
+                  <p className="text-lg font-bold text-primary">{p.soldToday}</p>
+                  <p className="text-[10px] text-muted-foreground">sold today</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Dead Stock Alert */}
+        {deadStock.length > 0 && (
+          <div className="bg-muted/50 rounded-lg p-4 mb-4 border border-border">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm font-semibold text-foreground">Goods Not Moving</span>
+            </div>
+            {deadStock.slice(0, 3).map((p) => (
+              <div key={p.id} className="flex items-center justify-between py-2">
+                <span className="text-sm text-foreground">{p.name}</span>
+                <span className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">No sales 30d</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Restock alerts */}
+        {restockItems.length > 0 && (
+          <button onClick={() => navigate("/distributor/inventory")} className="w-full bg-card rounded-lg p-4 mb-3 border border-border flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
+                <Package className="w-5 h-5 text-warning" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-foreground">Restock Alerts</p>
+                <p className="text-xs text-muted-foreground">{restockItems.length} products running low</p>
+              </div>
+            </div>
+            <span className="w-6 h-6 rounded-full bg-warning text-primary-foreground text-xs font-bold flex items-center justify-center">
+              {restockItems.length}
+            </span>
+          </button>
+        )}
+
+        {/* Daily expenses */}
+        <button
+          onClick={() => navigate("/distributor/expenses")}
+          className="w-full bg-card rounded-lg p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-critical/10 flex items-center justify-center">
+              <Receipt className="w-5 h-5 text-critical" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-foreground">Today's Expenses</p>
+              <p className="text-xs text-muted-foreground">Tap to log or view history</p>
+            </div>
+          </div>
+          <p className="text-lg font-bold text-critical">₦{todaysExpensesTotal.toLocaleString()}</p>
+        </button>
 
         {/* Today's Orders */}
         <button

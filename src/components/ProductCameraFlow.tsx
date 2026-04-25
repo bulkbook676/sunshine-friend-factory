@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 export interface CapturedProduct {
@@ -140,7 +141,7 @@ const ProductCameraFlow = ({
 
   if (!open) return null;
 
-  return (
+  const modal = (
     <div
       className="fixed inset-0 z-[60] bg-black"
       style={{ height: "100dvh" }}
@@ -254,6 +255,14 @@ const ProductCameraFlow = ({
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );
+
+  // Portal to body so the modal escapes any ancestor stacking context
+  // (e.g. .app-shell uses overflow:hidden + position:relative which can clip
+  // fixed-positioned children on some mobile browsers, hiding our buttons
+  // behind page-level chrome like bottom nav bars).
+  return typeof document !== "undefined"
+    ? createPortal(modal, document.body)
+    : modal;
 };
 
 export default ProductCameraFlow;

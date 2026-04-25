@@ -36,6 +36,10 @@ export interface DistributorIncomingOrder {
   confirmedAt?: string;
   shippedAt?: string;
   deliveredAt?: string;
+  // Goodwill repayment tracking (only relevant when items contain goodwill)
+  goodwillPaid?: boolean;
+  goodwillPaidAt?: string;
+  goodwillDeposits?: { amount: number; date: string }[];
 }
 
 interface DistributorState {
@@ -51,6 +55,38 @@ interface DistributorState {
   autoApproveGoodwill: boolean;
   products: DistributorOwnProduct[];
   orders: DistributorIncomingOrder[];
+  // Recorded sales the distributor makes from their own walk-in/over-the-counter
+  // (separate from incoming buyer orders).
+  ownSales: DistributorOwnSale[];
+  ownExpenses: DistributorOwnExpense[];
+}
+
+export interface DistributorOwnSale {
+  id: string;
+  items: { productId: string; productName: string; qty: number; unitPrice: number }[];
+  total: number;
+  paymentMethod: "cash" | "transfer" | "goodwill";
+  customerNote?: string;
+  collaborator?: string;
+  date: string;
+}
+
+export type DistributorExpenseType =
+  | "Fuel/Generator"
+  | "Rent"
+  | "Transport"
+  | "Handling"
+  | "Salary"
+  | "Electricity"
+  | "Miscellaneous";
+
+export interface DistributorOwnExpense {
+  id: string;
+  name: string;
+  amount: number;
+  type: DistributorExpenseType;
+  date: string;
+  note?: string;
 }
 
 interface DistributorContextType extends DistributorState {
@@ -61,6 +97,14 @@ interface DistributorContextType extends DistributorState {
   addCustomCategory: (cat: string) => void;
   addIncomingOrder: (o: Omit<DistributorIncomingOrder, "id" | "status" | "date"> & { id?: string; date?: string }) => void;
   setOrderStatus: (id: string, status: DistributorOrderStatus) => void;
+  // Goodwill repayment tracking on incoming orders
+  markGoodwillPaid: (orderId: string) => void;
+  recordGoodwillDeposit: (orderId: string, amount: number) => void;
+  // Distributor's own counter sales
+  addOwnSale: (s: Omit<DistributorOwnSale, "id" | "date"> & { date?: string }) => void;
+  // Distributor's own expenses
+  addOwnExpense: (e: Omit<DistributorOwnExpense, "id">) => void;
+  deleteOwnExpense: (id: string) => void;
 }
 
 const seedProducts: DistributorOwnProduct[] = [
@@ -125,6 +169,23 @@ export const DistributorProvider = ({ children }: { children: ReactNode }) => {
     autoApproveGoodwill: false,
     products: seedProducts,
     orders: seedOrders,
+    ownSales: [],
+    ownExpenses: [
+      {
+        id: "de1",
+        name: "Generator fuel",
+        amount: 4500,
+        type: "Fuel/Generator",
+        date: new Date().toISOString().split("T")[0],
+      },
+      {
+        id: "de2",
+        name: "Loader handling",
+        amount: 2000,
+        type: "Handling",
+        date: new Date().toISOString().split("T")[0],
+      },
+    ],
   });
 
   const setProfile = (data: Partial<DistributorState>) => setState((p) => ({ ...p, ...data }));
@@ -177,6 +238,60 @@ export const DistributorProvider = ({ children }: { children: ReactNode }) => {
     }));
   }, []);
 
+  const markGoodwillPaid = (orderId: string) =>
+    setState((s) => ({
+      ...s,
+      orders: s.orders.map((o) =>
+        o.id === orderId
+          ? { ...o, goodwillPaid: true, goodwillPaidAt: new Date().toISOString() }
+          : o
+      ),
+    }));
+
+  const recordGoodwillDeposit = (orderId: string, amount: number) => {
+    if (amount <= 0) return;
+    setState((s) => ({
+      ...s,
+      orders: s.orders.map((o) => {
+        if (o.id !== orderId) return o;
+        const deposits = [...(o.goodwillDeposits ?? []), { amount, date: new Date().toISOString() }];
+        const goodwillTotal = o.items
+          .filter((i) => i.paymentType === "goodwill")
+          .reduce((sum, i) => sum + i.qty * i.unitPrice, 0);
+        const totalDeposited = deposits.reduce((sum, d) => sum + d.amount, 0);
+        return totalDeposited >= goodwillTotal
+          ? { ...o, goodwillDeposits: deposits, goodwillPaid: true, goodwillPaidAt: new Date().toISOString() }
+          : { ...o, goodwillDeposits: deposits };
+      }),
+    }));
+  };
+
+  const addOwnSale = (sale: Omit<DistributorOwnSale, "id" | "date"> & { date?: string }) =>
+    setState((s) => {
+      // Reduce stock on sold products
+      const newProducts = s.products.map((p) => {
+        const sold = sale.items.find((i) => i.productId === p.id);
+        return sold ? { ...p, currentStock: Math.max(0, p.currentStock - sold.qty) } : p;
+      });
+      return {
+        ...s,
+        products: newProducts,
+        ownSales: [
+          { ...sale, id: `dos-${Date.now()}`, date: sale.date ?? new Date().toISOString() },
+          ...s.ownSales,
+        ],
+      };
+    });
+
+  const addOwnExpense = (e: Omit<DistributorOwnExpense, "id">) =>
+    setState((s) => ({
+      ...s,
+      ownExpenses: [{ ...e, id: `de-${Date.now()}` }, ...s.ownExpenses],
+    }));
+
+  const deleteOwnExpense = (id: string) =>
+    setState((s) => ({ ...s, ownExpenses: s.ownExpenses.filter((e) => e.id !== id) }));
+
   return (
     <DistributorContext.Provider
       value={{
@@ -188,6 +303,11 @@ export const DistributorProvider = ({ children }: { children: ReactNode }) => {
         addCustomCategory,
         addIncomingOrder,
         setOrderStatus,
+        markGoodwillPaid,
+        recordGoodwillDeposit,
+        addOwnSale,
+        addOwnExpense,
+        deleteOwnExpense,
       }}
     >
       {children}
