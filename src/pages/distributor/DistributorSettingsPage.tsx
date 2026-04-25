@@ -30,15 +30,18 @@ const DistributorSettingsPage = () => {
     title: "Account",
     items: [
       { label: "Business Profile", action: () => navigate("/distributor/profile") },
-      { label: "Phone & Password", action: () => toast.info("Coming soon") },
+      { label: "Phone & Password", action: () => navigate("/distributor/settings/account") },
     ],
   };
 
   const otherSection = {
     title: "Other",
     items: [
-      { label: "Notification preferences", action: () => toast.info("Coming soon") },
-      { label: "About Bulkbook", action: () => toast.info("Bulkbook v1.0") },
+      { label: "Notifications", action: () => navigate("/distributor/settings/notifications") },
+      { label: "Partners", action: () => navigate("/distributor/settings/partners") },
+      { label: "Billing", action: () => navigate("/distributor/settings/billing") },
+      { label: "Privacy & Security", action: () => navigate("/distributor/settings/privacy") },
+      { label: "About Bulkbook", action: () => navigate("/distributor/settings/about") },
     ],
   };
 
