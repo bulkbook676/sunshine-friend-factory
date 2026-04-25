@@ -82,6 +82,15 @@ import DistributorPromiseTrackerPage from "./pages/distributor/DistributorPromis
 import DistributorRecordSalePage from "./pages/distributor/DistributorRecordSalePage";
 import DistributorLogExpensePage from "./pages/distributor/DistributorLogExpensePage";
 import DistributorExpensesHistoryPage from "./pages/distributor/DistributorExpensesHistoryPage";
+import DistributorRevenueBreakdownPage from "./pages/distributor/DistributorRevenueBreakdownPage";
+import DistributorCostBreakdownPage from "./pages/distributor/DistributorCostBreakdownPage";
+import DistributorNetProfitBreakdownPage from "./pages/distributor/DistributorNetProfitBreakdownPage";
+import DistributorAccountSettingsPage from "./pages/distributor/DistributorAccountSettingsPage";
+import DistributorNotificationsSettingsPage from "./pages/distributor/DistributorNotificationsSettingsPage";
+import DistributorPartnersPage from "./pages/distributor/DistributorPartnersPage";
+import DistributorBillingPage from "./pages/distributor/DistributorBillingPage";
+import DistributorPrivacySecurityPage from "./pages/distributor/DistributorPrivacySecurityPage";
+import DistributorAboutPage from "./pages/distributor/DistributorAboutPage";
 
 // Shared pages
 import FeedPage from "./pages/shared/FeedPage";
@@ -190,6 +199,15 @@ const App = () => (
                       <Route path="/distributor/record-sale" element={<DistributorRecordSalePage />} />
                       <Route path="/distributor/expenses" element={<DistributorExpensesHistoryPage />} />
                       <Route path="/distributor/expenses/log" element={<DistributorLogExpensePage />} />
+                      <Route path="/distributor/reports/revenue" element={<DistributorRevenueBreakdownPage />} />
+                      <Route path="/distributor/reports/cost" element={<DistributorCostBreakdownPage />} />
+                      <Route path="/distributor/reports/profit" element={<DistributorNetProfitBreakdownPage />} />
+                      <Route path="/distributor/settings/account" element={<DistributorAccountSettingsPage />} />
+                      <Route path="/distributor/settings/notifications" element={<DistributorNotificationsSettingsPage />} />
+                      <Route path="/distributor/settings/partners" element={<DistributorPartnersPage />} />
+                      <Route path="/distributor/settings/billing" element={<DistributorBillingPage />} />
+                      <Route path="/distributor/settings/privacy" element={<DistributorPrivacySecurityPage />} />
+                      <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
 
                       <Route path="*" element={<NotFound />} />
                     </Routes>
