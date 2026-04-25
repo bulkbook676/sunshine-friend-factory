@@ -17,7 +17,7 @@ import {
 const DIST_FREQUENCY_LABELS: Record<ReportFrequency, string> = {
   monthly: "Monthly",
   quarterly: "Every 3 months",
-  "bi annual": "Every 6 months",
+  biannual: "Every 6 months",
 };
 
 const DistributorPartnersPage = () => {
