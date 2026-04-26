@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Camera, Search, Plus, Minus, X, ShoppingCart, Check, Layers } from "lucide-react";
+import { ArrowLeft, Camera, Search, Plus, Minus, X, ShoppingCart, Check, Layers, ScanLine } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { products, findProductByName } from "@/data/mockData";
+import { products } from "@/data/mockData";
 import { useAuth } from "@/contexts/AuthContext";
 import AgentBottomNav from "@/components/AgentBottomNav";
-import ProductCameraFlow, { type CapturedProduct } from "@/components/ProductCameraFlow";
+import SalesScannerCamera, { type ScannedSaleItem } from "@/components/SalesScannerCamera";
 import { toast } from "@/hooks/use-toast";
 import { registerCartCommit, unregisterCartCommit, type EditCartItem } from "@/pages/EditCartPage";
 
@@ -93,20 +93,26 @@ const RecordSalePage = () => {
     }
   }, [tab]);
 
-  const handleCameraContinue = ({ name }: CapturedProduct) => {
+  const mergeScanned = (item: ScannedSaleItem) => {
+    setCart((prev) => {
+      const existing = prev.find((c) => c.productId === item.productId);
+      if (existing) {
+        return prev.map((c) =>
+          c.productId === item.productId ? { ...c, qty: c.qty + item.qty } : c
+        );
+      }
+      return [...prev, item];
+    });
+  };
+
+  const handleScannerContinue = (item: ScannedSaleItem) => {
+    mergeScanned(item);
+  };
+
+  const handleScannerCheckout = (item: ScannedSaleItem) => {
+    mergeScanned(item);
     setCameraOpen(false);
-    const match = findProductByName(name);
-    if (match) {
-      addToCart(match, 1);
-      toast({ title: "Added to cart", description: `${match.name} added.` });
-    } else {
-      setQuery(name);
-      setTab("search");
-      toast({
-        title: "Product not found",
-        description: `“${name}” is not in your inventory yet. Search or add it first.`,
-      });
-    }
+    setTimeout(() => setShowPreview(true), 0);
   };
 
   const addToCart = (product: typeof products[0], quantity: number) => {
