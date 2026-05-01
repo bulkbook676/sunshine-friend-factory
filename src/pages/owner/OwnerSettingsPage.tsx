@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
+import ProfileSummaryCard from "@/components/ProfileSummaryCard";
 
 const OwnerSettingsPage = () => {
   const navigate = useNavigate();
