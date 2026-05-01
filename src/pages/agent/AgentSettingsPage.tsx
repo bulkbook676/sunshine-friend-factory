@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Lock, Building2, ChevronRight, LogOut, Send, Mic, Square, Play, Pause, Eye, EyeOff, X, Swords, Check, FileText, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import AgentBottomNav from "@/components/AgentBottomNav";
+import { redeemAuthKey } from "@/data/subAccountStore";
 
 interface Rec {
   id: string;
@@ -14,7 +15,7 @@ interface Rec {
 
 const AgentSettingsPage = () => {
   const navigate = useNavigate();
-  const { logout, userName, businessName, isAuthorized, setAuthorized } = useAuth();
+  const { logout, userName, businessName, isAuthorized, setAuthorized, setLinkedBusiness, userId } = useAuth();
   const [activeSection, setActiveSection] = useState<"menu" | "linked" | "challenge" | "profile">("menu");
   const [recText, setRecText] = useState("");
   const [recording, setRecording] = useState(false);
@@ -91,12 +92,19 @@ const AgentSettingsPage = () => {
       setAuthError("Please enter the full 6-digit code");
       return;
     }
-    setAuthSuccess(true);
-    setAuthorized(true);
-    setTimeout(() => {
-      setAuthSuccess(false);
-      setActiveSection("linked");
-    }, 2000);
+    try {
+      const linkedBusinessId = redeemAuthKey(code, userId || `agent-${userName || "anon"}`);
+      setAuthorized(true);
+      setLinkedBusiness(linkedBusinessId, linkedBusinessId);
+      setAuthSuccess(true);
+      setAuthError("");
+      setTimeout(() => {
+        setAuthSuccess(false);
+        setActiveSection("linked");
+      }, 1800);
+    } catch (err) {
+      setAuthError(err instanceof Error ? err.message : "Could not authorize. Try again.");
+    }
   };
 
   const handleSendChallenge = () => {
