@@ -26,6 +26,10 @@ interface AuthState {
   isAuthorized: boolean;
   businessTarget: BusinessTarget | null;
   personalTarget: PersonalTarget | null;
+  /** For agents: the businessId of the owner they are linked to. */
+  linkedBusinessId: string | null;
+  /** Stable id for the current user (used to key per-user mock data). */
+  userId: string;
 }
 
 interface AuthContextType extends AuthState {
@@ -36,6 +40,7 @@ interface AuthContextType extends AuthState {
   setBusinessTarget: (target: BusinessTarget | null) => void;
   setPersonalTarget: (target: PersonalTarget | null) => void;
   setBusinessType: (type: BusinessType) => void;
+  setLinkedBusiness: (businessId: string | null, businessName?: string) => void;
   logout: () => void;
 }
 
@@ -57,18 +62,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isAuthorized: false,
     businessTarget: null,
     personalTarget: null,
+    linkedBusinessId: null,
+    userId: "",
   });
 
   const loginAsOwner = (businessName: string, ownerName: string, businessType: BusinessType = "product") => {
-    setAuth((prev) => ({ ...prev, isAuthenticated: true, role: "owner", businessType, userName: ownerName, businessName, isAuthorized: true }));
+    setAuth((prev) => ({ ...prev, isAuthenticated: true, role: "owner", businessType, userName: ownerName, businessName, isAuthorized: true, userId: `owner-${businessName}` }));
   };
 
   const loginAsAgent = (agentName: string, businessName: string, authorized = false, businessType: BusinessType = "product") => {
-    setAuth((prev) => ({ ...prev, isAuthenticated: true, role: "agent", businessType, userName: agentName, businessName, isAuthorized: authorized }));
+    setAuth((prev) => ({ ...prev, isAuthenticated: true, role: "agent", businessType, userName: agentName, businessName, isAuthorized: authorized, userId: `agent-${agentName}` }));
   };
 
   const loginAsDistributor = (businessName: string, ownerName: string) => {
-    setAuth((prev) => ({ ...prev, isAuthenticated: true, role: "distributor", businessType: null, userName: ownerName, businessName, isAuthorized: true }));
+    setAuth((prev) => ({ ...prev, isAuthenticated: true, role: "distributor", businessType: null, userName: ownerName, businessName, isAuthorized: true, userId: `distributor-${businessName}` }));
   };
 
   const setBusinessType = (type: BusinessType) => {
@@ -87,12 +94,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAuth((prev) => ({ ...prev, personalTarget: target }));
   };
 
+  const setLinkedBusiness = (businessId: string | null, businessName?: string) => {
+    setAuth((prev) => ({
+      ...prev,
+      linkedBusinessId: businessId,
+      businessName: businessName ?? prev.businessName,
+    }));
+  };
+
   const logout = () => {
-    setAuth({ isAuthenticated: false, role: null, businessType: null, userName: "", businessName: "", isAuthorized: false, businessTarget: null, personalTarget: null });
+    setAuth({ isAuthenticated: false, role: null, businessType: null, userName: "", businessName: "", isAuthorized: false, businessTarget: null, personalTarget: null, linkedBusinessId: null, userId: "" });
   };
 
   return (
-    <AuthContext.Provider value={{ ...auth, loginAsOwner, loginAsAgent, loginAsDistributor, setAuthorized, setBusinessTarget, setPersonalTarget, setBusinessType, logout }}>
+    <AuthContext.Provider value={{ ...auth, loginAsOwner, loginAsAgent, loginAsDistributor, setAuthorized, setBusinessTarget, setPersonalTarget, setBusinessType, setLinkedBusiness, logout }}>
       {children}
     </AuthContext.Provider>
   );
