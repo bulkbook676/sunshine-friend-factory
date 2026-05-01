@@ -82,12 +82,17 @@ const DistributorHealthBreakdownPage = () => {
           </div>
         </div>
 
-        {/* Assets */}
         <div className="bg-card rounded-lg p-4 mb-3 border border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingUp className="w-4 h-4 text-success" />
-            <span className="text-sm font-semibold text-foreground">What You Have</span>
-          </div>
+          <button
+            onClick={() => navigate("/owner/health/what-you-have")}
+            className="w-full flex items-center justify-between mb-3 active:opacity-80"
+          >
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-success" />
+              <span className="text-sm font-semibold text-foreground">What You Have</span>
+            </div>
+            <span className="text-[11px] text-primary font-medium">Details →</span>
+          </button>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -125,12 +130,17 @@ const DistributorHealthBreakdownPage = () => {
           </div>
         </div>
 
-        {/* Liabilities */}
         <div className="bg-card rounded-lg p-4 mb-3 border border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <TrendingDown className="w-4 h-4 text-critical" />
-            <span className="text-sm font-semibold text-foreground">What You've Spent</span>
-          </div>
+          <button
+            onClick={() => navigate("/owner/health/what-you-spent")}
+            className="w-full flex items-center justify-between mb-3 active:opacity-80"
+          >
+            <div className="flex items-center gap-2">
+              <TrendingDown className="w-4 h-4 text-critical" />
+              <span className="text-sm font-semibold text-foreground">What You've Spent</span>
+            </div>
+            <span className="text-[11px] text-primary font-medium">Details →</span>
+          </button>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm text-foreground">Cost of Goods</span>

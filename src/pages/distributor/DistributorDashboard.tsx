@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Bell, Settings, Zap, ClipboardList, AlertTriangle, Package, User, Plus, Receipt, TrendingUp } from "lucide-react";
+import { Bell, Settings, Zap, ClipboardList, AlertTriangle, Package, User, Plus, Receipt, TrendingUp, Boxes } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
@@ -112,6 +112,23 @@ const DistributorDashboard = () => {
         >
           <Plus className="w-5 h-5 text-primary-foreground" />
           <span className="text-sm font-bold text-primary-foreground">Record a Sale</span>
+        </button>
+
+        {/* Inventory entry — bottom nav no longer shows it as a tab */}
+        <button
+          onClick={() => navigate("/distributor/inventory")}
+          className="w-full bg-card rounded-lg p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
+              <Boxes className="w-5 h-5 text-foreground" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-foreground">My Inventory</p>
+              <p className="text-xs text-muted-foreground">{products.length} products in stock</p>
+            </div>
+          </div>
+          <span className="text-xs text-primary font-semibold">Open →</span>
         </button>
 
         {/* AI Brief */}

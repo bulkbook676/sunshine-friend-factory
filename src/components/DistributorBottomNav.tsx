@@ -1,12 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, Package, ClipboardList, BarChart3, Newspaper } from "lucide-react";
+import { Home, Users, ClipboardList, BarChart3, Newspaper } from "lucide-react";
 
 const DistributorBottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const items = [
     { icon: Home, label: "Home", path: "/distributor" },
-    { icon: Package, label: "Inventory", path: "/distributor/inventory" },
+    { icon: Users, label: "Agents", path: "/distributor/agents" },
     { icon: ClipboardList, label: "Orders", path: "/distributor/orders" },
     { icon: BarChart3, label: "Reports", path: "/distributor/reports" },
     { icon: Newspaper, label: "Feed", path: "/distributor/feed" },

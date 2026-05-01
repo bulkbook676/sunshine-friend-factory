@@ -31,6 +31,7 @@ const DistributorSettingsPage = () => {
     items: [
       { label: "Business Profile", action: () => navigate("/distributor/profile") },
       { label: "Phone & Password", action: () => navigate("/distributor/settings/account") },
+      { label: "Agents", action: () => navigate("/distributor/agents") },
     ],
   };
 

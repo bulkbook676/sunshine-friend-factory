@@ -14,7 +14,7 @@ import {
 
 const DistributorPromiseTrackerPage = () => {
   const navigate = useNavigate();
-  const { orders, markGoodwillPaid, recordGoodwillDeposit } = useDistributor();
+  const { orders, markGoodwillPaid, recordGoodwillDeposit, defaultGoodwillDays } = useDistributor();
 
   const goodwillTotalFor = (o: (typeof orders)[number]) =>
     o.items.filter((i) => i.paymentType === "goodwill").reduce((s, i) => s + i.qty * i.unitPrice, 0);
@@ -38,6 +38,31 @@ const DistributorPromiseTrackerPage = () => {
   const [depositAmount, setDepositAmount] = useState("");
 
   const daysSince = (iso: string) => Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+
+  /** Estimate units the buyer has already moved (mock: 60% of qty after 7d). */
+  const estimateUnitsMoved = (o: (typeof orders)[number]) => {
+    const totalQty = o.items
+      .filter((i) => i.paymentType === "goodwill")
+      .reduce((s, i) => s + i.qty, 0);
+    const ageDays = daysSince(o.date);
+    const movedRatio = Math.min(1, ageDays / Math.max(1, defaultGoodwillDays));
+    return Math.round(totalQty * movedRatio * 0.6);
+  };
+
+  const repaymentDueDate = (o: (typeof orders)[number]) =>
+    new Date(new Date(o.date).getTime() + defaultGoodwillDays * 86400000);
+
+  const daysToDue = (o: (typeof orders)[number]) =>
+    Math.ceil((repaymentDueDate(o).getTime() - Date.now()) / 86400000);
+
+  const statusOf = (o: (typeof orders)[number]) => {
+    const remaining = outstandingFor(o);
+    if (remaining <= 0) return { label: "Paid", color: "bg-success/10 text-success" };
+    const due = daysToDue(o);
+    if (due < 0) return { label: "Overdue", color: "bg-critical/10 text-critical" };
+    if (due <= 3) return { label: "Due Soon", color: "bg-warning/10 text-warning" };
+    return { label: "On Track", color: "bg-primary/10 text-primary" };
+  };
 
   const handleMarkPaid = (id: string) => {
     markGoodwillPaid(id);
@@ -112,7 +137,12 @@ const DistributorPromiseTrackerPage = () => {
                           </span>
                         )}
                       </p>
-                      <p className="text-xs text-foreground mt-0.5">{o.buyerName}</p>
+                      <button
+                        onClick={() => navigate(`/distributor/owner/${o.buyerId}`)}
+                        className="text-xs text-primary mt-0.5 font-medium hover:underline text-left"
+                      >
+                        {o.buyerName}
+                      </button>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {o.items.filter((i) => i.paymentType === "goodwill").map((i) => i.productName).join(", ")}
                       </p>
@@ -136,6 +166,51 @@ const DistributorPromiseTrackerPage = () => {
                       Deposited ₦{lastDeposit.amount.toLocaleString()} · {formatTimestamp(lastDeposit.date)}
                     </p>
                   )}
+
+                  {/* Buyer movement + due date + progress + status */}
+                  {(() => {
+                    const moved = estimateUnitsMoved(o);
+                    const due = daysToDue(o);
+                    const status = statusOf(o);
+                    const repaid = goodwillTotal > 0 ? Math.min(100, (totalDeposited / goodwillTotal) * 100) : 0;
+                    const totalQty = o.items
+                      .filter((i) => i.paymentType === "goodwill")
+                      .reduce((s, i) => s + i.qty, 0);
+                    return (
+                      <>
+                        <div className="grid grid-cols-2 gap-3 text-[11px] mb-2 mt-2">
+                          <div>
+                            <p className="text-muted-foreground">Sold by buyer</p>
+                            <p className="text-foreground font-semibold">
+                              {moved} of {totalQty} units
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-muted-foreground">Next payment</p>
+                            <p className={`font-semibold ${due < 0 ? "text-critical" : due <= 3 ? "text-warning" : "text-foreground"}`}>
+                              {due < 0 ? `${Math.abs(due)}d overdue` : due === 0 ? "Today" : `in ${due}d`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden mb-2">
+                          <div
+                            className={`h-full rounded-full ${
+                              status.label === "Overdue" ? "bg-critical" : status.label === "Due Soon" ? "bg-warning" : "bg-primary"
+                            }`}
+                            style={{ width: `${repaid}%` }}
+                          />
+                        </div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${status.color}`}>
+                            {status.label}
+                          </span>
+                          <span className="text-[10px] text-muted-foreground">
+                            Due {repaymentDueDate(o).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
+                          </span>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   <div className="flex items-center justify-between gap-2 mt-2">
                     <p className="text-[10px] text-muted-foreground">{new Date(o.date).toLocaleDateString()}</p>

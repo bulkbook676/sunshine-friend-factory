@@ -19,6 +19,8 @@ import LoginPage from "./pages/LoginPage";
 
 // Owner pages
 import HealthBreakdownPage from "./pages/owner/HealthBreakdownPage";
+import WhatYouHavePage from "./pages/owner/WhatYouHavePage";
+import WhatYouSpentPage from "./pages/owner/WhatYouSpentPage";
 import InventoryPage from "./pages/owner/InventoryPage";
 import ProductDetailPage from "./pages/owner/ProductDetailPage";
 import AddProductPage from "./pages/owner/AddProductPage";
@@ -79,6 +81,7 @@ import DistributorNotificationsPage from "./pages/distributor/DistributorNotific
 import DistributorSettingsPage from "./pages/distributor/DistributorSettingsPage";
 import DistributorProfileSelfPage from "./pages/distributor/DistributorProfileSelfPage";
 import DistributorPromiseTrackerPage from "./pages/distributor/DistributorPromiseTrackerPage";
+import DistributorAgentsPage from "./pages/distributor/DistributorAgentsPage";
 import DistributorRecordSalePage from "./pages/distributor/DistributorRecordSalePage";
 import DistributorLogExpensePage from "./pages/distributor/DistributorLogExpensePage";
 import DistributorExpensesHistoryPage from "./pages/distributor/DistributorExpensesHistoryPage";
@@ -130,6 +133,8 @@ const App = () => (
                       {/* Owner */}
                       <Route path="/owner" element={<OwnerHome />} />
                       <Route path="/owner/health" element={<HealthBreakdownPage />} />
+                     <Route path="/owner/health/what-you-have" element={<WhatYouHavePage />} />
+                     <Route path="/owner/health/what-you-spent" element={<WhatYouSpentPage />} />
                       <Route path="/owner/inventory" element={<InventoryPage />} />
                       <Route path="/owner/product/:id" element={<ProductDetailPage />} />
                       <Route path="/owner/product/add" element={<AddProductPage />} />
@@ -208,6 +213,7 @@ const App = () => (
                       <Route path="/distributor/settings/billing" element={<DistributorBillingPage />} />
                       <Route path="/distributor/settings/privacy" element={<DistributorPrivacySecurityPage />} />
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
+                     <Route path="/distributor/agents" element={<DistributorAgentsPage />} />
 
                       <Route path="*" element={<NotFound />} />
                     </Routes>
