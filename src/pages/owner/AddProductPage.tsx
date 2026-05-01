@@ -467,6 +467,11 @@ const AddProductPage = () => {
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Captured Products</span>
+              {totalProducts > 0 && (
+                <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {savedCount} of {totalProducts} saved
+                </span>
+              )}
               <button onClick={openCameraModal} className="ml-auto text-xs text-primary font-medium">+ Add More</button>
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -487,6 +492,22 @@ const AddProductPage = () => {
                 </button>
               ))}
             </div>
+
+            {/* Progress indicator: "Product N of M" */}
+            {activePhotoId && totalProducts > 1 && (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-[11px] font-medium text-foreground">
+                  Product {currentIndex} of {totalProducts}
+                </p>
+                <div className="flex-1 mx-3 h-1 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all"
+                    style={{ width: `${(savedCount / totalProducts) * 100}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-muted-foreground">{savedCount}/{totalProducts}</p>
+              </div>
+            )}
           </div>
         )}
 
