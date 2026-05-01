@@ -4,7 +4,6 @@ import { ArrowLeft, Check, AlertTriangle, Wallet } from "lucide-react";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
 import { toast } from "sonner";
-import { useNavigate as _useNav } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
