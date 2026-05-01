@@ -221,13 +221,14 @@ const AddProductPage = () => {
     setErrors({});
   };
 
-  // ---- Calculations ----
-  const calc = useMemo(() => {
-    const units = parseFloat(form.sellingUnitsPerBuying) || 0;
-    const totalOrder = parseFloat(form.totalOrderAmount) || 0;
-    const qtyOrdered = parseFloat(form.buyingUnitsOrdered) || 0;
-    const transport = parseFloat(form.transportFee) || 0;
-    const asp = parseFloat(form.actualSellingPrice) || 0;
+  // Pure computation so we can run it for the active form AND for any draft
+  // (e.g. when rendering the preview-all summary).
+  const computeFor = (d: ProductDraft) => {
+    const units = parseFloat(d.sellingUnitsPerBuying) || 0;
+    const totalOrder = parseFloat(d.totalOrderAmount) || 0;
+    const qtyOrdered = parseFloat(d.buyingUnitsOrdered) || 0;
+    const transport = parseFloat(d.transportFee) || 0;
+    const asp = parseFloat(d.actualSellingPrice) || 0;
 
     const cogPerBuying = qtyOrdered > 0 ? totalOrder / qtyOrdered : 0;
     const expPerBuying = qtyOrdered > 0 ? transport / qtyOrdered : 0;
@@ -237,7 +238,6 @@ const AddProductPage = () => {
     const idealPrice = costPerSelling * 1.3;
     const marginPerUnit = asp - costPerSelling;
     const marginPct = costPerSelling > 0 ? ((asp - costPerSelling) / costPerSelling) * 100 : 0;
-
     const openingStock = qtyOrdered * units;
 
     let verdictLabel = "";
@@ -253,57 +253,136 @@ const AddProductPage = () => {
       minViablePrice, idealPrice, marginPerUnit, marginPct,
       verdictLabel, verdictColor, openingStock,
     };
-  }, [form.sellingUnitsPerBuying, form.totalOrderAmount, form.buyingUnitsOrdered, form.transportFee, form.actualSellingPrice]);
+  };
+
+  const calc = useMemo(() => computeFor(form), [
+    form.sellingUnitsPerBuying, form.totalOrderAmount, form.buyingUnitsOrdered, form.transportFee, form.actualSellingPrice,
+  ]);
 
   const fmt = (n: number) => `₦${Math.round(n).toLocaleString()}`;
 
   const sellingUnitLabel = form.sellingUnit || "units";
   const buyingUnitLabel = form.buyingUnit || "units";
 
-  const validate = () => {
+  const validateDraft = (d: ProductDraft): Record<string, string> => {
     const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = "Required";
-    if (!form.buyingUnit) e.buyingUnit = "Required";
-    if (!form.sellingUnit) e.sellingUnit = "Required";
-    if (!form.buyingUnitsOrdered || parseFloat(form.buyingUnitsOrdered) <= 0) e.buyingUnitsOrdered = "Required";
-    if (!form.sellingUnitsPerBuying || parseFloat(form.sellingUnitsPerBuying) <= 0) e.sellingUnitsPerBuying = "Required";
-    if (!form.totalOrderAmount || parseFloat(form.totalOrderAmount) <= 0) e.totalOrderAmount = "Required";
-    if (!form.actualSellingPrice || parseFloat(form.actualSellingPrice) <= 0) e.actualSellingPrice = "Required";
+    if (!d.name.trim()) e.name = "Required";
+    if (!d.buyingUnit) e.buyingUnit = "Required";
+    if (!d.sellingUnit) e.sellingUnit = "Required";
+    if (!d.buyingUnitsOrdered || parseFloat(d.buyingUnitsOrdered) <= 0) e.buyingUnitsOrdered = "Required";
+    if (!d.sellingUnitsPerBuying || parseFloat(d.sellingUnitsPerBuying) <= 0) e.sellingUnitsPerBuying = "Required";
+    if (!d.totalOrderAmount || parseFloat(d.totalOrderAmount) <= 0) e.totalOrderAmount = "Required";
+    if (!d.actualSellingPrice || parseFloat(d.actualSellingPrice) <= 0) e.actualSellingPrice = "Required";
+    return e;
+  };
+
+  const validate = () => {
+    const e = validateDraft(form);
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
+  const draftToProduct = (d: ProductDraft): Product => {
+    const c = computeFor(d);
+    return {
+      id: `p-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name: d.name.trim(),
+      category: d.category || "Uncategorized",
+      currentStock: Math.round(c.openingStock),
+      buyingUnit: d.buyingUnit,
+      sellingUnit: d.sellingUnit,
+      unitsPerBuyingUnit: parseFloat(d.sellingUnitsPerBuying) || 0,
+      costPrice: Math.round(c.totalCostPerBuying),
+      sellingPrice: parseFloat(d.actualSellingPrice) || 0,
+      totalRevenue: 0,
+      status: "healthy",
+      salesHistory: [0, 0, 0, 0, 0, 0, 0],
+      stockLog: [{ date: "Just now", action: "Added", qty: Math.round(c.openingStock), by: "Owner" }],
+    };
+  };
+
+  /**
+   * Save the current thumbnail's details and advance to the next unsaved one.
+   * If this was the last unsaved thumbnail, surface the "Preview All" CTA
+   * instead of navigating away — the user must explicitly submit to commit
+   * everything to the inventory store.
+   */
   const saveProduct = () => {
     if (!validate()) {
       toast({ title: "Please fix the errors", description: "Some required fields are missing.", variant: "destructive" });
       return;
     }
-
-    const newProduct: Product = {
-      id: `p-${Date.now()}`,
-      name: form.name.trim(),
-      category: form.category || "Uncategorized",
-      currentStock: Math.round(calc.openingStock),
-      buyingUnit: form.buyingUnit,
-      sellingUnit: form.sellingUnit,
-      unitsPerBuyingUnit: parseFloat(form.sellingUnitsPerBuying) || 0,
-      costPrice: Math.round(calc.totalCostPerBuying),
-      sellingPrice: parseFloat(form.actualSellingPrice) || 0,
-      totalRevenue: 0,
-      status: "healthy",
-      salesHistory: [0, 0, 0, 0, 0, 0, 0],
-      stockLog: [{ date: "Just now", action: "Added", qty: Math.round(calc.openingStock), by: "Owner" }],
-    };
-
-    productStore.push(newProduct);
-
-    if (activePhotoId) {
-      setCapturedPhotos((prev) => prev.map((p) => (p.id === activePhotoId ? { ...p, saved: true } : p)));
+    if (!activePhotoId) {
+      toast({ title: "No product selected", variant: "destructive" });
+      return;
     }
 
-    toast({ title: "Product saved successfully" });
+    // Persist the validated draft and mark the current photo saved.
+    const savedDraft = { ...form };
+    setDrafts((d) => ({ ...d, [activePhotoId]: savedDraft }));
+    const updatedPhotos = capturedPhotos.map((p) =>
+      p.id === activePhotoId ? { ...p, saved: true, label: savedDraft.name } : p,
+    );
+    setCapturedPhotos(updatedPhotos);
+
+    // Find the next unsaved thumbnail.
+    const nextUnsaved = updatedPhotos.find((p) => !p.saved);
+
+    if (nextUnsaved) {
+      const remaining = updatedPhotos.filter((p) => !p.saved).length;
+      toast({
+        title: "Saved",
+        description: `${remaining} product${remaining > 1 ? "s" : ""} left to fill in`,
+      });
+      setActivePhotoId(nextUnsaved.id);
+      const existing = drafts[nextUnsaved.id];
+      setForm(existing ?? emptyDraft(nextUnsaved.label));
+      setErrors({});
+      // Scroll to top so the next product starts at the form header.
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // All thumbnails are saved — show the Preview All CTA.
+      toast({ title: "All products saved — review and submit" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  /** Final commit: push every saved draft to the inventory store. */
+  const submitAll = () => {
+    // Defensive validation in case anything is incomplete.
+    const incomplete = capturedPhotos.find((p) => {
+      const d = drafts[p.id];
+      return !d || Object.keys(validateDraft(d)).length > 0;
+    });
+    if (incomplete) {
+      toast({
+        title: "Some products are incomplete",
+        description: "Tap the highlighted thumbnail to finish its details.",
+        variant: "destructive",
+      });
+      setShowPreviewAll(false);
+      setActivePhotoId(incomplete.id);
+      const d = drafts[incomplete.id];
+      setForm(d ?? emptyDraft(incomplete.label));
+      return;
+    }
+    capturedPhotos.forEach((p) => {
+      const d = drafts[p.id];
+      if (d) productStore.push(draftToProduct(d));
+    });
+    toast({
+      title: `${capturedPhotos.length} product${capturedPhotos.length > 1 ? "s" : ""} added`,
+    });
     navigate("/owner/inventory");
   };
+
+  // Derived: how many products are saved, total, current index for "N of M".
+  const totalProducts = capturedPhotos.length;
+  const savedCount = capturedPhotos.filter((p) => p.saved).length;
+  const allSaved = totalProducts > 0 && savedCount === totalProducts;
+  const currentIndex = activePhotoId
+    ? capturedPhotos.findIndex((p) => p.id === activePhotoId) + 1
+    : 0;
 
   return (
     <div className="app-shell dark bg-background">
