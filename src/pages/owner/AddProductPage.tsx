@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Camera, TrendingUp, TrendingDown, Check, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Camera, TrendingUp, TrendingDown, Check, Plus, ChevronRight } from "lucide-react";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 import ProductCameraFlow, { type CapturedProduct } from "@/components/ProductCameraFlow";
 import {
@@ -21,6 +21,33 @@ interface CapturedPhoto {
   label: string;
   saved: boolean;
 }
+
+/** Per-thumbnail draft form. Mirrors the editable form fields. */
+interface ProductDraft {
+  name: string;
+  category: string;
+  buyingUnit: string;
+  sellingUnit: string;
+  buyingUnitsOrdered: string;
+  sellingUnitsPerBuying: string;
+  totalOrderAmount: string;
+  transportFee: string;
+  actualSellingPrice: string;
+  applyPriceToCurrent: boolean;
+}
+
+const emptyDraft = (name = ""): ProductDraft => ({
+  name,
+  category: "",
+  buyingUnit: "",
+  sellingUnit: "",
+  buyingUnitsOrdered: "",
+  sellingUnitsPerBuying: "",
+  totalOrderAmount: "",
+  transportFee: "",
+  actualSellingPrice: "",
+  applyPriceToCurrent: false,
+});
 
 // --- Field components defined OUTSIDE the page so they are NOT recreated on
 //     every render. Recreating them caused React to unmount the underlying
