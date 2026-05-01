@@ -4,6 +4,7 @@ import { ArrowLeft, ChevronRight, Pencil, Check } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
+import ProfileSummaryCard from "@/components/ProfileSummaryCard";
 import { toast } from "sonner";
 
 const DistributorSettingsPage = () => {
@@ -59,15 +60,15 @@ const DistributorSettingsPage = () => {
         <h1 className="text-2xl font-bold text-foreground mb-6">Settings</h1>
 
         {/* Profile card */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-6 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-lg font-bold text-primary">{(businessName || "D")[0]}</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">{userName}</p>
-            <p className="text-xs text-muted-foreground">{businessName}</p>
-          </div>
-        </div>
+        <ProfileSummaryCard
+          name={userName || "Tunde Adebayo"}
+          role="Distributor"
+          business={businessName || "Adebayo Wholesale Depot"}
+          bio="Verified bulk supplier serving 38 retailers across Lagos & Ogun State."
+          followers={2147}
+          following={89}
+          totalSales="₦18.5M"
+        />
 
         {/* Account */}
         <div className="mb-6">
