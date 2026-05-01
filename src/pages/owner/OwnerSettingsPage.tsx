@@ -98,15 +98,15 @@ const OwnerSettingsPage = () => {
         <h1 className="text-lg font-bold text-foreground mb-6">Settings</h1>
 
         {/* Profile card */}
-        <div className="bg-card rounded-lg p-4 border border-border flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-lg font-bold text-primary">{(userName || "N")[0]}</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">{userName || "Nkechi Okafor"}</p>
-            <p className="text-xs text-muted-foreground">{businessName || "Mama Nkechi Provisions"}</p>
-          </div>
-        </div>
+        <ProfileSummaryCard
+          name={userName || "Nkechi Okafor"}
+          role="Owner"
+          business={businessName || "Mama Nkechi Provisions"}
+          bio="Building Mama Nkechi into the most reliable provisions store in Surulere."
+          followers={1284}
+          following={342}
+          totalSales="₦4.2M"
+        />
 
         {sections.map((section) => (
           <div key={section.title} className="mb-5">
