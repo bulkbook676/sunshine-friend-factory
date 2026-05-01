@@ -19,6 +19,8 @@ import LoginPage from "./pages/LoginPage";
 
 // Owner pages
 import HealthBreakdownPage from "./pages/owner/HealthBreakdownPage";
+import WhatYouHavePage from "./pages/owner/WhatYouHavePage";
+import WhatYouSpentPage from "./pages/owner/WhatYouSpentPage";
 import InventoryPage from "./pages/owner/InventoryPage";
 import ProductDetailPage from "./pages/owner/ProductDetailPage";
 import AddProductPage from "./pages/owner/AddProductPage";
@@ -131,6 +133,8 @@ const App = () => (
                       {/* Owner */}
                       <Route path="/owner" element={<OwnerHome />} />
                       <Route path="/owner/health" element={<HealthBreakdownPage />} />
+                     <Route path="/owner/health/what-you-have" element={<WhatYouHavePage />} />
+                     <Route path="/owner/health/what-you-spent" element={<WhatYouSpentPage />} />
                       <Route path="/owner/inventory" element={<InventoryPage />} />
                       <Route path="/owner/product/:id" element={<ProductDetailPage />} />
                       <Route path="/owner/product/add" element={<AddProductPage />} />
