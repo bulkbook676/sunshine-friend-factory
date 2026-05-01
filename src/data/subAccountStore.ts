@@ -95,6 +95,9 @@ const paymentMethods = new Map<string, PaymentMethod[]>();
 /** Last sale ISO timestamp keyed by businessId. */
 const lastSaleByBusiness = new Map<string, string>();
 
+/** Agent → linked business mapping. Agents can only be linked to ONE business. */
+const agentLinkedBusiness = new Map<string, string>();
+
 // ---------- Helpers ----------
 
 const permKey = (businessId: string, agentId: string) => `${businessId}:${agentId}`;
@@ -169,6 +172,57 @@ export const recordSaleForBusiness = (businessId: string): void => {
 /** Test helper — manually set the last-sale date (for QA/demo only). */
 export const __setLastSaleForBusiness = (businessId: string, iso: string): void => {
   lastSaleByBusiness.set(businessId, iso);
+};
+
+// ---------- Redemption / linkage API ----------
+
+/**
+ * Redeem an authorization code on behalf of an agent.
+ *
+ * Validates that:
+ *  - the code exists,
+ *  - it has not already been redeemed,
+ *  - it has not expired.
+ *
+ * On success the key is marked redeemed, the agent is linked to the issuing
+ * business, and authorization is enabled for the agent.
+ *
+ * @returns the linked business id on success.
+ * @throws Error with a user-safe message on failure.
+ */
+export const redeemAuthKey = (code: string, agentId: string): string => {
+  const trimmed = code.trim();
+  if (!/^\d{6}$/.test(trimmed)) {
+    throw new Error("Enter the 6-digit code from your owner.");
+  }
+  const key = issuedKeys.get(trimmed);
+  if (!key) throw new Error("Invalid code. Please double-check and try again.");
+  if (key.redeemed) throw new Error("This code has already been used.");
+  if (Date.now() > new Date(key.expiresAt).getTime()) {
+    throw new Error("This code has expired. Ask the owner for a new one.");
+  }
+  // Enforce single-business linkage: if the agent is already linked elsewhere,
+  // unlink them from the previous business first.
+  agentLinkedBusiness.set(agentId, key.businessId);
+  setAgentAuthorization(key.businessId, agentId, true);
+  key.redeemed = true;
+  // Free up the active-key slot so the owner can issue another.
+  if (businessActiveKey.get(key.businessId) === trimmed) {
+    businessActiveKey.delete(key.businessId);
+  }
+  return key.businessId;
+};
+
+/** Returns the businessId an agent is linked to (or null). */
+export const getAgentLinkedBusiness = (agentId: string): string | null =>
+  agentLinkedBusiness.get(agentId) ?? null;
+
+/** Owner-initiated revoke: remove the agent's link + authorization. */
+export const revokeAgent = (businessId: string, agentId: string): void => {
+  setAgentAuthorization(businessId, agentId, false);
+  if (agentLinkedBusiness.get(agentId) === businessId) {
+    agentLinkedBusiness.delete(agentId);
+  }
 };
 
 // ---------- Permissions API ----------

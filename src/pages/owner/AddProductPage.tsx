@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ChevronDown, Camera, TrendingUp, TrendingDown, Check, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Camera, TrendingUp, TrendingDown, Check, Plus, ChevronRight } from "lucide-react";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 import ProductCameraFlow, { type CapturedProduct } from "@/components/ProductCameraFlow";
 import {
@@ -21,6 +21,33 @@ interface CapturedPhoto {
   label: string;
   saved: boolean;
 }
+
+/** Per-thumbnail draft form. Mirrors the editable form fields. */
+interface ProductDraft {
+  name: string;
+  category: string;
+  buyingUnit: string;
+  sellingUnit: string;
+  buyingUnitsOrdered: string;
+  sellingUnitsPerBuying: string;
+  totalOrderAmount: string;
+  transportFee: string;
+  actualSellingPrice: string;
+  applyPriceToCurrent: boolean;
+}
+
+const emptyDraft = (name = ""): ProductDraft => ({
+  name,
+  category: "",
+  buyingUnit: "",
+  sellingUnit: "",
+  buyingUnitsOrdered: "",
+  sellingUnitsPerBuying: "",
+  totalOrderAmount: "",
+  transportFee: "",
+  actualSellingPrice: "",
+  applyPriceToCurrent: false,
+});
 
 // --- Field components defined OUTSIDE the page so they are NOT recreated on
 //     every render. Recreating them caused React to unmount the underlying
@@ -107,22 +134,19 @@ const AddProductPage = () => {
   // Active product form (selected thumbnail)
   const [activePhotoId, setActivePhotoId] = useState<string | null>(null);
 
+  // Per-thumbnail drafts. Persisted across thumbnail switches so users can
+  // navigate back to a saved product and see their entered data.
+  const [drafts, setDrafts] = useState<Record<string, ProductDraft>>({});
+
+  // Final preview-all screen toggle (shown after the last thumbnail is saved).
+  const [showPreviewAll, setShowPreviewAll] = useState(false);
+
   // Custom unit types (persist for the session)
   const [customUnits, setCustomUnits] = useState<string[]>([]);
   const allUnits = useMemo(() => [...baseUnitTypes, ...customUnits], [customUnits]);
 
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    buyingUnit: "",
-    sellingUnit: "",
-    buyingUnitsOrdered: "",       // NEW (was quantityOrdered)
-    sellingUnitsPerBuying: "",    // NEW (was unitsPerBuying)
-    totalOrderAmount: "",
-    transportFee: "",
-    actualSellingPrice: "",
-    applyPriceToCurrent: false,
-  });
+  // Active form state, mirrored to drafts[activePhotoId] on every change.
+  const [form, setForm] = useState<ProductDraft>(emptyDraft());
 
   // FIX 5 — categories
   const [customCats, setCustomCats] = useState<string[]>([...customCategoryStore]);
@@ -147,7 +171,13 @@ const AddProductPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const update = (k: string, v: string | boolean) => {
-    setForm((p) => ({ ...p, [k]: v }));
+    setForm((p) => {
+      const next = { ...p, [k]: v } as ProductDraft;
+      if (activePhotoId) {
+        setDrafts((d) => ({ ...d, [activePhotoId]: next }));
+      }
+      return next;
+    });
     if (errors[k]) setErrors((e) => ({ ...e, [k]: "" }));
   };
 
@@ -171,8 +201,9 @@ const AddProductPage = () => {
       saved: false,
     };
     setCapturedPhotos((prev) => [...prev, newPhoto]);
+    setDrafts((d) => ({ ...d, [newPhoto.id]: emptyDraft(name) }));
     setActivePhotoId(newPhoto.id);
-    setForm((prev) => ({ ...prev, name }));
+    setForm(emptyDraft(name));
   };
 
   const handleContinueFromCamera = () => {
@@ -180,29 +211,24 @@ const AddProductPage = () => {
   };
 
   const selectThumbnail = (photo: CapturedPhoto) => {
+    // Persist current edits into the previously-active draft before switching.
+    if (activePhotoId) {
+      setDrafts((d) => ({ ...d, [activePhotoId]: form }));
+    }
     setActivePhotoId(photo.id);
-    setForm({
-      name: photo.label,
-      category: "",
-      buyingUnit: "",
-      sellingUnit: "",
-      buyingUnitsOrdered: "",
-      sellingUnitsPerBuying: "",
-      totalOrderAmount: "",
-      transportFee: "",
-      actualSellingPrice: "",
-      applyPriceToCurrent: false,
-    });
+    const existing = drafts[photo.id];
+    setForm(existing ?? emptyDraft(photo.label));
     setErrors({});
   };
 
-  // ---- Calculations ----
-  const calc = useMemo(() => {
-    const units = parseFloat(form.sellingUnitsPerBuying) || 0;
-    const totalOrder = parseFloat(form.totalOrderAmount) || 0;
-    const qtyOrdered = parseFloat(form.buyingUnitsOrdered) || 0;
-    const transport = parseFloat(form.transportFee) || 0;
-    const asp = parseFloat(form.actualSellingPrice) || 0;
+  // Pure computation so we can run it for the active form AND for any draft
+  // (e.g. when rendering the preview-all summary).
+  const computeFor = (d: ProductDraft) => {
+    const units = parseFloat(d.sellingUnitsPerBuying) || 0;
+    const totalOrder = parseFloat(d.totalOrderAmount) || 0;
+    const qtyOrdered = parseFloat(d.buyingUnitsOrdered) || 0;
+    const transport = parseFloat(d.transportFee) || 0;
+    const asp = parseFloat(d.actualSellingPrice) || 0;
 
     const cogPerBuying = qtyOrdered > 0 ? totalOrder / qtyOrdered : 0;
     const expPerBuying = qtyOrdered > 0 ? transport / qtyOrdered : 0;
@@ -212,7 +238,6 @@ const AddProductPage = () => {
     const idealPrice = costPerSelling * 1.3;
     const marginPerUnit = asp - costPerSelling;
     const marginPct = costPerSelling > 0 ? ((asp - costPerSelling) / costPerSelling) * 100 : 0;
-
     const openingStock = qtyOrdered * units;
 
     let verdictLabel = "";
@@ -228,57 +253,197 @@ const AddProductPage = () => {
       minViablePrice, idealPrice, marginPerUnit, marginPct,
       verdictLabel, verdictColor, openingStock,
     };
-  }, [form.sellingUnitsPerBuying, form.totalOrderAmount, form.buyingUnitsOrdered, form.transportFee, form.actualSellingPrice]);
+  };
+
+  const calc = useMemo(() => computeFor(form), [
+    form.sellingUnitsPerBuying, form.totalOrderAmount, form.buyingUnitsOrdered, form.transportFee, form.actualSellingPrice,
+  ]);
 
   const fmt = (n: number) => `₦${Math.round(n).toLocaleString()}`;
 
   const sellingUnitLabel = form.sellingUnit || "units";
   const buyingUnitLabel = form.buyingUnit || "units";
 
-  const validate = () => {
+  const validateDraft = (d: ProductDraft): Record<string, string> => {
     const e: Record<string, string> = {};
-    if (!form.name.trim()) e.name = "Required";
-    if (!form.buyingUnit) e.buyingUnit = "Required";
-    if (!form.sellingUnit) e.sellingUnit = "Required";
-    if (!form.buyingUnitsOrdered || parseFloat(form.buyingUnitsOrdered) <= 0) e.buyingUnitsOrdered = "Required";
-    if (!form.sellingUnitsPerBuying || parseFloat(form.sellingUnitsPerBuying) <= 0) e.sellingUnitsPerBuying = "Required";
-    if (!form.totalOrderAmount || parseFloat(form.totalOrderAmount) <= 0) e.totalOrderAmount = "Required";
-    if (!form.actualSellingPrice || parseFloat(form.actualSellingPrice) <= 0) e.actualSellingPrice = "Required";
+    if (!d.name.trim()) e.name = "Required";
+    if (!d.buyingUnit) e.buyingUnit = "Required";
+    if (!d.sellingUnit) e.sellingUnit = "Required";
+    if (!d.buyingUnitsOrdered || parseFloat(d.buyingUnitsOrdered) <= 0) e.buyingUnitsOrdered = "Required";
+    if (!d.sellingUnitsPerBuying || parseFloat(d.sellingUnitsPerBuying) <= 0) e.sellingUnitsPerBuying = "Required";
+    if (!d.totalOrderAmount || parseFloat(d.totalOrderAmount) <= 0) e.totalOrderAmount = "Required";
+    if (!d.actualSellingPrice || parseFloat(d.actualSellingPrice) <= 0) e.actualSellingPrice = "Required";
+    return e;
+  };
+
+  const validate = () => {
+    const e = validateDraft(form);
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
+  const draftToProduct = (d: ProductDraft): Product => {
+    const c = computeFor(d);
+    return {
+      id: `p-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      name: d.name.trim(),
+      category: d.category || "Uncategorized",
+      currentStock: Math.round(c.openingStock),
+      buyingUnit: d.buyingUnit,
+      sellingUnit: d.sellingUnit,
+      unitsPerBuyingUnit: parseFloat(d.sellingUnitsPerBuying) || 0,
+      costPrice: Math.round(c.totalCostPerBuying),
+      sellingPrice: parseFloat(d.actualSellingPrice) || 0,
+      totalRevenue: 0,
+      status: "healthy",
+      salesHistory: [0, 0, 0, 0, 0, 0, 0],
+      stockLog: [{ date: "Just now", action: "Added", qty: Math.round(c.openingStock), by: "Owner" }],
+    };
+  };
+
+  /**
+   * Save the current thumbnail's details and advance to the next unsaved one.
+   * If this was the last unsaved thumbnail, surface the "Preview All" CTA
+   * instead of navigating away — the user must explicitly submit to commit
+   * everything to the inventory store.
+   */
   const saveProduct = () => {
     if (!validate()) {
       toast({ title: "Please fix the errors", description: "Some required fields are missing.", variant: "destructive" });
       return;
     }
-
-    const newProduct: Product = {
-      id: `p-${Date.now()}`,
-      name: form.name.trim(),
-      category: form.category || "Uncategorized",
-      currentStock: Math.round(calc.openingStock),
-      buyingUnit: form.buyingUnit,
-      sellingUnit: form.sellingUnit,
-      unitsPerBuyingUnit: parseFloat(form.sellingUnitsPerBuying) || 0,
-      costPrice: Math.round(calc.totalCostPerBuying),
-      sellingPrice: parseFloat(form.actualSellingPrice) || 0,
-      totalRevenue: 0,
-      status: "healthy",
-      salesHistory: [0, 0, 0, 0, 0, 0, 0],
-      stockLog: [{ date: "Just now", action: "Added", qty: Math.round(calc.openingStock), by: "Owner" }],
-    };
-
-    productStore.push(newProduct);
-
-    if (activePhotoId) {
-      setCapturedPhotos((prev) => prev.map((p) => (p.id === activePhotoId ? { ...p, saved: true } : p)));
+    if (!activePhotoId) {
+      toast({ title: "No product selected", variant: "destructive" });
+      return;
     }
 
-    toast({ title: "Product saved successfully" });
+    // Persist the validated draft and mark the current photo saved.
+    const savedDraft = { ...form };
+    setDrafts((d) => ({ ...d, [activePhotoId]: savedDraft }));
+    const updatedPhotos = capturedPhotos.map((p) =>
+      p.id === activePhotoId ? { ...p, saved: true, label: savedDraft.name } : p,
+    );
+    setCapturedPhotos(updatedPhotos);
+
+    // Find the next unsaved thumbnail.
+    const nextUnsaved = updatedPhotos.find((p) => !p.saved);
+
+    if (nextUnsaved) {
+      const remaining = updatedPhotos.filter((p) => !p.saved).length;
+      toast({
+        title: "Saved",
+        description: `${remaining} product${remaining > 1 ? "s" : ""} left to fill in`,
+      });
+      setActivePhotoId(nextUnsaved.id);
+      const existing = drafts[nextUnsaved.id];
+      setForm(existing ?? emptyDraft(nextUnsaved.label));
+      setErrors({});
+      // Scroll to top so the next product starts at the form header.
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      // All thumbnails are saved — show the Preview All CTA.
+      toast({ title: "All products saved — review and submit" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  /** Final commit: push every saved draft to the inventory store. */
+  const submitAll = () => {
+    // Defensive validation in case anything is incomplete.
+    const incomplete = capturedPhotos.find((p) => {
+      const d = drafts[p.id];
+      return !d || Object.keys(validateDraft(d)).length > 0;
+    });
+    if (incomplete) {
+      toast({
+        title: "Some products are incomplete",
+        description: "Tap the highlighted thumbnail to finish its details.",
+        variant: "destructive",
+      });
+      setShowPreviewAll(false);
+      setActivePhotoId(incomplete.id);
+      const d = drafts[incomplete.id];
+      setForm(d ?? emptyDraft(incomplete.label));
+      return;
+    }
+    capturedPhotos.forEach((p) => {
+      const d = drafts[p.id];
+      if (d) productStore.push(draftToProduct(d));
+    });
+    toast({
+      title: `${capturedPhotos.length} product${capturedPhotos.length > 1 ? "s" : ""} added`,
+    });
     navigate("/owner/inventory");
   };
+
+  // Derived: how many products are saved, total, current index for "N of M".
+  const totalProducts = capturedPhotos.length;
+  const savedCount = capturedPhotos.filter((p) => p.saved).length;
+  const allSaved = totalProducts > 0 && savedCount === totalProducts;
+  const currentIndex = activePhotoId
+    ? capturedPhotos.findIndex((p) => p.id === activePhotoId) + 1
+    : 0;
+
+  // ---- Preview-all screen ----
+  if (showPreviewAll) {
+    const fmtN = (n: number) => `₦${Math.round(n).toLocaleString()}`;
+    return (
+      <div className="app-shell dark bg-background">
+        <div className="page-content px-4 pt-4 pb-8">
+          <button onClick={() => setShowPreviewAll(false)} className="flex items-center gap-1 text-muted-foreground mb-4">
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm">Back to edit</span>
+          </button>
+          <h1 className="text-lg font-bold text-foreground mb-1">Preview Products</h1>
+          <p className="text-xs text-muted-foreground mb-5">
+            Review {capturedPhotos.length} product{capturedPhotos.length > 1 ? "s" : ""} before adding to inventory.
+          </p>
+
+          <div className="space-y-3 mb-6">
+            {capturedPhotos.map((p, i) => {
+              const d = drafts[p.id];
+              if (!d) return null;
+              const c = computeFor(d);
+              return (
+                <div key={p.id} className="bg-card border border-border rounded-xl p-4 flex gap-3">
+                  <img src={p.dataUrl} alt={d.name} className="w-16 h-16 rounded-lg object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-semibold text-foreground truncate">{d.name || `Product ${i + 1}`}</p>
+                      <span className="text-[10px] text-muted-foreground shrink-0 ml-2">#{i + 1}</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mb-2">{d.category || "Uncategorized"}</p>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+                      <span className="text-muted-foreground">Stock</span>
+                      <span className="text-foreground text-right">
+                        {Math.round(c.openingStock).toLocaleString()} {d.sellingUnit}
+                      </span>
+                      <span className="text-muted-foreground">Cost / unit</span>
+                      <span className="text-foreground text-right">{c.costPerSelling > 0 ? fmtN(c.costPerSelling) : "—"}</span>
+                      <span className="text-muted-foreground">Selling price</span>
+                      <span className="text-primary font-semibold text-right">{fmtN(parseFloat(d.actualSellingPrice) || 0)}</span>
+                      <span className="text-muted-foreground">Margin</span>
+                      <span className={`text-right font-semibold ${c.verdictColor || "text-foreground"}`}>
+                        {c.marginPct ? `${Math.round(c.marginPct)}%` : "—"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={submitAll}
+            className="w-full h-12 rounded-lg bg-primary text-primary-foreground font-semibold text-sm"
+          >
+            Add {capturedPhotos.length} product{capturedPhotos.length > 1 ? "s" : ""} to inventory
+          </button>
+        </div>
+        <OwnerBottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell dark bg-background">
@@ -302,6 +467,11 @@ const AddProductPage = () => {
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Captured Products</span>
+              {totalProducts > 0 && (
+                <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {savedCount} of {totalProducts} saved
+                </span>
+              )}
               <button onClick={openCameraModal} className="ml-auto text-xs text-primary font-medium">+ Add More</button>
             </div>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
@@ -322,6 +492,22 @@ const AddProductPage = () => {
                 </button>
               ))}
             </div>
+
+            {/* Progress indicator: "Product N of M" */}
+            {activePhotoId && totalProducts > 1 && (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-[11px] font-medium text-foreground">
+                  Product {currentIndex} of {totalProducts}
+                </p>
+                <div className="flex-1 mx-3 h-1 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full bg-primary transition-all"
+                    style={{ width: `${(savedCount / totalProducts) * 100}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-muted-foreground">{savedCount}/{totalProducts}</p>
+              </div>
+            )}
           </div>
         )}
 
@@ -540,9 +726,47 @@ const AddProductPage = () => {
             return null;
           })()}
 
-          <button onClick={saveProduct} className="w-full h-12 mt-2 rounded-lg bg-primary text-primary-foreground font-semibold text-sm">
-            Save Product
-          </button>
+          {(() => {
+            // Determine button copy based on flow position.
+            const isLastUnsaved =
+              totalProducts > 0 &&
+              capturedPhotos.filter((p) => !p.saved && p.id !== activePhotoId).length === 0;
+            const label = totalProducts <= 1
+              ? "Save Product"
+              : isLastUnsaved
+                ? "Save Product"
+                : `Save & Next (${currentIndex} of ${totalProducts})`;
+            return (
+              <button
+                onClick={saveProduct}
+                className="w-full h-12 mt-2 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
+              >
+                {label}
+                {!isLastUnsaved && totalProducts > 1 && <ChevronRight className="w-4 h-4" />}
+              </button>
+            );
+          })()}
+
+          {/* Preview All — shown only after every thumbnail has been saved. */}
+          {allSaved && totalProducts > 0 && (
+            <button
+              onClick={() => setShowPreviewAll(true)}
+              className="w-full h-14 mt-3 rounded-lg bg-success text-success-foreground font-bold text-sm flex items-center justify-center gap-2 shadow-lg"
+            >
+              Preview All Products
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* For the single-product happy path, retain quick "Add to inventory" */}
+          {totalProducts === 1 && capturedPhotos[0]?.saved && (
+            <button
+              onClick={submitAll}
+              className="w-full h-12 mt-3 rounded-lg border-2 border-success text-success font-semibold text-sm"
+            >
+              Add to inventory
+            </button>
+          )}
         </div>
       </div>
       <OwnerBottomNav />

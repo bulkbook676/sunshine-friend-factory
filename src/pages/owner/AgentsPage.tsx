@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { KeyRound, Copy, Check, X, Lock } from "lucide-react";
+import { KeyRound, Copy, Check, X, Lock, ShieldOff } from "lucide-react";
 import { agents } from "@/data/mockData";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,6 +9,7 @@ import {
   issueAuthKey,
   getTotalAgentSlots,
   isAgentAuthorized,
+  revokeAgent,
 } from "@/data/subAccountStore";
 import { toast } from "sonner";
 
@@ -23,6 +24,8 @@ const AgentsPage = () => {
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [copied, setCopied] = useState(false);
+  // Re-render trigger after revoking (subAccountStore is plain in-memory).
+  const [revokeTick, setRevokeTick] = useState(0);
 
   const canGenerate = useMemo(
     () => canGenerateAuthKey(businessId),
@@ -30,6 +33,8 @@ const AgentsPage = () => {
   );
   const totalSlots = useMemo(() => getTotalAgentSlots(businessId), [businessId]);
   // Default seeded mock authorizations ("1" and "2") for demo continuity.
+  // Recompute when revokeTick changes.
+  void revokeTick;
   const usedSlots = agents.filter(
     (a) => isAgentAuthorized(businessId, a.id, ["1", "2"].includes(a.id)),
   ).length;
@@ -62,6 +67,14 @@ const AgentsPage = () => {
     navigator.clipboard.writeText(authCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleRevoke = (e: React.MouseEvent, agentId: string, agentName: string) => {
+    e.stopPropagation();
+    if (!window.confirm(`Revoke ${agentName}'s access? They'll lose access to your inventory immediately.`)) return;
+    revokeAgent(businessId, agentId);
+    setRevokeTick((t) => t + 1);
+    toast.success(`${agentName}'s access has been revoked`);
   };
 
   return (
@@ -139,6 +152,15 @@ const AgentsPage = () => {
                   <p className="text-lg font-bold text-primary">{agent.todaySales}</p>
                   <p className="text-[10px] text-muted-foreground">sales today</p>
                 </div>
+                {authorized && (
+                  <button
+                    onClick={(e) => handleRevoke(e, agent.id, agent.name)}
+                    aria-label={`Revoke ${agent.name}`}
+                    className="ml-2 w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-critical hover:bg-critical/10 shrink-0"
+                  >
+                    <ShieldOff className="w-4 h-4" />
+                  </button>
+                )}
               </button>
             );
           })}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { X, Minus, Plus, ScanLine } from "lucide-react";
+import { X, Minus, Plus, ScanLine, Search } from "lucide-react";
 import type { Product } from "@/data/mockData";
 
 export interface ScannedSaleItem {
@@ -55,6 +55,9 @@ const SalesScannerCamera = ({
   const [recognised, setRecognised] = useState<Product | null>(null);
   const [qty, setQty] = useState(1);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  // When recognition fails (low confidence) we fall back to a manual search panel.
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -85,10 +88,14 @@ const SalesScannerCamera = ({
       stopCamera();
       setRecognised(null);
       setQty(1);
+      setSearchOpen(false);
+      setSearchQuery("");
       return;
     }
     setRecognised(null);
     setQty(1);
+    setSearchOpen(false);
+    setSearchQuery("");
     void startCamera();
     return () => stopCamera();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,16 +103,22 @@ const SalesScannerCamera = ({
 
   // Auto-recognition timer. Picks the next inventory product to simulate AI match.
   useEffect(() => {
-    if (!open || recognised) return;
+    if (!open || recognised || searchOpen) return;
     if (inventory.length === 0) return;
     const t = setTimeout(() => {
+      // Simulate ~25% no-confident-match outcome → fall back to manual search.
+      const noMatch = Math.random() < 0.25;
+      if (noMatch) {
+        setSearchOpen(true);
+        return;
+      }
       const next = inventory[cycleRef.current % inventory.length];
       cycleRef.current += 1;
       setRecognised(next);
       setQty(1);
     }, recognitionDelay);
     return () => clearTimeout(t);
-  }, [open, recognised, inventory, recognitionDelay]);
+  }, [open, recognised, inventory, recognitionDelay, searchOpen]);
 
   const buildItem = (p: Product, q: number): ScannedSaleItem => ({
     productId: p.id,
@@ -132,6 +145,23 @@ const SalesScannerCamera = ({
     stopCamera();
     onClose();
   };
+
+  const handleManualSelect = (p: Product) => {
+    setRecognised(p);
+    setQty(1);
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  const handleWrongProduct = () => {
+    setRecognised(null);
+    setQty(1);
+    setSearchOpen(true);
+  };
+
+  const filteredInventory = searchQuery.trim().length > 0
+    ? inventory.filter((p) => p.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+    : inventory;
 
   if (!open) return null;
 
@@ -183,7 +213,7 @@ const SalesScannerCamera = ({
       )}
 
       {/* Scanning state — only shown until a product is recognised */}
-      {!recognised && !cameraError && (
+      {!recognised && !searchOpen && !cameraError && (
         <div className="absolute inset-0 z-[2] flex flex-col items-center justify-center pointer-events-none">
           <div className="relative w-64 h-64 rounded-2xl border-2 border-white/70 overflow-hidden">
             <div
@@ -195,6 +225,55 @@ const SalesScannerCamera = ({
             <ScanLine className="w-3.5 h-3.5" />
             Point at a product
           </span>
+        </div>
+      )}
+
+      {/* Fallback manual search panel — slides up when no confident match */}
+      {searchOpen && !recognised && (
+        <div
+          className="fixed left-0 right-0 z-50 bg-card text-card-foreground rounded-t-3xl shadow-[0_-12px_32px_rgba(0,0,0,0.55)] animate-slide-up"
+          style={{ bottom: 0, paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 20px)", maxHeight: "70dvh", display: "flex", flexDirection: "column" }}
+        >
+          <div className="px-5 pt-5 pb-3 shrink-0">
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mx-auto mb-4" />
+            <p className="text-xs text-muted-foreground mb-1">Couldn't identify the product</p>
+            <p className="text-sm font-semibold text-foreground mb-3">Pick it from your inventory</p>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search inventory…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-muted border border-border rounded-xl pl-10 pr-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+          <div className="overflow-y-auto px-5 pb-2" style={{ flex: 1 }}>
+            {filteredInventory.length === 0 ? (
+              <p className="text-xs text-muted-foreground text-center py-6">No matching products</p>
+            ) : (
+              <ul className="space-y-1">
+                {filteredInventory.map((p) => (
+                  <li key={p.id}>
+                    <button
+                      onClick={() => handleManualSelect(p)}
+                      className="w-full flex items-center justify-between gap-3 py-3 px-3 rounded-lg hover:bg-muted/60 text-left"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {p.currentStock} {p.sellingUnit}
+                          {p.currentStock !== 1 ? "s" : ""} · ₦{p.sellingPrice.toLocaleString()}
+                        </p>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
 
@@ -266,6 +345,13 @@ const SalesScannerCamera = ({
                 Checkout
               </button>
             </div>
+
+            <button
+              onClick={handleWrongProduct}
+              className="mt-3 w-full text-center text-[11px] text-muted-foreground underline-offset-2 hover:underline"
+            >
+              Wrong product? Search again
+            </button>
           </div>
         </div>
       )}
