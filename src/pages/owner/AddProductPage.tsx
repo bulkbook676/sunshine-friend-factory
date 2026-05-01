@@ -384,6 +384,67 @@ const AddProductPage = () => {
     ? capturedPhotos.findIndex((p) => p.id === activePhotoId) + 1
     : 0;
 
+  // ---- Preview-all screen ----
+  if (showPreviewAll) {
+    const fmtN = (n: number) => `₦${Math.round(n).toLocaleString()}`;
+    return (
+      <div className="app-shell dark bg-background">
+        <div className="page-content px-4 pt-4 pb-8">
+          <button onClick={() => setShowPreviewAll(false)} className="flex items-center gap-1 text-muted-foreground mb-4">
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm">Back to edit</span>
+          </button>
+          <h1 className="text-lg font-bold text-foreground mb-1">Preview Products</h1>
+          <p className="text-xs text-muted-foreground mb-5">
+            Review {capturedPhotos.length} product{capturedPhotos.length > 1 ? "s" : ""} before adding to inventory.
+          </p>
+
+          <div className="space-y-3 mb-6">
+            {capturedPhotos.map((p, i) => {
+              const d = drafts[p.id];
+              if (!d) return null;
+              const c = computeFor(d);
+              return (
+                <div key={p.id} className="bg-card border border-border rounded-xl p-4 flex gap-3">
+                  <img src={p.dataUrl} alt={d.name} className="w-16 h-16 rounded-lg object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-semibold text-foreground truncate">{d.name || `Product ${i + 1}`}</p>
+                      <span className="text-[10px] text-muted-foreground shrink-0 ml-2">#{i + 1}</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mb-2">{d.category || "Uncategorized"}</p>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+                      <span className="text-muted-foreground">Stock</span>
+                      <span className="text-foreground text-right">
+                        {Math.round(c.openingStock).toLocaleString()} {d.sellingUnit}
+                      </span>
+                      <span className="text-muted-foreground">Cost / unit</span>
+                      <span className="text-foreground text-right">{c.costPerSelling > 0 ? fmtN(c.costPerSelling) : "—"}</span>
+                      <span className="text-muted-foreground">Selling price</span>
+                      <span className="text-primary font-semibold text-right">{fmtN(parseFloat(d.actualSellingPrice) || 0)}</span>
+                      <span className="text-muted-foreground">Margin</span>
+                      <span className={`text-right font-semibold ${c.verdictColor || "text-foreground"}`}>
+                        {c.marginPct ? `${Math.round(c.marginPct)}%` : "—"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={submitAll}
+            className="w-full h-12 rounded-lg bg-primary text-primary-foreground font-semibold text-sm"
+          >
+            Add {capturedPhotos.length} product{capturedPhotos.length > 1 ? "s" : ""} to inventory
+          </button>
+        </div>
+        <OwnerBottomNav />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell dark bg-background">
       <div className="page-content px-4 pt-4 pb-6">
