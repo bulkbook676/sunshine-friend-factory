@@ -134,22 +134,19 @@ const AddProductPage = () => {
   // Active product form (selected thumbnail)
   const [activePhotoId, setActivePhotoId] = useState<string | null>(null);
 
+  // Per-thumbnail drafts. Persisted across thumbnail switches so users can
+  // navigate back to a saved product and see their entered data.
+  const [drafts, setDrafts] = useState<Record<string, ProductDraft>>({});
+
+  // Final preview-all screen toggle (shown after the last thumbnail is saved).
+  const [showPreviewAll, setShowPreviewAll] = useState(false);
+
   // Custom unit types (persist for the session)
   const [customUnits, setCustomUnits] = useState<string[]>([]);
   const allUnits = useMemo(() => [...baseUnitTypes, ...customUnits], [customUnits]);
 
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    buyingUnit: "",
-    sellingUnit: "",
-    buyingUnitsOrdered: "",       // NEW (was quantityOrdered)
-    sellingUnitsPerBuying: "",    // NEW (was unitsPerBuying)
-    totalOrderAmount: "",
-    transportFee: "",
-    actualSellingPrice: "",
-    applyPriceToCurrent: false,
-  });
+  // Active form state, mirrored to drafts[activePhotoId] on every change.
+  const [form, setForm] = useState<ProductDraft>(emptyDraft());
 
   // FIX 5 — categories
   const [customCats, setCustomCats] = useState<string[]>([...customCategoryStore]);
@@ -174,7 +171,13 @@ const AddProductPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const update = (k: string, v: string | boolean) => {
-    setForm((p) => ({ ...p, [k]: v }));
+    setForm((p) => {
+      const next = { ...p, [k]: v } as ProductDraft;
+      if (activePhotoId) {
+        setDrafts((d) => ({ ...d, [activePhotoId]: next }));
+      }
+      return next;
+    });
     if (errors[k]) setErrors((e) => ({ ...e, [k]: "" }));
   };
 
@@ -198,8 +201,9 @@ const AddProductPage = () => {
       saved: false,
     };
     setCapturedPhotos((prev) => [...prev, newPhoto]);
+    setDrafts((d) => ({ ...d, [newPhoto.id]: emptyDraft(name) }));
     setActivePhotoId(newPhoto.id);
-    setForm((prev) => ({ ...prev, name }));
+    setForm(emptyDraft(name));
   };
 
   const handleContinueFromCamera = () => {
@@ -207,19 +211,13 @@ const AddProductPage = () => {
   };
 
   const selectThumbnail = (photo: CapturedPhoto) => {
+    // Persist current edits into the previously-active draft before switching.
+    if (activePhotoId) {
+      setDrafts((d) => ({ ...d, [activePhotoId]: form }));
+    }
     setActivePhotoId(photo.id);
-    setForm({
-      name: photo.label,
-      category: "",
-      buyingUnit: "",
-      sellingUnit: "",
-      buyingUnitsOrdered: "",
-      sellingUnitsPerBuying: "",
-      totalOrderAmount: "",
-      transportFee: "",
-      actualSellingPrice: "",
-      applyPriceToCurrent: false,
-    });
+    const existing = drafts[photo.id];
+    setForm(existing ?? emptyDraft(photo.label));
     setErrors({});
   };
 
