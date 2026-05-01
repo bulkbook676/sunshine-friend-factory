@@ -79,6 +79,7 @@ import DistributorNotificationsPage from "./pages/distributor/DistributorNotific
 import DistributorSettingsPage from "./pages/distributor/DistributorSettingsPage";
 import DistributorProfileSelfPage from "./pages/distributor/DistributorProfileSelfPage";
 import DistributorPromiseTrackerPage from "./pages/distributor/DistributorPromiseTrackerPage";
+import DistributorAgentsPage from "./pages/distributor/DistributorAgentsPage";
 import DistributorRecordSalePage from "./pages/distributor/DistributorRecordSalePage";
 import DistributorLogExpensePage from "./pages/distributor/DistributorLogExpensePage";
 import DistributorExpensesHistoryPage from "./pages/distributor/DistributorExpensesHistoryPage";
@@ -208,6 +209,7 @@ const App = () => (
                       <Route path="/distributor/settings/billing" element={<DistributorBillingPage />} />
                       <Route path="/distributor/settings/privacy" element={<DistributorPrivacySecurityPage />} />
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
+                     <Route path="/distributor/agents" element={<DistributorAgentsPage />} />
 
                       <Route path="*" element={<NotFound />} />
                     </Routes>
