@@ -137,7 +137,12 @@ const DistributorPromiseTrackerPage = () => {
                           </span>
                         )}
                       </p>
-                      <p className="text-xs text-foreground mt-0.5">{o.buyerName}</p>
+                      <button
+                        onClick={() => navigate(`/distributor/owner/${o.buyerId}`)}
+                        className="text-xs text-primary mt-0.5 font-medium hover:underline text-left"
+                      >
+                        {o.buyerName}
+                      </button>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {o.items.filter((i) => i.paymentType === "goodwill").map((i) => i.productName).join(", ")}
                       </p>
