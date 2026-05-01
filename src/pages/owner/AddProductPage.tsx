@@ -726,9 +726,47 @@ const AddProductPage = () => {
             return null;
           })()}
 
-          <button onClick={saveProduct} className="w-full h-12 mt-2 rounded-lg bg-primary text-primary-foreground font-semibold text-sm">
-            Save Product
-          </button>
+          {(() => {
+            // Determine button copy based on flow position.
+            const isLastUnsaved =
+              totalProducts > 0 &&
+              capturedPhotos.filter((p) => !p.saved && p.id !== activePhotoId).length === 0;
+            const label = totalProducts <= 1
+              ? "Save Product"
+              : isLastUnsaved
+                ? "Save Product"
+                : `Save & Next (${currentIndex} of ${totalProducts})`;
+            return (
+              <button
+                onClick={saveProduct}
+                className="w-full h-12 mt-2 rounded-lg bg-primary text-primary-foreground font-semibold text-sm flex items-center justify-center gap-2"
+              >
+                {label}
+                {!isLastUnsaved && totalProducts > 1 && <ChevronRight className="w-4 h-4" />}
+              </button>
+            );
+          })()}
+
+          {/* Preview All — shown only after every thumbnail has been saved. */}
+          {allSaved && totalProducts > 0 && (
+            <button
+              onClick={() => setShowPreviewAll(true)}
+              className="w-full h-14 mt-3 rounded-lg bg-success text-success-foreground font-bold text-sm flex items-center justify-center gap-2 shadow-lg"
+            >
+              Preview All Products
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* For the single-product happy path, retain quick "Add to inventory" */}
+          {totalProducts === 1 && capturedPhotos[0]?.saved && (
+            <button
+              onClick={submitAll}
+              className="w-full h-12 mt-3 rounded-lg border-2 border-success text-success font-semibold text-sm"
+            >
+              Add to inventory
+            </button>
+          )}
         </div>
       </div>
       <OwnerBottomNav />
