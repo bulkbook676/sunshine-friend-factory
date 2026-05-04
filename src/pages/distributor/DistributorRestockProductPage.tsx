@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowLeft, ChevronDown, TrendingUp, TrendingDown } from "lucide-react";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
-import { useDistributor } from "@/contexts/DistributorContext";
+import { useDistributor, GoodwillConditions } from "@/contexts/DistributorContext";
 import { toast } from "sonner";
 
 const baseUnitTypes = ["Carton", "Bag", "Roll", "Piece", "Kg", "Litre", "Yard"];
@@ -19,7 +19,7 @@ interface RestockDraft {
   applyPriceToCurrent: boolean;
   freeShippingThreshold: string;
   goodwillEnabled: boolean;
-  goodwillRepaymentDays: string;
+  goodwillConditions?: GoodwillConditions;
   paymentMethods: string[];
 }
 
