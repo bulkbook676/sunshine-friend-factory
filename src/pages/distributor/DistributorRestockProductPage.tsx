@@ -141,7 +141,7 @@ const DistributorRestockProductPage = () => {
     navigate("/distributor/inventory/goodwill-conditions", {
       state: {
         initial: { enabled: form.goodwillEnabled, conditions: form.goodwillConditions },
-        returnTo: `/distributor/inventory/restock/${id}`,
+        returnTo: `/distributor/restock/${id}`,
       },
     });
   };
