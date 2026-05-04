@@ -1,58 +1,44 @@
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { useRecordSaleCart, type RecordSaleCartItem } from "@/contexts/RecordSaleCartContext";
 
 /**
- * Generic Edit Cart page used by both owner & agent record-sale flows.
+ * Generic Edit Cart page used by owner, agent and distributor record-sale flows.
  *
- * It receives the cart and update callbacks via `location.state`:
- *   {
- *     cart: CartItem[];
- *     onCartChange: (next: CartItem[]) => void;  // not serialisable across navigation
- *     returnTo: string;                          // path to navigate back to
- *   }
+ * Cart state is held in the shared `RecordSaleCartProvider` keyed by `cartKey`,
+ * so it survives navigation between the Sale Preview page and this page.
  *
- * Because functions cannot survive a hard reload, we cache the cart locally
- * and only commit back via the `commit` ref when "Done" is tapped.
+ * Required `location.state`:
+ *   { returnTo: string; cartKey: string }
  */
-export interface EditCartItem {
-  productId: string;
-  name: string;
-  qty: number;
-  price: number;
-  unit: string;
-}
+export type EditCartItem = RecordSaleCartItem;
 
 interface LocationState {
-  cart: EditCartItem[];
   returnTo: string;
-  // Stored on window via a callback registry keyed by `cartKey`.
   cartKey: string;
 }
 
-// Lightweight registry so that we can pass the setter across navigation
-// without serialising it through router state.
-type CartCommit = (next: EditCartItem[]) => void;
-const registry = new Map<string, CartCommit>();
-export const registerCartCommit = (key: string, commit: CartCommit) => {
-  registry.set(key, commit);
-};
-export const unregisterCartCommit = (key: string) => {
-  registry.delete(key);
-};
+/**
+ * Backwards-compatible no-ops. Older call sites used a callback registry —
+ * the shared context replaces that, but exports are kept so stale imports
+ * don't break the build during the refactor.
+ */
+export const registerCartCommit = (_key: string, _commit: (next: EditCartItem[]) => void) => {};
+export const unregisterCartCommit = (_key: string) => {};
 
 const EditCartPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state ?? null) as LocationState | null;
-
-  const [items, setItems] = useState<EditCartItem[]>(state?.cart ?? []);
+  const cartKey = state?.cartKey ?? "";
+  const { items, setItems } = useRecordSaleCart(cartKey);
   const recentlyRemoved = useRef<EditCartItem | null>(null);
 
   useEffect(() => {
-    if (!state) {
-      // Direct visit without state — bounce back home defensively.
+    if (!state || !state.cartKey || !state.returnTo) {
+      // Direct visit without proper state — bounce back defensively.
       navigate(-1);
     }
   }, [state, navigate]);
@@ -60,7 +46,7 @@ const EditCartPage = () => {
   const total = items.reduce((s, i) => s + i.qty * i.price, 0);
 
   const updateQty = (productId: string, delta: number) => {
-    setItems((prev) => {
+    setItems((prev: EditCartItem[]) => {
       const next: EditCartItem[] = [];
       for (const item of prev) {
         if (item.productId !== productId) {
@@ -75,7 +61,7 @@ const EditCartPage = () => {
               label: "Undo",
               onClick: () => {
                 if (recentlyRemoved.current) {
-                  setItems((c) => [...c, recentlyRemoved.current!]);
+                  setItems((c: EditCartItem[]) => [...c, recentlyRemoved.current!]);
                   recentlyRemoved.current = null;
                 }
               },
@@ -90,7 +76,7 @@ const EditCartPage = () => {
   };
 
   const removeItem = (productId: string) => {
-    setItems((prev) => {
+    setItems((prev: EditCartItem[]) => {
       const target = prev.find((i) => i.productId === productId);
       if (target) {
         recentlyRemoved.current = target;
@@ -99,7 +85,7 @@ const EditCartPage = () => {
             label: "Undo",
             onClick: () => {
               if (recentlyRemoved.current) {
-                setItems((c) => [...c, recentlyRemoved.current!]);
+                setItems((c: EditCartItem[]) => [...c, recentlyRemoved.current!]);
                 recentlyRemoved.current = null;
               }
             },
@@ -112,8 +98,7 @@ const EditCartPage = () => {
 
   const handleDone = () => {
     if (state) {
-      const commit = registry.get(state.cartKey);
-      if (commit) commit(items);
+      // State is already persisted in the shared context — just navigate back.
       navigate(state.returnTo, { replace: true, state: { fromEditCart: true } });
     } else {
       navigate(-1);

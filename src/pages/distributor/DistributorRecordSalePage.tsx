@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { ArrowLeft, Camera, Search, X, ShoppingCart, Check, ScanLine } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
 import SalesScannerCamera, { type ScannedSaleItem } from "@/components/SalesScannerCamera";
 import type { Product } from "@/data/mockData";
 import { toast } from "sonner";
+import { useRecordSaleCart } from "@/contexts/RecordSaleCartContext";
 
 interface CartItem {
   productId: string;
   name: string;
   qty: number;
   price: number;
-  unit?: string;
+  unit: string;
 }
 
 type Payment = "cash" | "transfer" | "goodwill";
@@ -25,11 +26,13 @@ const PAYMENTS: { value: Payment; label: string }[] = [
 
 const DistributorRecordSalePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { products, addOwnSale } = useDistributor();
   const [tab, setTab] = useState<"search" | "camera">("camera");
   const [cameraOpen, setCameraOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { items: cart, setItems: setCartItems, clear: clearCart } = useRecordSaleCart("distributor-record-sale");
+  const setCart = setCartItems as React.Dispatch<React.SetStateAction<CartItem[]>>;
   const [selected, setSelected] = useState<typeof products[0] | null>(null);
   const [qty, setQty] = useState("1");
   const [showPreview, setShowPreview] = useState(false);
@@ -38,6 +41,12 @@ const DistributorRecordSalePage = () => {
   const [collaborator, setCollaborator] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  // Returning from Edit Cart → go straight back to the preview screen.
+  useEffect(() => {
+    const fromEdit = (location.state as { fromEditCart?: boolean } | null)?.fromEditCart;
+    if (fromEdit) setShowPreview(true);
+  }, [location.state]);
 
   // Map distributor products into the Product shape SalesScannerCamera expects.
   const scannerInventory = useMemo<Product[]>(
@@ -73,7 +82,7 @@ const DistributorRecordSalePage = () => {
     setCart((prev) => {
       const existing = prev.find((c) => c.productId === p.id);
       if (existing) return prev.map((c) => c.productId === p.id ? { ...c, qty: c.qty + q } : c);
-      return [...prev, { productId: p.id, name: p.name, qty: q, price: p.sellingPrice }];
+      return [...prev, { productId: p.id, name: p.name, qty: q, price: p.sellingPrice, unit: "unit" }];
     });
   };
 
@@ -126,6 +135,7 @@ const DistributorRecordSalePage = () => {
       collaborator: collaborator || undefined,
     });
     setConfirmed(true);
+    clearCart();
     setTimeout(() => navigate("/distributor"), 1800);
   };
 
@@ -211,7 +221,14 @@ const DistributorRecordSalePage = () => {
           </div>
 
           <div className="flex gap-3">
-            <button onClick={() => setShowPreview(false)} className="flex-1 py-3 rounded-xl border border-border text-sm font-medium text-foreground">
+            <button
+              onClick={() =>
+                navigate("/distributor/edit-cart", {
+                  state: { returnTo: "/distributor/record-sale", cartKey: "distributor-record-sale" },
+                })
+              }
+              className="flex-1 py-3 rounded-xl border border-border text-sm font-medium text-foreground"
+            >
               Edit
             </button>
             <button onClick={handleConfirm} className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold">

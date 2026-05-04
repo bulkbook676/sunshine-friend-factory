@@ -9,6 +9,7 @@ import { ServiceProvider } from "@/contexts/ServiceContext";
 import { SalesProvider } from "@/contexts/SalesContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { DistributorProvider } from "@/contexts/DistributorContext";
+import { RecordSaleCartProvider } from "@/contexts/RecordSaleCartContext";
 
 // Auth pages
 import LandingPage from "./pages/LandingPage";
@@ -123,8 +124,9 @@ const App = () => (
             <SalesProvider>
               <DistributorProvider>
                 <CartProvider>
-                  <BrowserRouter>
-                    <Routes>
+                  <RecordSaleCartProvider>
+                    <BrowserRouter>
+                      <Routes>
                       {/* Auth */}
                       <Route path="/" element={<LandingPage />} />
                       <Route path="/signup/owner" element={<OwnerSignupPage />} />
@@ -218,10 +220,12 @@ const App = () => (
                       <Route path="/distributor/settings/privacy" element={<DistributorPrivacySecurityPage />} />
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
                      <Route path="/distributor/agents" element={<DistributorAgentsPage />} />
+                      <Route path="/distributor/edit-cart" element={<EditCartPage />} />
 
                       <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </BrowserRouter>
+                      </Routes>
+                    </BrowserRouter>
+                  </RecordSaleCartProvider>
                 </CartProvider>
               </DistributorProvider>
             </SalesProvider>

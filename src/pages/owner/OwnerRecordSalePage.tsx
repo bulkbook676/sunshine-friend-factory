@@ -6,15 +6,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSales, PaymentMethod } from "@/contexts/SalesContext";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 import SalesScannerCamera, { type ScannedSaleItem } from "@/components/SalesScannerCamera";
-import { registerCartCommit, unregisterCartCommit, type EditCartItem } from "@/pages/EditCartPage";
+import { useRecordSaleCart, type RecordSaleCartItem } from "@/contexts/RecordSaleCartContext";
 
-interface CartItem {
-  productId: string;
-  name: string;
-  qty: number;
-  price: number;
-  unit: string;
-}
+type CartItem = RecordSaleCartItem & { unit: string };
 
 const paymentOptions: { value: PaymentMethod; label: string }[] = [
   { value: "cash", label: "Cash" },
@@ -30,7 +24,8 @@ const OwnerRecordSalePage = () => {
   const { addSale } = useSales();
   const [tab, setTab] = useState<"search" | "camera">("search");
   const [query, setQuery] = useState("");
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { items: cart, setItems: setCartItems, clear: clearCart } = useRecordSaleCart("owner-record-sale");
+  const setCart = setCartItems as React.Dispatch<React.SetStateAction<CartItem[]>>;
   const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
   const [qty, setQty] = useState("1");
   const [showPreview, setShowPreview] = useState(false);
@@ -39,13 +34,6 @@ const OwnerRecordSalePage = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash");
   const [customerNote, setCustomerNote] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
-
-  // Register a commit handler so the Edit Cart page can write back to us.
-  useEffect(() => {
-    const key = "owner-record-sale";
-    registerCartCommit(key, (next: EditCartItem[]) => setCart(next));
-    return () => unregisterCartCommit(key);
-  }, []);
 
   // When returning from Edit Cart, jump straight back to the preview screen.
   useEffect(() => {
@@ -117,6 +105,7 @@ const OwnerRecordSalePage = () => {
       role: "owner",
     });
     setConfirmed(true);
+    clearCart();
     setTimeout(() => navigate("/owner"), 1800);
   };
 
@@ -204,7 +193,11 @@ const OwnerRecordSalePage = () => {
 
           <div className="flex gap-3">
             <button
-              onClick={() => navigate("/owner/edit-cart", { state: { cart, returnTo: "/owner/record-sale", cartKey: "owner-record-sale" } })}
+              onClick={() =>
+                navigate("/owner/edit-cart", {
+                  state: { returnTo: "/owner/record-sale", cartKey: "owner-record-sale" },
+                })
+              }
               className="flex-1 py-3 rounded-xl border border-border text-sm font-medium text-foreground"
             >
               Edit
