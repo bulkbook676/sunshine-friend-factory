@@ -51,11 +51,10 @@ const DistributorDashboard = () => {
   );
   const deadStock = products.filter((p) => p.currentStock > 0 && !recentSoldIds.has(p.id));
 
-  // Restock — products at <50% of an inferred opening stock baseline (use 2x current as baseline floor)
+  // Restock — products at or below 50% of opening stock (parity with owner)
   const restockItems = products.filter((p) => {
-    if (p.currentStock <= 0) return false;
-    // Heuristic: if currentStock is small (<= 100) treat as low; production would use openingStock
-    return p.currentStock <= 100;
+    const opening = p.openingStock && p.openingStock > 0 ? p.openingStock : Math.max(p.currentStock, 1);
+    return opening > 0 && p.currentStock / opening <= 0.5;
   });
 
   const todaysExpensesTotal = ownExpenses
@@ -182,20 +181,38 @@ const DistributorDashboard = () => {
 
         {/* Restock alerts */}
         {restockItems.length > 0 && (
-          <button onClick={() => navigate("/distributor/inventory")} className="w-full bg-card rounded-lg p-4 mb-3 border border-border flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
-                <Package className="w-5 h-5 text-warning" />
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Package className="w-4 h-4 text-warning" />
+                <h2 className="text-sm font-semibold text-foreground">Restock Alerts</h2>
               </div>
-              <div className="text-left">
-                <p className="text-sm font-semibold text-foreground">Restock Alerts</p>
-                <p className="text-xs text-muted-foreground">{restockItems.length} products running low</p>
-              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-warning/15 text-warning font-medium">
+                {restockItems.length}
+              </span>
             </div>
-            <span className="w-6 h-6 rounded-full bg-warning text-primary-foreground text-xs font-bold flex items-center justify-center">
-              {restockItems.length}
-            </span>
-          </button>
+            <div className="space-y-2">
+              {restockItems.slice(0, 3).map((p) => (
+                <div key={p.id} className="bg-card rounded-lg p-3 border border-border flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-warning/10 flex items-center justify-center shrink-0">
+                    <Package className="w-4 h-4 text-warning" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {p.currentStock.toLocaleString()} left
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigate(`/distributor/restock/${p.id}`)}
+                    className="px-3 py-1.5 rounded-md border border-primary text-primary text-xs font-semibold active:opacity-80"
+                  >
+                    Restock
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Daily expenses */}
