@@ -174,7 +174,7 @@ const DistributorAddProductPage = () => {
                   className="w-full h-28 rounded-lg border-2 border-dashed border-border bg-card flex flex-col items-center justify-center gap-2"
                 >
                   <Camera className="w-6 h-6 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Tap to capture product photos</span>
+                  <span className="text-xs text-muted-foreground">Tap to capture product photos (optional)</span>
                 </button>
               ) : (
                 <div>
