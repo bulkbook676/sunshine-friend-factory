@@ -15,11 +15,13 @@ export interface DistributorOwnProduct {
   costPrice: number;
   sellingPrice: number;
   currentStock: number;
+  openingStock?: number;
   freeShippingThreshold?: number;
   goodwillEnabled: boolean;
   goodwillRepaymentDays?: number;
   goodwillConditions?: GoodwillConditions;
   paymentMethods: string[];
+  stockLog?: { date: string; action: string; qty: number; by: string }[];
 }
 
 export type DistributorOrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "declined";
@@ -94,6 +96,19 @@ interface DistributorContextType extends DistributorState {
   addProduct: (p: Omit<DistributorOwnProduct, "id">) => void;
   updateProduct: (id: string, p: Partial<Omit<DistributorOwnProduct, "id">>) => void;
   removeProduct: (id: string) => void;
+  restockProduct: (
+    id: string,
+    payload: {
+      addingQty: number;
+      newCostPrice?: number;
+      newSellingPrice?: number;
+      applyPriceToCurrent: boolean;
+      freeShippingThreshold?: number;
+      goodwillEnabled?: boolean;
+      goodwillConditions?: GoodwillConditions;
+      paymentMethods?: string[];
+    },
+  ) => void;
   addCustomCategory: (cat: string) => void;
   addIncomingOrder: (o: Omit<DistributorIncomingOrder, "id" | "status" | "date"> & { id?: string; date?: string }) => void;
   setOrderStatus: (id: string, status: DistributorOrderStatus) => void;
