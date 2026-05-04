@@ -10,6 +10,7 @@ import {
   Bell,
   Lock,
   Users,
+  ClipboardCheck,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
@@ -73,6 +74,16 @@ const OwnerSettingsPage = () => {
           icon: Users,
           label: "Share health reports with partners",
           action: () => navigate("/owner/settings/partners"),
+        },
+      ],
+    },
+    {
+      title: "Audit",
+      items: [
+        {
+          icon: ClipboardCheck,
+          label: "Stock audit — review agent counts",
+          action: () => navigate("/owner/stock-audit"),
         },
       ],
     },

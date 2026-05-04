@@ -101,6 +101,7 @@ import DistributorAboutPage from "./pages/distributor/DistributorAboutPage";
 // Shared pages
 import FeedPage from "./pages/shared/FeedPage";
 import OwnerProfilePage from "./pages/shared/OwnerProfilePage";
+import StockAuditPage from "./pages/shared/StockAuditPage";
 import OwnerBottomNav from "./components/OwnerBottomNav";
 import AgentBottomNav from "./components/AgentBottomNav";
 import DistributorBottomNav from "./components/DistributorBottomNav";
@@ -176,6 +177,7 @@ const App = () => (
                       <Route path="/owner/settings/privacy" element={<PrivacySecurityPage />} />
                       <Route path="/owner/settings/partners" element={<PartnersPage />} />
                       <Route path="/owner/settings/about" element={<AboutBulkbookPage />} />
+                      <Route path="/owner/stock-audit" element={<StockAuditPage variant="owner" />} />
 
                       {/* Agent */}
                       <Route path="/agent" element={<AgentHomePage />} />
@@ -219,6 +221,7 @@ const App = () => (
                       <Route path="/distributor/settings/billing" element={<DistributorBillingPage />} />
                       <Route path="/distributor/settings/privacy" element={<DistributorPrivacySecurityPage />} />
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
+                      <Route path="/distributor/stock-audit" element={<StockAuditPage variant="distributor" />} />
                      <Route path="/distributor/agents" element={<DistributorAgentsPage />} />
                       <Route path="/distributor/edit-cart" element={<EditCartPage />} />
 
