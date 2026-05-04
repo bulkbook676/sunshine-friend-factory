@@ -130,6 +130,7 @@ const seedProducts: DistributorOwnProduct[] = [
     costPrice: 280,
     sellingPrice: 350,
     currentStock: 2400,
+    openingStock: 5000,
     freeShippingThreshold: 30000,
     goodwillEnabled: true,
     goodwillRepaymentDays: 60,
@@ -143,6 +144,7 @@ const seedProducts: DistributorOwnProduct[] = [
     costPrice: 220,
     sellingPrice: 280,
     currentStock: 4000,
+    openingStock: 5000,
     goodwillEnabled: false,
     paymentMethods: ["Cash", "Bank Transfer"],
   },
@@ -216,6 +218,39 @@ export const DistributorProvider = ({ children }: { children: ReactNode }) => {
 
   const removeProduct = (id: string) =>
     setState((s) => ({ ...s, products: s.products.filter((p) => p.id !== id) }));
+
+  const restockProduct: DistributorContextType["restockProduct"] = (id, payload) =>
+    setState((s) => ({
+      ...s,
+      products: s.products.map((p) => {
+        if (p.id !== id) return p;
+        const addingQty = Math.max(0, Math.round(payload.addingQty));
+        const newCurrent = p.currentStock + addingQty;
+        const newOpening = (p.openingStock ?? p.currentStock) + addingQty;
+        const log = p.stockLog ?? [];
+        return {
+          ...p,
+          currentStock: newCurrent,
+          openingStock: newOpening,
+          costPrice: payload.newCostPrice ?? p.costPrice,
+          sellingPrice: payload.applyPriceToCurrent && payload.newSellingPrice != null
+            ? payload.newSellingPrice
+            : p.sellingPrice,
+          freeShippingThreshold: payload.freeShippingThreshold ?? p.freeShippingThreshold,
+          goodwillEnabled: payload.goodwillEnabled ?? p.goodwillEnabled,
+          goodwillConditions: payload.goodwillEnabled === false ? undefined : (payload.goodwillConditions ?? p.goodwillConditions),
+          goodwillRepaymentDays:
+            payload.goodwillEnabled === false
+              ? undefined
+              : (payload.goodwillConditions?.repaymentDays ?? p.goodwillRepaymentDays),
+          paymentMethods: payload.paymentMethods ?? p.paymentMethods,
+          stockLog: [
+            { date: "Just now", action: "Restocked", qty: addingQty, by: "Distributor" },
+            ...log,
+          ],
+        };
+      }),
+    }));
 
   const addCustomCategory = (cat: string) =>
     setState((s) =>
@@ -315,6 +350,7 @@ export const DistributorProvider = ({ children }: { children: ReactNode }) => {
         addProduct,
         updateProduct,
         removeProduct,
+        restockProduct,
         addCustomCategory,
         addIncomingOrder,
         setOrderStatus,
