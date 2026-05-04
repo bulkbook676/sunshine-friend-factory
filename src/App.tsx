@@ -31,6 +31,7 @@ import RevenueBreakdownPage from "./pages/owner/RevenueBreakdownPage";
 import CostBreakdownPage from "./pages/owner/CostBreakdownPage";
 import NetProfitBreakdownPage from "./pages/owner/NetProfitBreakdownPage";
 import RestockPage from "./pages/owner/RestockPage";
+import RestockProductPage from "./pages/owner/RestockProductPage";
 import DistributorPage from "./pages/owner/DistributorPage";
 import DistributorProfilePage from "./pages/owner/DistributorProfilePage";
 import OwnerNotificationsPage from "./pages/owner/OwnerNotificationsPage";
@@ -148,6 +149,7 @@ const App = () => (
                       <Route path="/owner/reports/cost" element={<CostBreakdownPage />} />
                       <Route path="/owner/reports/profit" element={<NetProfitBreakdownPage />} />
                       <Route path="/owner/restock" element={<RestockPage />} />
+                      <Route path="/owner/restock/:id" element={<RestockProductPage />} />
                       <Route path="/owner/distributor" element={<DistributorPage />} />
                       <Route path="/owner/distributor/:id" element={<DistributorProfilePage />} />
                       <Route path="/owner/cart" element={<CartPage />} />

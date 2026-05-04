@@ -52,8 +52,11 @@ const RestockPage = () => {
                     <p className="text-xs text-muted-foreground">
                       Suggested: <strong className="text-foreground">{suggestedRestock} {p.sellingUnit}s</strong>
                     </p>
-                    <button className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium">
-                      Mark Restocked
+                    <button
+                      onClick={() => navigate(`/owner/restock/${p.id}`)}
+                      className="px-3 py-1.5 rounded-md border border-primary text-primary text-xs font-semibold active:opacity-80"
+                    >
+                      Restock
                     </button>
                   </div>
                 </div>
