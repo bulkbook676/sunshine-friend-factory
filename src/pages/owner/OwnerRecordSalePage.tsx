@@ -193,7 +193,11 @@ const OwnerRecordSalePage = () => {
 
           <div className="flex gap-3">
             <button
-              onClick={() => navigate("/owner/edit-cart", { state: { cart, returnTo: "/owner/record-sale", cartKey: "owner-record-sale" } })}
+              onClick={() =>
+                navigate("/owner/edit-cart", {
+                  state: { returnTo: "/owner/record-sale", cartKey: "owner-record-sale" },
+                })
+              }
               className="flex-1 py-3 rounded-xl border border-border text-sm font-medium text-foreground"
             >
               Edit
