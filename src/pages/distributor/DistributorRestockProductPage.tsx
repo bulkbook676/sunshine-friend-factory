@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowLeft, ChevronDown, TrendingUp, TrendingDown } from "lucide-react";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
-import { useDistributor } from "@/contexts/DistributorContext";
+import { useDistributor, GoodwillConditions } from "@/contexts/DistributorContext";
 import { toast } from "sonner";
 
 const baseUnitTypes = ["Carton", "Bag", "Roll", "Piece", "Kg", "Litre", "Yard"];
@@ -19,7 +19,7 @@ interface RestockDraft {
   applyPriceToCurrent: boolean;
   freeShippingThreshold: string;
   goodwillEnabled: boolean;
-  goodwillRepaymentDays: string;
+  goodwillConditions?: GoodwillConditions;
   paymentMethods: string[];
 }
 
@@ -114,9 +114,47 @@ const DistributorRestockProductPage = () => {
     applyPriceToCurrent: false,
     freeShippingThreshold: product?.freeShippingThreshold ? String(product.freeShippingThreshold) : "",
     goodwillEnabled: product?.goodwillEnabled ?? false,
-    goodwillRepaymentDays: product?.goodwillRepaymentDays ? String(product.goodwillRepaymentDays) : "30",
+    goodwillConditions:
+      product?.goodwillConditions ??
+      (product?.goodwillEnabled && product?.goodwillRepaymentDays
+        ? { repaymentDays: product.goodwillRepaymentDays }
+        : undefined),
     paymentMethods: product?.paymentMethods ?? ["Cash", "Bank Transfer"],
   }));
+
+  const location = useLocation();
+
+  // Receive goodwill result from sub-page
+  useEffect(() => {
+    const result = (location.state as any)?.goodwillResult;
+    if (result) {
+      setForm((p) => ({
+        ...p,
+        goodwillEnabled: result.enabled,
+        goodwillConditions: result.conditions,
+      }));
+      window.history.replaceState({}, "");
+    }
+  }, [location.state]);
+
+  const openGoodwillPage = () => {
+    navigate("/distributor/inventory/goodwill-conditions", {
+      state: {
+        initial: { enabled: form.goodwillEnabled, conditions: form.goodwillConditions },
+        returnTo: `/distributor/restock/${id}`,
+      },
+    });
+  };
+
+  const goodwillSummary = (() => {
+    if (!form.goodwillEnabled) return "Not enabled";
+    const c = form.goodwillConditions;
+    if (!c) return "Enabled";
+    const parts: string[] = [`${c.repaymentDays}d repayment`];
+    if (c.minMonthsOnBulkbook != null) parts.push(`${c.minMonthsOnBulkbook}+ months`);
+    if (c.minOrderValue != null) parts.push(`min ₦${c.minOrderValue.toLocaleString()} order`);
+    return `Enabled — ${parts.join(", ")}`;
+  })();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -216,7 +254,6 @@ const DistributorRestockProductPage = () => {
       return;
     }
     const addingQty = Math.round(calc.addingStock);
-    const repaymentDays = parseInt(form.goodwillRepaymentDays) || 30;
     restockProduct(product.id, {
       addingQty,
       newCostPrice: calc.totalCostPerBuying > 0 ? Math.round(calc.totalCostPerBuying) : undefined,
@@ -224,9 +261,7 @@ const DistributorRestockProductPage = () => {
       applyPriceToCurrent: form.applyPriceToCurrent,
       freeShippingThreshold: form.freeShippingThreshold ? parseFloat(form.freeShippingThreshold) : undefined,
       goodwillEnabled: form.goodwillEnabled,
-      goodwillConditions: form.goodwillEnabled
-        ? { repaymentDays, ...(product.goodwillConditions ?? {}) }
-        : undefined,
+      goodwillConditions: form.goodwillEnabled ? form.goodwillConditions : undefined,
       paymentMethods: form.paymentMethods,
     });
     toast.success(`${addingQty} ${form.sellingUnit}s added`);
@@ -394,34 +429,18 @@ const DistributorRestockProductPage = () => {
             prefix="₦"
           />
 
-          <div className="bg-card border border-border rounded-lg p-4">
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-foreground">Buy Now Pay Later (Goodwill)</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Allow buyers to defer payment</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => update("goodwillEnabled", !form.goodwillEnabled)}
-                className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${form.goodwillEnabled ? "bg-primary" : "bg-muted"}`}
-                aria-pressed={form.goodwillEnabled}
-              >
-                <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-background transition-transform ${form.goodwillEnabled ? "translate-x-5" : ""}`} />
-              </button>
-            </div>
-            {form.goodwillEnabled && (
+          <button
+            onClick={openGoodwillPage}
+            className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+          >
+            <div className="flex items-center justify-between">
               <div>
-                <label className="text-xs text-muted-foreground block mb-1.5">Repayment window (days)</label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  value={form.goodwillRepaymentDays}
-                  onChange={(e) => update("goodwillRepaymentDays", e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                <p className="text-sm font-semibold text-foreground">Buy Now Pay Later (Goodwill)</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{goodwillSummary}</p>
               </div>
-            )}
-          </div>
+              <span className="text-xs text-primary">Configure →</span>
+            </div>
+          </button>
 
           <div>
             <label className="text-sm font-medium text-foreground block mb-2">Payment Methods Accepted</label>

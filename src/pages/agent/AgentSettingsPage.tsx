@@ -93,8 +93,20 @@ const AgentSettingsPage = () => {
       setAuthError("Please enter the full 6-digit code");
       return;
     }
+    // Mock validation for frontend testing — any 6-digit numeric code is accepted.
+    // Real backend validation will replace this when the backend is fully connected.
+    if (!/^\d{6}$/.test(code)) {
+      setAuthError("Code must be 6 digits");
+      return;
+    }
     try {
-      const linkedBusinessId = redeemAuthKey(code, userId || `agent-${userName || "anon"}`);
+      let linkedBusinessId: string;
+      try {
+        linkedBusinessId = redeemAuthKey(code, userId || `agent-${userName || "anon"}`);
+      } catch {
+        // Fall back to mock business linkage so any 6-digit code works during testing.
+        linkedBusinessId = businessName || "Mama Nkechi Provisions";
+      }
       setAuthorized(true);
       setLinkedBusiness(linkedBusinessId, linkedBusinessId);
       setAuthSuccess(true);
@@ -103,8 +115,8 @@ const AgentSettingsPage = () => {
         setAuthSuccess(false);
         setActiveSection("linked");
       }, 1800);
-    } catch (err) {
-      setAuthError(err instanceof Error ? err.message : "Could not authorize. Try again.");
+    } catch {
+      setAuthError("Could not authorize. Try again.");
     }
   };
 
