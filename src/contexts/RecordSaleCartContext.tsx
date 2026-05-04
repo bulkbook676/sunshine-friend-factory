@@ -15,7 +15,7 @@ export interface RecordSaleCartItem {
   name: string;
   qty: number;
   price: number;
-  unit?: string;
+  unit: string;
 }
 
 type CartMap = Record<string, RecordSaleCartItem[]>;
