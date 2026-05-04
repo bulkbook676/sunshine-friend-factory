@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus, Package, TrendingUp } from "lucide-react";
-import { products, computeStockStatus, type Product } from "@/data/mockData";
+import { products, computeStockStatus, STOCK_LOW_PCT, type Product } from "@/data/mockData";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 
 const statusColors: Record<string, string> = {
@@ -11,7 +11,7 @@ const statusColors: Record<string, string> = {
   dead: "bg-muted text-muted-foreground",
 };
 
-type FilterType = "all" | "healthy" | "low" | "dead" | "top-selling" | "trending";
+type FilterType = "all" | "healthy" | "low" | "dead" | "restock" | "top-selling" | "trending";
 
 const InventoryPage = () => {
   const navigate = useNavigate();
@@ -30,6 +30,12 @@ const InventoryPage = () => {
 
     if (filter === "low") {
       list = list.filter((p) => p.status === "low" || p.status === "critical");
+    } else if (filter === "restock") {
+      // At or below 50% of opening stock — both low and critical states.
+      list = list.filter((p) => {
+        const opening = p.openingStock && p.openingStock > 0 ? p.openingStock : p.currentStock;
+        return opening > 0 && p.currentStock / opening <= STOCK_LOW_PCT;
+      });
     } else if (filter === "healthy" || filter === "dead") {
       list = list.filter((p) => p.status === filter);
     } else if (filter === "top-selling") {
@@ -67,6 +73,7 @@ const InventoryPage = () => {
     { key: "healthy", label: "Healthy" },
     { key: "low", label: "Low Stock" },
     { key: "dead", label: "Dead Stock" },
+    { key: "restock", label: "Restock" },
     { key: "top-selling", label: "Top Selling" },
     { key: "trending", label: "Trending" },
   ];
@@ -105,44 +112,55 @@ const InventoryPage = () => {
         {/* Products */}
         <div className="space-y-2">
           {filtered.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => navigate(`/owner/product/${p.id}`)}
-              className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 text-left"
-            >
-              <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                <Package className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{p.category}</p>
-              </div>
-              <div className="text-right shrink-0">
-                {filter === "top-selling" ? (
-                  <>
-                    <p className="text-sm font-bold text-foreground">{getTotalUnitsSold(p)} sold</p>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-primary/15 text-primary">
-                      Top Seller
-                    </span>
-                  </>
-                ) : filter === "trending" ? (
-                  <>
-                    <div className="flex items-center gap-1 justify-end">
-                      <TrendingUp className="w-3 h-3 text-success" />
-                      <p className="text-sm font-bold text-success">+{getTrendPct(p)}%</p>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground">this week</span>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm font-bold text-foreground">{p.currentStock}</p>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColors[p.status]}`}>
-                      {p.status}
-                    </span>
-                  </>
-                )}
-              </div>
-            </button>
+            <div key={p.id} className="bg-card rounded-lg border border-border overflow-hidden">
+              <button
+                onClick={() => navigate(`/owner/product/${p.id}`)}
+                className="w-full p-4 flex items-center gap-3 text-left"
+              >
+                <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                  <Package className="w-5 h-5 text-muted-foreground" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">{p.name}</p>
+                  <p className="text-xs text-muted-foreground">{p.category}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  {filter === "top-selling" ? (
+                    <>
+                      <p className="text-sm font-bold text-foreground">{getTotalUnitsSold(p)} sold</p>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full font-medium bg-primary/15 text-primary">
+                        Top Seller
+                      </span>
+                    </>
+                  ) : filter === "trending" ? (
+                    <>
+                      <div className="flex items-center gap-1 justify-end">
+                        <TrendingUp className="w-3 h-3 text-success" />
+                        <p className="text-sm font-bold text-success">+{getTrendPct(p)}%</p>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">this week</span>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm font-bold text-foreground">{p.currentStock}</p>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColors[p.status]}`}>
+                        {p.status}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </button>
+              {filter === "restock" && (
+                <div className="px-4 pb-3 flex justify-end">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate(`/owner/restock/${p.id}`); }}
+                    className="px-3 py-1.5 rounded-md border border-primary text-primary text-xs font-semibold active:opacity-80"
+                  >
+                    Restock
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
 
