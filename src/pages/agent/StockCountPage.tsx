@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, AlertTriangle, Send } from "lucide-react";
+import { ArrowLeft, Send } from "lucide-react";
 import { products } from "@/data/mockData";
 import AgentBottomNav from "@/components/AgentBottomNav";
 
@@ -43,31 +43,16 @@ const StockCountPage = () => {
 
         <div className="space-y-3">
           {products.map((p) => {
-            const physicalCount = parseInt(counts[p.id] || "");
-            const hasDiscrepancy = !isNaN(physicalCount) && physicalCount !== p.currentStock;
             return (
-              <div key={p.id} className={`bg-card rounded-xl p-4 border ${hasDiscrepancy ? "border-warning" : "border-border"}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">System: {p.currentStock} {p.sellingUnit}s</p>
-                  </div>
-                  {hasDiscrepancy && <AlertTriangle className="w-4 h-4 text-warning" />}
-                </div>
+              <div key={p.id} className="bg-card rounded-xl p-4 border border-border">
+                <p className="text-sm font-medium text-foreground mb-2">{p.name}</p>
                 <input
                   type="number"
                   placeholder="Physical count"
                   value={counts[p.id] || ""}
                   onChange={(e) => updateCount(p.id, e.target.value)}
-                  className={`w-full h-10 px-3 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-primary ${
-                    hasDiscrepancy ? "border-warning bg-warning/5 text-foreground" : "border-input bg-background text-foreground placeholder:text-muted-foreground"
-                  }`}
+                  className="w-full h-10 px-3 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 />
-                {hasDiscrepancy && (
-                  <p className="text-xs text-warning mt-1">
-                    Discrepancy: {physicalCount - p.currentStock > 0 ? "+" : ""}{physicalCount - p.currentStock} units
-                  </p>
-                )}
               </div>
             );
           })}

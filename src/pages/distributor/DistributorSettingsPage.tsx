@@ -39,6 +39,7 @@ const DistributorSettingsPage = () => {
   const otherSection = {
     title: "Other",
     items: [
+      { label: "Stock Audit", action: () => navigate("/distributor/stock-audit") },
       { label: "Notifications", action: () => navigate("/distributor/settings/notifications") },
       { label: "Partners", action: () => navigate("/distributor/settings/partners") },
       { label: "Billing", action: () => navigate("/distributor/settings/billing") },
