@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Camera, Search, X, ShoppingCart, Check } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { ArrowLeft, Camera, Search, X, ShoppingCart, Check, ScanLine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
-import ProductCameraFlow, { type CapturedProduct } from "@/components/ProductCameraFlow";
+import SalesScannerCamera, { type ScannedSaleItem } from "@/components/SalesScannerCamera";
+import type { Product } from "@/data/mockData";
 import { toast } from "sonner";
 
 interface CartItem {
@@ -11,6 +12,7 @@ interface CartItem {
   name: string;
   qty: number;
   price: number;
+  unit?: string;
 }
 
 type Payment = "cash" | "transfer" | "goodwill";
@@ -24,7 +26,7 @@ const PAYMENTS: { value: Payment; label: string }[] = [
 const DistributorRecordSalePage = () => {
   const navigate = useNavigate();
   const { products, addOwnSale } = useDistributor();
-  const [tab, setTab] = useState<"search" | "camera">("search");
+  const [tab, setTab] = useState<"search" | "camera">("camera");
   const [cameraOpen, setCameraOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -36,6 +38,28 @@ const DistributorRecordSalePage = () => {
   const [collaborator, setCollaborator] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  // Map distributor products into the Product shape SalesScannerCamera expects.
+  const scannerInventory = useMemo<Product[]>(
+    () =>
+      products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        category: p.category,
+        currentStock: p.currentStock,
+        openingStock: p.openingStock,
+        buyingUnit: "Unit",
+        sellingUnit: "unit",
+        unitsPerBuyingUnit: 1,
+        costPrice: p.costPrice,
+        sellingPrice: p.sellingPrice,
+        totalRevenue: 0,
+        status: "healthy",
+        salesHistory: [],
+        stockLog: [],
+      })),
+    [products],
+  );
 
   useEffect(() => {
     if (tab === "search") searchRef.current?.focus();
@@ -68,17 +92,27 @@ const DistributorRecordSalePage = () => {
     searchRef.current?.focus();
   };
 
-  const handleCameraContinue = ({ name }: CapturedProduct) => {
+  const mergeScanned = (item: ScannedSaleItem) => {
+    setCart((prev) => {
+      const existing = prev.find((c) => c.productId === item.productId);
+      if (existing) {
+        return prev.map((c) =>
+          c.productId === item.productId ? { ...c, qty: c.qty + item.qty } : c
+        );
+      }
+      return [...prev, { productId: item.productId, name: item.name, qty: item.qty, price: item.price, unit: item.unit }];
+    });
+  };
+
+  const handleScannerContinue = (item: ScannedSaleItem) => {
+    mergeScanned(item);
+    // Scanner stays open and resets itself for the next product.
+  };
+
+  const handleScannerCheckout = (item: ScannedSaleItem) => {
+    mergeScanned(item);
     setCameraOpen(false);
-    const match = products.find((p) => p.name.toLowerCase() === name.trim().toLowerCase());
-    if (match) {
-      addToCart(match, 1);
-      toast.success(`${match.name} added`);
-    } else {
-      setQuery(name);
-      setTab("search");
-      toast.error(`"${name}" not in inventory`);
-    }
+    setTimeout(() => setShowPreview(true), 0);
   };
 
   const grandTotal = cart.reduce((s, i) => s + i.qty * i.price, 0);
@@ -234,19 +268,24 @@ const DistributorRecordSalePage = () => {
           <div className="mb-4">
             <button
               onClick={() => setCameraOpen(true)}
-              className="w-full aspect-[3/4] rounded-2xl bg-foreground/5 border border-border flex flex-col items-center justify-center gap-2"
+              className="w-full aspect-[3/4] rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20 flex flex-col items-center justify-center gap-2 active:scale-[0.99] transition-transform"
             >
-              <Camera className="w-10 h-10 text-primary" />
-              <span className="text-sm font-semibold text-foreground">Open camera</span>
-              <span className="text-xs text-muted-foreground">Tap to scan a product</span>
+              <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mb-1">
+                <ScanLine className="w-8 h-8 text-primary" />
+              </div>
+              <span className="text-sm font-semibold text-foreground">Open scanner</span>
+              <span className="text-xs text-muted-foreground">Auto-detects products from your inventory</span>
             </button>
           </div>
         )}
 
-        <ProductCameraFlow
+        <SalesScannerCamera
           open={cameraOpen}
-          onClose={() => { setCameraOpen(false); setTab("search"); }}
-          onContinue={handleCameraContinue}
+          inventory={scannerInventory}
+          cartCount={cart.length}
+          onAddAndContinue={handleScannerContinue}
+          onAddAndCheckout={handleScannerCheckout}
+          onClose={() => setCameraOpen(false)}
         />
 
         {tab === "search" && (

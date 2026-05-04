@@ -72,6 +72,7 @@ import AgentLogExpensePage from "./pages/agent/LogExpensePage";
 import DistributorDashboard from "./pages/distributor/DistributorDashboard";
 import DistributorInventoryPage from "./pages/distributor/DistributorInventoryPage";
 import DistributorAddProductPage from "./pages/distributor/DistributorAddProductPage";
+import DistributorRestockProductPage from "./pages/distributor/DistributorRestockProductPage";
 import DistributorProductDetailPage from "./pages/distributor/DistributorProductDetailPage";
 import DistributorGoodwillConditionsPage from "./pages/distributor/DistributorGoodwillConditionsPage";
 import DistributorHealthBreakdownPage from "./pages/distributor/DistributorHealthBreakdownPage";
@@ -192,6 +193,7 @@ const App = () => (
                       <Route path="/distributor/inventory" element={<DistributorInventoryPage />} />
                       <Route path="/distributor/inventory/add" element={<DistributorAddProductPage />} />
                       <Route path="/distributor/inventory/edit/:id" element={<DistributorAddProductPage />} />
+                      <Route path="/distributor/restock/:id" element={<DistributorRestockProductPage />} />
                       <Route path="/distributor/inventory/goodwill-conditions" element={<DistributorGoodwillConditionsPage />} />
                       <Route path="/distributor/inventory/:id" element={<DistributorProductDetailPage />} />
                       <Route path="/distributor/orders" element={<DistributorOrdersPage />} />
