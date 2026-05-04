@@ -478,7 +478,7 @@ const AddProductPage = () => {
         {capturedPhotos.length === 0 ? (
           <button onClick={openCameraModal} className="w-full h-28 rounded-lg border-2 border-dashed border-border bg-card flex flex-col items-center justify-center gap-2 mb-6">
             <Camera className="w-6 h-6 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Tap to add product photos</span>
+            <span className="text-xs text-muted-foreground">Tap to add product photos (optional)</span>
           </button>
         ) : (
           <div className="mb-6">
