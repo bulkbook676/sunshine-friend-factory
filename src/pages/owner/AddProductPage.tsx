@@ -312,16 +312,33 @@ const AddProductPage = () => {
       toast({ title: "Please fix the errors", description: "Some required fields are missing.", variant: "destructive" });
       return;
     }
-    if (!activePhotoId) {
-      toast({ title: "No product selected", variant: "destructive" });
-      return;
+    // FIX 5 — Product photos are optional. If the owner saves without
+    // capturing a photo, create a virtual photo-less entry so the rest
+    // of the multi-product flow continues to work.
+    let workingPhotoId = activePhotoId;
+    if (!workingPhotoId) {
+      const newId = `noimg-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+      const newPhoto: CapturedPhoto = {
+        id: newId,
+        dataUrl: "",
+        label: form.name.trim() || "Product",
+        saved: false,
+      };
+      setCapturedPhotos((prev) => [...prev, newPhoto]);
+      setDrafts((d) => ({ ...d, [newId]: { ...form } }));
+      setActivePhotoId(newId);
+      workingPhotoId = newId;
     }
 
     // Persist the validated draft and mark the current photo saved.
     const savedDraft = { ...form };
-    setDrafts((d) => ({ ...d, [activePhotoId]: savedDraft }));
-    const updatedPhotos = capturedPhotos.map((p) =>
-      p.id === activePhotoId ? { ...p, saved: true, label: savedDraft.name } : p,
+    const photoId = workingPhotoId;
+    setDrafts((d) => ({ ...d, [photoId]: savedDraft }));
+    const baseList = capturedPhotos.some((p) => p.id === photoId)
+      ? capturedPhotos
+      : [...capturedPhotos, { id: photoId, dataUrl: "", label: savedDraft.name, saved: false }];
+    const updatedPhotos = baseList.map((p) =>
+      p.id === photoId ? { ...p, saved: true, label: savedDraft.name } : p,
     );
     setCapturedPhotos(updatedPhotos);
 
