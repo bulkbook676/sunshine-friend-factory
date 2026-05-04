@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import AgentBottomNav from "@/components/AgentBottomNav";
 import SalesScannerCamera, { type ScannedSaleItem } from "@/components/SalesScannerCamera";
 import { toast } from "@/hooks/use-toast";
-import { registerCartCommit, unregisterCartCommit, type EditCartItem } from "@/pages/EditCartPage";
+import { useRecordSaleCart } from "@/contexts/RecordSaleCartContext";
 
 interface CartItem {
   productId: string;
@@ -30,7 +30,8 @@ const RecordSalePage = () => {
   const [tab, setTab] = useState<"search" | "camera">("search");
   const [cameraOpen, setCameraOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { items: cart, setItems: setCartItems, clear: clearCart } = useRecordSaleCart("agent-record-sale");
+  const setCart = setCartItems as React.Dispatch<React.SetStateAction<CartItem[]>>;
   const [selectedProduct, setSelectedProduct] = useState<typeof products[0] | null>(null);
   const [qty, setQty] = useState("1");
   const [showPreview, setShowPreview] = useState(false);
@@ -48,12 +49,6 @@ const RecordSalePage = () => {
   const [editingGroup, setEditingGroup] = useState<ProductGroup | null>(null);
   const [selectedGroupProducts, setSelectedGroupProducts] = useState<string[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const key = "agent-record-sale";
-    registerCartCommit(key, (next: EditCartItem[]) => setCart(next));
-    return () => unregisterCartCommit(key);
-  }, []);
 
   useEffect(() => {
     const fromEdit = (location.state as { fromEditCart?: boolean } | null)?.fromEditCart;
