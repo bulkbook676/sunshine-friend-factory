@@ -179,6 +179,7 @@ const RecordSalePage = () => {
 
   const handleConfirm = () => {
     setConfirmed(true);
+    clearCart();
     setTimeout(() => {
       navigate("/agent");
     }, 1800);
