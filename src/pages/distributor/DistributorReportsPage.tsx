@@ -7,6 +7,8 @@ import {
   ChevronRight,
   CalendarIcon,
   Package,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   format,
@@ -28,14 +30,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 
 type Period = "daily" | "weekly" | "monthly";
-type ReportTab = "performance" | "goodwill";
 
 const DistributorReportsPage = () => {
   const navigate = useNavigate();
   const { orders, products, ownSales, ownExpenses } = useDistributor();
   const [period, setPeriod] = useState<Period>("daily");
   const [anchorDate, setAnchorDate] = useState<Date>(new Date());
-  const [tab, setTab] = useState<ReportTab>("performance");
+  const [goodwillExpanded, setGoodwillExpanded] = useState(true);
 
   // Compute date range for selected period
   const range = useMemo(() => {
@@ -368,27 +369,108 @@ const DistributorReportsPage = () => {
           <p className="text-[10px] text-primary mt-0.5">Tap for breakdown →</p>
         </button>
 
-        {/* Tab toggle: Performance vs Goodwill Tracker */}
-        <div className="flex rounded-lg bg-muted p-1 mb-4">
-          {([
-            { key: "performance", label: "Performance" },
-            { key: "goodwill", label: "Goodwill Tracker" },
-          ] as const).map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`flex-1 h-9 rounded-md text-[11px] font-medium transition-colors ${
-                tab === t.key
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
+        {/* Goodwill Tracker — permanent section (period-independent) */}
+        <div className="bg-card rounded-lg border border-border mb-4">
+          <button
+            onClick={() => setGoodwillExpanded((v) => !v)}
+            className="w-full flex items-center justify-between p-4"
+          >
+            <h3 className="text-sm font-semibold text-foreground">Goodwill Tracker</h3>
+            {goodwillExpanded ? (
+              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            )}
+          </button>
+          {goodwillExpanded && (
+            <div className="px-4 pb-4 space-y-3">
+              {goodwillProducts.length === 0 ? (
+                <p className="text-xs text-muted-foreground text-center py-6">
+                  No goodwill products tracked yet.
+                </p>
+              ) : (
+                goodwillProducts.map((c) => {
+                  const remainingPct =
+                    c.qtySent > 0 ? c.qtyRemaining / c.qtySent : 0;
+                  const remainingPillClass =
+                    remainingPct < 0.2
+                      ? "bg-critical/15 text-critical"
+                      : remainingPct < 0.5
+                        ? "bg-warning/15 text-warning"
+                        : "bg-card text-foreground border border-border";
+                  const deadlineClass =
+                    c.status === "overdue"
+                      ? "text-critical"
+                      : c.status === "duesoon"
+                        ? "text-warning"
+                        : "text-success";
+                  const barColor =
+                    c.status === "overdue"
+                      ? "bg-critical"
+                      : c.status === "duesoon"
+                        ? "bg-warning"
+                        : "bg-success";
+                  return (
+                    <button
+                      key={c.key}
+                      onClick={() => navigate("/distributor/reports/goodwill")}
+                      className="w-full bg-muted/30 rounded-lg p-3 border border-border text-left active:opacity-80"
+                    >
+                      <div className="flex items-start gap-3 mb-2">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <Package className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground truncate">
+                            {c.productName}
+                          </p>
+                          <span
+                            role="link"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/distributor/owner/${c.buyerId}`);
+                            }}
+                            className="text-xs text-primary underline-offset-2 hover:underline truncate block max-w-full"
+                          >
+                            {c.buyerName}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] px-2 py-0.5 rounded font-medium bg-success/15 text-success">
+                          Sold: {c.qtySold}
+                        </span>
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded font-medium ${remainingPillClass}`}
+                        >
+                          Remaining: {c.qtyRemaining}
+                        </span>
+                      </div>
+                      <div className="w-full h-1 rounded-full bg-muted mb-2">
+                        <div
+                          className={`h-full rounded-full ${barColor}`}
+                          style={{ width: `${c.sellThroughPct}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between text-[10px]">
+                        <span className="text-muted-foreground">
+                          {c.sellThroughPct}% sold
+                        </span>
+                        <span className={`font-medium ${deadlineClass}`}>
+                          {c.status === "overdue"
+                            ? `${-c.daysRemaining}d overdue`
+                            : `${c.daysRemaining}d left`}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
         </div>
 
-        {tab === "performance" && topProducts.length > 0 && (
+        {topProducts.length > 0 && (
           <div className="bg-card rounded-lg p-4 border border-border mb-4">
             <h3 className="text-sm font-semibold text-foreground mb-3">Top Products</h3>
             {topProducts.map((p, i) => (
@@ -410,7 +492,7 @@ const DistributorReportsPage = () => {
         )}
 
         {/* Goodwill Repayment Tracker */}
-        {tab === "performance" && goodwillEntries.length > 0 && (
+        {goodwillEntries.length > 0 && (
           <>
             <h3 className="text-sm font-semibold text-foreground mb-3">
               Businesses Due for Repayment
@@ -466,99 +548,6 @@ const DistributorReportsPage = () => {
               })}
             </div>
           </>
-        )}
-
-        {/* Goodwill Tracker tab — products with qty sold / remaining */}
-        {tab === "goodwill" && (
-          <div className="space-y-3 mb-6">
-            {goodwillProducts.length === 0 ? (
-              <div className="text-center py-12 px-4">
-                <Package className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">
-                  No goodwill products tracked yet. Send products on goodwill terms to see tracking here.
-                </p>
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={() => navigate("/distributor/reports/goodwill")}
-                  className="text-[11px] text-primary underline-offset-2 hover:underline"
-                >
-                  Open full tracker →
-                </button>
-                {goodwillProducts.map((c) => {
-                  const statusColor =
-                    c.status === "overdue"
-                      ? "text-critical bg-critical/10"
-                      : c.status === "duesoon"
-                        ? "text-warning bg-warning/10"
-                        : "text-success bg-success/10";
-                  const barColor =
-                    c.status === "overdue"
-                      ? "bg-critical"
-                      : c.status === "duesoon"
-                        ? "bg-warning"
-                        : "bg-success";
-                  return (
-                    <div
-                      key={c.key}
-                      className="bg-card rounded-lg p-4 border border-border"
-                    >
-                      <div className="flex items-start gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                          <Package className="w-4 h-4 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate">
-                            {c.productName}
-                          </p>
-                          <button
-                            onClick={() => navigate(`/distributor/owner/${c.buyerId}`)}
-                            className="text-xs text-primary underline-offset-2 hover:underline truncate block max-w-full text-left"
-                          >
-                            {c.buyerName}
-                          </button>
-                        </div>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded font-medium ${statusColor}`}
-                        >
-                          {c.status === "overdue"
-                            ? `${-c.daysRemaining}d overdue`
-                            : `${c.daysRemaining}d left`}
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 mb-3">
-                        <div className="bg-muted/50 rounded p-2">
-                          <p className="text-[10px] text-muted-foreground">Sent</p>
-                          <p className="text-sm font-bold text-foreground">{c.qtySent}</p>
-                        </div>
-                        <div className="bg-muted/50 rounded p-2">
-                          <p className="text-[10px] text-muted-foreground">Sold</p>
-                          <p className="text-sm font-bold text-success">{c.qtySold}</p>
-                        </div>
-                        <div className="bg-muted/50 rounded p-2">
-                          <p className="text-[10px] text-muted-foreground">Left</p>
-                          <p className="text-sm font-bold text-foreground">{c.qtyRemaining}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-between text-[10px] mb-1">
-                          <span className="text-muted-foreground">Sell-through</span>
-                          <span className="text-foreground font-medium">{c.sellThroughPct}%</span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-muted">
-                          <div
-                            className={`h-full rounded-full ${barColor}`}
-                            style={{ width: `${c.sellThroughPct}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </>
-            )}
-          </div>
         )}
       </div>
       <DistributorBottomNav />
