@@ -208,13 +208,19 @@ const DistributorReportsPage = () => {
             <button
               key={p}
               onClick={() => setPeriod(p)}
-              className={`flex-1 h-9 rounded-md text-sm font-medium transition-colors capitalize ${
+              className={`flex-1 h-9 rounded-md text-[11px] font-medium transition-colors capitalize ${
                 period === p ? "bg-primary text-primary-foreground" : "text-muted-foreground"
               }`}
             >
               {p}
             </button>
           ))}
+          <button
+            onClick={() => navigate("/distributor/reports/goodwill")}
+            className="flex-1 h-9 rounded-md text-[11px] font-medium text-muted-foreground"
+          >
+            Goodwill Tracker
+          </button>
         </div>
 
         {/* Range navigation */}
