@@ -86,6 +86,7 @@ import DistributorSettingsPage from "./pages/distributor/DistributorSettingsPage
 import DistributorProfileSelfPage from "./pages/distributor/DistributorProfileSelfPage";
 import DistributorPromiseTrackerPage from "./pages/distributor/DistributorPromiseTrackerPage";
 import DistributorAgentsPage from "./pages/distributor/DistributorAgentsPage";
+import DistributorAgentDetailPage from "./pages/distributor/DistributorAgentDetailPage";
 import DistributorRecordSalePage from "./pages/distributor/DistributorRecordSalePage";
 import DistributorLogExpensePage from "./pages/distributor/DistributorLogExpensePage";
 import DistributorExpensesHistoryPage from "./pages/distributor/DistributorExpensesHistoryPage";
@@ -225,6 +226,7 @@ const App = () => (
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
                       <Route path="/distributor/stock-audit" element={<StockAuditPage variant="distributor" />} />
                      <Route path="/distributor/agents" element={<DistributorAgentsPage />} />
+                      <Route path="/distributor/agent/:id" element={<DistributorAgentDetailPage />} />
                       <Route path="/distributor/edit-cart" element={<EditCartPage />} />
 
                       <Route path="*" element={<NotFound />} />
