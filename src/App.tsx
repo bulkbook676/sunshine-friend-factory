@@ -66,6 +66,7 @@ import StockCountPage from "./pages/agent/StockCountPage";
 import PerformancePage from "./pages/agent/PerformancePage";
 import RecommendationsPage from "./pages/agent/RecommendationsPage";
 import AgentSettingsPage from "./pages/agent/AgentSettingsPage";
+import ChangePinPage from "./pages/agent/ChangePinPage";
 import TargetBreakdownPage from "./pages/agent/TargetBreakdownPage";
 import AgentLogExpensePage from "./pages/agent/LogExpensePage";
 
@@ -186,6 +187,7 @@ const App = () => (
                       <Route path="/agent/performance" element={<PerformancePage />} />
                       <Route path="/agent/recommendations" element={<RecommendationsPage />} />
                       <Route path="/agent/settings" element={<AgentSettingsPage />} />
+                      <Route path="/agent/settings/change-pin" element={<ChangePinPage />} />
                       <Route path="/agent/target-breakdown" element={<TargetBreakdownPage />} />
                       <Route path="/agent/log-expense" element={<AgentLogExpensePage />} />
                       <Route path="/agent/feed" element={<FeedPage variant="agent" BottomNav={AgentBottomNav} />} />
