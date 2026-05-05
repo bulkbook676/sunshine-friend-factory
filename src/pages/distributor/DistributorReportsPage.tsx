@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarIcon,
+  Package,
 } from "lucide-react";
 import {
   format,
@@ -27,12 +28,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 
 type Period = "daily" | "weekly" | "monthly";
+type ReportTab = "performance" | "goodwill";
 
 const DistributorReportsPage = () => {
   const navigate = useNavigate();
   const { orders, products, ownSales, ownExpenses } = useDistributor();
   const [period, setPeriod] = useState<Period>("daily");
   const [anchorDate, setAnchorDate] = useState<Date>(new Date());
+  const [tab, setTab] = useState<ReportTab>("performance");
 
   // Compute date range for selected period
   const range = useMemo(() => {
@@ -147,6 +150,67 @@ const DistributorReportsPage = () => {
       ];
     });
 
+  // Goodwill product tracker — per product, per buyer with qty sent/sold/remaining.
+  // Mirrors DistributorGoodwillTrackerPage logic so this tab shows the same items.
+  const goodwillProducts = useMemo(() => {
+    type Row = {
+      key: string;
+      productName: string;
+      buyerId: string;
+      buyerName: string;
+      qtySent: number;
+      qtySold: number;
+      qtyRemaining: number;
+      sellThroughPct: number;
+      daysRemaining: number;
+      status: "ontrack" | "duesoon" | "overdue";
+    };
+    const rows: Row[] = [];
+    orders
+      .filter((o) => o.status === "confirmed" && !o.goodwillPaid)
+      .forEach((o) => {
+        o.items
+          .filter((i) => i.paymentType === "goodwill")
+          .forEach((item) => {
+            const product = products.find((p) => p.id === item.productId);
+            const repaymentDays = product?.goodwillRepaymentDays ?? 30;
+            const repaymentDate = new Date(
+              new Date(o.date).getTime() + repaymentDays * 86400000
+            );
+            const daysRemaining = Math.ceil(
+              (repaymentDate.getTime() - Date.now()) / 86400000
+            );
+            const seed = (item.productId + o.id)
+              .split("")
+              .reduce((s, c) => s + c.charCodeAt(0), 0);
+            const soldRatio = ((seed % 70) + 10) / 100;
+            const qtySold = Math.min(item.qty, Math.floor(item.qty * soldRatio));
+            const qtyRemaining = item.qty - qtySold;
+            const sellThroughPct =
+              item.qty > 0 ? Math.round((qtySold / item.qty) * 100) : 0;
+            const status: Row["status"] =
+              daysRemaining < 0
+                ? "overdue"
+                : daysRemaining <= 14
+                  ? "duesoon"
+                  : "ontrack";
+            rows.push({
+              key: `${o.id}-${item.productId}`,
+              productName: item.productName,
+              buyerId: o.buyerId,
+              buyerName: o.buyerName,
+              qtySent: item.qty,
+              qtySold,
+              qtyRemaining,
+              sellThroughPct,
+              daysRemaining,
+              status,
+            });
+          });
+      });
+    return rows;
+  }, [orders, products]);
+
   // Range navigation
   const goPrev = () => {
     if (period === "daily") setAnchorDate((d) => addDays(d, -1));
@@ -215,12 +279,6 @@ const DistributorReportsPage = () => {
               {p}
             </button>
           ))}
-          <button
-            onClick={() => navigate("/distributor/reports/goodwill")}
-            className="flex-1 h-9 rounded-md text-[11px] font-medium text-muted-foreground"
-          >
-            Goodwill Tracker
-          </button>
         </div>
 
         {/* Range navigation */}
@@ -310,8 +368,27 @@ const DistributorReportsPage = () => {
           <p className="text-[10px] text-primary mt-0.5">Tap for breakdown →</p>
         </button>
 
-        {/* Top products */}
-        {topProducts.length > 0 && (
+        {/* Tab toggle: Performance vs Goodwill Tracker */}
+        <div className="flex rounded-lg bg-muted p-1 mb-4">
+          {([
+            { key: "performance", label: "Performance" },
+            { key: "goodwill", label: "Goodwill Tracker" },
+          ] as const).map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`flex-1 h-9 rounded-md text-[11px] font-medium transition-colors ${
+                tab === t.key
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "performance" && topProducts.length > 0 && (
           <div className="bg-card rounded-lg p-4 border border-border mb-4">
             <h3 className="text-sm font-semibold text-foreground mb-3">Top Products</h3>
             {topProducts.map((p, i) => (
@@ -333,7 +410,7 @@ const DistributorReportsPage = () => {
         )}
 
         {/* Goodwill Repayment Tracker */}
-        {goodwillEntries.length > 0 && (
+        {tab === "performance" && goodwillEntries.length > 0 && (
           <>
             <h3 className="text-sm font-semibold text-foreground mb-3">
               Businesses Due for Repayment
@@ -389,6 +466,99 @@ const DistributorReportsPage = () => {
               })}
             </div>
           </>
+        )}
+
+        {/* Goodwill Tracker tab — products with qty sold / remaining */}
+        {tab === "goodwill" && (
+          <div className="space-y-3 mb-6">
+            {goodwillProducts.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <Package className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  No goodwill products tracked yet. Send products on goodwill terms to see tracking here.
+                </p>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/distributor/reports/goodwill")}
+                  className="text-[11px] text-primary underline-offset-2 hover:underline"
+                >
+                  Open full tracker →
+                </button>
+                {goodwillProducts.map((c) => {
+                  const statusColor =
+                    c.status === "overdue"
+                      ? "text-critical bg-critical/10"
+                      : c.status === "duesoon"
+                        ? "text-warning bg-warning/10"
+                        : "text-success bg-success/10";
+                  const barColor =
+                    c.status === "overdue"
+                      ? "bg-critical"
+                      : c.status === "duesoon"
+                        ? "bg-warning"
+                        : "bg-success";
+                  return (
+                    <div
+                      key={c.key}
+                      className="bg-card rounded-lg p-4 border border-border"
+                    >
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <Package className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground truncate">
+                            {c.productName}
+                          </p>
+                          <button
+                            onClick={() => navigate(`/distributor/owner/${c.buyerId}`)}
+                            className="text-xs text-primary underline-offset-2 hover:underline truncate block max-w-full text-left"
+                          >
+                            {c.buyerName}
+                          </button>
+                        </div>
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded font-medium ${statusColor}`}
+                        >
+                          {c.status === "overdue"
+                            ? `${-c.daysRemaining}d overdue`
+                            : `${c.daysRemaining}d left`}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <div className="bg-muted/50 rounded p-2">
+                          <p className="text-[10px] text-muted-foreground">Sent</p>
+                          <p className="text-sm font-bold text-foreground">{c.qtySent}</p>
+                        </div>
+                        <div className="bg-muted/50 rounded p-2">
+                          <p className="text-[10px] text-muted-foreground">Sold</p>
+                          <p className="text-sm font-bold text-success">{c.qtySold}</p>
+                        </div>
+                        <div className="bg-muted/50 rounded p-2">
+                          <p className="text-[10px] text-muted-foreground">Left</p>
+                          <p className="text-sm font-bold text-foreground">{c.qtyRemaining}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-center justify-between text-[10px] mb-1">
+                          <span className="text-muted-foreground">Sell-through</span>
+                          <span className="text-foreground font-medium">{c.sellThroughPct}%</span>
+                        </div>
+                        <div className="w-full h-1.5 rounded-full bg-muted">
+                          <div
+                            className={`h-full rounded-full ${barColor}`}
+                            style={{ width: `${c.sellThroughPct}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+          </div>
         )}
       </div>
       <DistributorBottomNav />
