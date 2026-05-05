@@ -209,7 +209,46 @@ const DistributorReportsPage = () => {
             });
           });
       });
-    return rows;
+    // Mock demo data — UI demonstration only. Replace with backend rows when wired.
+    const mocks: typeof rows = [
+      {
+        key: "mock-peak-milk",
+        productName: "Peak Milk (Tin)",
+        buyerId: "mock-mama-nkechi",
+        buyerName: "Mama Nkechi Provisions",
+        qtySent: 200,
+        qtySold: 143,
+        qtyRemaining: 57,
+        sellThroughPct: 72,
+        daysRemaining: 14,
+        status: "duesoon",
+      },
+      {
+        key: "mock-dangote-sugar",
+        productName: "Dangote Sugar (500g)",
+        buyerId: "mock-oga-emeka",
+        buyerName: "Oga Emeka Stores",
+        qtySent: 100,
+        qtySold: 18,
+        qtyRemaining: 82,
+        sellThroughPct: 18,
+        daysRemaining: 3,
+        status: "overdue",
+      },
+      {
+        key: "mock-indomie-chicken",
+        productName: "Indomie Chicken (70g)",
+        buyerId: "mock-aunty-chidinma",
+        buyerName: "Aunty Chidinma Supermart",
+        qtySent: 500,
+        qtySold: 490,
+        qtyRemaining: 10,
+        sellThroughPct: 98,
+        daysRemaining: 30,
+        status: "ontrack",
+      },
+    ];
+    return [...mocks, ...rows];
   }, [orders, products]);
 
   // Range navigation
