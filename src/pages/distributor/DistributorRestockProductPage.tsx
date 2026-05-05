@@ -152,7 +152,7 @@ const DistributorRestockProductPage = () => {
     if (!c) return "Enabled";
     const parts: string[] = [`${c.repaymentDays}d repayment`];
     if (c.minMonthsOnBulkbook != null) parts.push(`${c.minMonthsOnBulkbook}+ months`);
-    if (c.minOrderValue != null) parts.push(`min ₦${c.minOrderValue.toLocaleString()} order`);
+    if (c.minOrderValue != null) parts.push(`Min order value: ${c.minOrderValue.toLocaleString()}`);
     return `Enabled — ${parts.join(", ")}`;
   })();
 
