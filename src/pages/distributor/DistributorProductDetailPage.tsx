@@ -136,7 +136,7 @@ const DistributorProductDetailPage = () => {
                 <p className="text-xs text-muted-foreground">
                   Min order value:{" "}
                   <span className="text-foreground font-medium">
-                    ₦{product.goodwillConditions.minOrderValue.toLocaleString()}
+                    {product.goodwillConditions.minOrderValue.toLocaleString()}
                   </span>
                 </p>
               )}

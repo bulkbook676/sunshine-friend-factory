@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, KeyRound, Copy, Check, X, Lock, ShieldOff } from "lucide-react";
+import { KeyRound, Copy, Check, X, Lock, ShieldOff } from "lucide-react";
 import { agents } from "@/data/mockData";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
 import { useAuth } from "@/contexts/AuthContext";
@@ -13,26 +13,26 @@ import {
 } from "@/data/subAccountStore";
 import { toast } from "sonner";
 
-/**
- * Distributor agents page — mirrors the owner's AgentsPage exactly.
- * Reuses the same subAccountStore primitives so an agent can link to a
- * distributor with a 6-digit code in the same way they link to an owner.
- */
+// Mock unread recommendations status (parity with owner page).
+const unreadRecs: Record<string, number> = { "1": 2, "2": 0 };
+
 const DistributorAgentsPage = () => {
   const navigate = useNavigate();
   const { businessName } = useAuth();
-  const businessId = businessName || "default-distributor";
+  // Distributor business id — namespaced so it doesn't collide with owner accounts.
+  const businessId = `distributor:${businessName || "default-distributor"}`;
 
   const [showCodeModal, setShowCodeModal] = useState(false);
   const [authCode, setAuthCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [revokeTick, setRevokeTick] = useState(0);
-  void revokeTick;
 
   const canGenerate = useMemo(() => canGenerateAuthKey(businessId), [businessId]);
   const totalSlots = useMemo(() => getTotalAgentSlots(businessId), [businessId]);
-  // Distributors start with no seeded authorizations.
-  const usedSlots = agents.filter((a) => isAgentAuthorized(businessId, a.id, false)).length;
+  void revokeTick;
+  const usedSlots = agents.filter(
+    (a) => isAgentAuthorized(businessId, a.id, ["1", "2"].includes(a.id)),
+  ).length;
   const slotsAvailable = usedSlots < totalSlots;
 
   const generateCode = () => {
@@ -41,7 +41,7 @@ const DistributorAgentsPage = () => {
       return;
     }
     if (!slotsAvailable) {
-      navigate("/owner/billing/unlock-agents");
+      navigate("/distributor/settings/billing");
       return;
     }
     try {
@@ -71,17 +71,8 @@ const DistributorAgentsPage = () => {
   return (
     <div className="app-shell dark bg-background">
       <div className="page-content px-4 pt-5">
-        <div className="flex items-center gap-2 mb-4">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-lg font-bold text-foreground">My Agents</h1>
-        </div>
-
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs text-muted-foreground">
-            {usedSlots} of {totalSlots} slots used
-          </p>
+          <h1 className="text-lg font-bold text-foreground">Sub Accounts</h1>
           <button
             onClick={generateCode}
             disabled={!canGenerate}
@@ -93,52 +84,68 @@ const DistributorAgentsPage = () => {
             Generate Key
           </button>
         </div>
-
         {!canGenerate && (
           <p className="text-[11px] text-warning mb-4">
             Generate Key is paused. Record sales activity to re-enable.
           </p>
         )}
+        {canGenerate && !slotsAvailable && (
+          <button
+            onClick={() => navigate("/distributor/settings/billing")}
+            className="text-[11px] text-primary mb-4 underline-offset-2 hover:underline"
+          >
+            All slots used — tap Generate Key to unlock more.
+          </button>
+        )}
 
         <div className="space-y-3">
-          {agents.length === 0 && (
-            <p className="text-sm text-muted-foreground text-center py-12">
-              No agents yet. Generate a key and share it to invite one.
-            </p>
-          )}
           {agents.map((agent) => {
-            const authorized = isAgentAuthorized(businessId, agent.id, false);
+            const unread = unreadRecs[agent.id] || 0;
+            const authorized = isAgentAuthorized(
+              businessId,
+              agent.id,
+              ["1", "2"].includes(agent.id),
+            );
             return (
-              <div
+              <button
                 key={agent.id}
-                className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 text-left"
+                onClick={() => navigate(`/distributor/agent/${agent.id}`)}
+                className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 text-left relative"
               >
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 relative">
                   <span className="text-sm font-bold text-primary">{agent.name[0]}</span>
+                  {unread > 0 && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-primary" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{agent.name}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <p className="text-xs text-muted-foreground">{agent.role}</p>
-                    <span
-                      className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-                        authorized ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
-                      }`}
-                    >
-                      {authorized ? "Active" : "Pending"}
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-foreground">{agent.name}</p>
+                    <span className={`w-2 h-2 rounded-full ${agent.status === "active" ? "bg-success" : "bg-muted-foreground"}`} />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-muted-foreground">{agent.role} · {agent.lastActive}</p>
+                    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
+                      authorized ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+                    }`}>
+                      {authorized ? "Authorized" : "Pending"}
                     </span>
                   </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-lg font-bold text-primary">{agent.todaySales}</p>
+                  <p className="text-[10px] text-muted-foreground">sales today</p>
                 </div>
                 {authorized && (
                   <button
                     onClick={(e) => handleRevoke(e, agent.id, agent.name)}
                     aria-label={`Revoke ${agent.name}`}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-critical hover:bg-critical/10 shrink-0"
+                    className="ml-2 w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-critical hover:bg-critical/10 shrink-0"
                   >
                     <ShieldOff className="w-4 h-4" />
                   </button>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
@@ -153,9 +160,7 @@ const DistributorAgentsPage = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              Share this code with your agent to authorize them
-            </p>
+            <p className="text-sm text-muted-foreground mb-4">Share this code with your agent to authorize them</p>
             <div className="flex items-center justify-center gap-2 mb-2">
               {authCode.split("").map((digit, i) => (
                 <div key={i} className="w-10 h-12 rounded-lg bg-muted flex items-center justify-center">

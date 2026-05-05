@@ -66,6 +66,7 @@ import StockCountPage from "./pages/agent/StockCountPage";
 import PerformancePage from "./pages/agent/PerformancePage";
 import RecommendationsPage from "./pages/agent/RecommendationsPage";
 import AgentSettingsPage from "./pages/agent/AgentSettingsPage";
+import ChangePinPage from "./pages/agent/ChangePinPage";
 import TargetBreakdownPage from "./pages/agent/TargetBreakdownPage";
 import AgentLogExpensePage from "./pages/agent/LogExpensePage";
 
@@ -80,11 +81,13 @@ import DistributorHealthBreakdownPage from "./pages/distributor/DistributorHealt
 import DistributorOrdersPage from "./pages/distributor/DistributorOrdersPage";
 import DistributorOrderDetailPage from "./pages/distributor/DistributorOrderDetailPage";
 import DistributorReportsPage from "./pages/distributor/DistributorReportsPage";
+import DistributorGoodwillTrackerPage from "./pages/distributor/DistributorGoodwillTrackerPage";
 import DistributorNotificationsPage from "./pages/distributor/DistributorNotificationsPage";
 import DistributorSettingsPage from "./pages/distributor/DistributorSettingsPage";
 import DistributorProfileSelfPage from "./pages/distributor/DistributorProfileSelfPage";
 import DistributorPromiseTrackerPage from "./pages/distributor/DistributorPromiseTrackerPage";
 import DistributorAgentsPage from "./pages/distributor/DistributorAgentsPage";
+import DistributorAgentDetailPage from "./pages/distributor/DistributorAgentDetailPage";
 import DistributorRecordSalePage from "./pages/distributor/DistributorRecordSalePage";
 import DistributorLogExpensePage from "./pages/distributor/DistributorLogExpensePage";
 import DistributorExpensesHistoryPage from "./pages/distributor/DistributorExpensesHistoryPage";
@@ -186,6 +189,7 @@ const App = () => (
                       <Route path="/agent/performance" element={<PerformancePage />} />
                       <Route path="/agent/recommendations" element={<RecommendationsPage />} />
                       <Route path="/agent/settings" element={<AgentSettingsPage />} />
+                      <Route path="/agent/settings/change-pin" element={<ChangePinPage />} />
                       <Route path="/agent/target-breakdown" element={<TargetBreakdownPage />} />
                       <Route path="/agent/log-expense" element={<AgentLogExpensePage />} />
                       <Route path="/agent/feed" element={<FeedPage variant="agent" BottomNav={AgentBottomNav} />} />
@@ -203,6 +207,7 @@ const App = () => (
                       <Route path="/distributor/orders" element={<DistributorOrdersPage />} />
                       <Route path="/distributor/order/:id" element={<DistributorOrderDetailPage />} />
                       <Route path="/distributor/reports" element={<DistributorReportsPage />} />
+                      <Route path="/distributor/reports/goodwill" element={<DistributorGoodwillTrackerPage />} />
                       <Route path="/distributor/notifications" element={<DistributorNotificationsPage />} />
                       <Route path="/distributor/settings" element={<DistributorSettingsPage />} />
                       <Route path="/distributor/profile" element={<DistributorProfileSelfPage />} />
@@ -223,6 +228,7 @@ const App = () => (
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
                       <Route path="/distributor/stock-audit" element={<StockAuditPage variant="distributor" />} />
                      <Route path="/distributor/agents" element={<DistributorAgentsPage />} />
+                      <Route path="/distributor/agent/:id" element={<DistributorAgentDetailPage />} />
                       <Route path="/distributor/edit-cart" element={<EditCartPage />} />
 
                       <Route path="*" element={<NotFound />} />

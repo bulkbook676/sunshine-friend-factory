@@ -1,17 +1,31 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Package, UserPlus, Truck, ShoppingCart, Plus, Minus } from "lucide-react";
+import { ArrowLeft, MapPin, Package, Truck, ShoppingCart, Plus, Minus, Users } from "lucide-react";
 import { distributors, DistributorProduct } from "@/data/distributors";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 import { useCart } from "@/contexts/CartContext";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { toast } from "sonner";
+import FollowButton from "@/components/FollowButton";
+import { getFollowerCount, seedFollowerBase, subscribeFollow } from "@/data/followStore";
+import { useEffect, useState as useReactState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const DistributorProfilePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const distributor = distributors.find((d) => d.id === id);
   const { addItem, itemCount } = useCart();
+  const { businessName } = useAuth();
+  const viewerId = `owner:${businessName || "viewer"}`;
+  const targetId = `distributor:${id}`;
+  // Seed mock follower base once per distributor
+  if (distributor) seedFollowerBase(targetId, 142);
+  const [followerCount, setFollowerCount] = useReactState(getFollowerCount(targetId));
+  useEffect(() => {
+    const unsub = subscribeFollow(() => setFollowerCount(getFollowerCount(targetId)));
+    return () => { unsub(); };
+  }, [targetId]);
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [selectedProduct, setSelectedProduct] = useState<DistributorProduct | null>(null);
   const [qty, setQty] = useState(1);
@@ -126,11 +140,17 @@ const DistributorProfilePage = () => {
           ))}
         </div>
 
-        {/* Follow button */}
-        <button className="w-full py-3 rounded-lg bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center gap-2 mb-6">
-          <UserPlus className="w-4 h-4" />
-          Follow Distributor
-        </button>
+        {/* Followers + Follow */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Users className="w-4 h-4" />
+            <span className="text-sm">
+              <span className="font-bold text-foreground">{followerCount.toLocaleString()}</span>{" "}
+              Followers
+            </span>
+          </div>
+          <FollowButton viewerId={viewerId} targetId={targetId} />
+        </div>
 
         {/* Products */}
         <h3 className="text-sm font-semibold text-foreground mb-3">

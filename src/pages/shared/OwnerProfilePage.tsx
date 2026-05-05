@@ -1,6 +1,10 @@
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Package, Calendar } from "lucide-react";
+import { ArrowLeft, MapPin, Package, Calendar, Users } from "lucide-react";
 import { products } from "@/data/mockData";
+import FollowButton from "@/components/FollowButton";
+import { getFollowerCount, seedFollowerBase, subscribeFollow } from "@/data/followStore";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Mock owner profiles registry — distributors viewing
 const ownerProfiles: Record<string, {
@@ -30,6 +34,15 @@ const OwnerProfilePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const owner = ownerProfiles[id || ""] || ownerProfiles["owner-current"];
+  const { businessName } = useAuth();
+  const viewerId = `distributor:${businessName || "viewer"}`;
+  const targetId = `owner:${owner.id}`;
+  seedFollowerBase(targetId, 312);
+  const [followerCount, setFollowerCount] = useState(getFollowerCount(targetId));
+  useEffect(() => {
+    const unsub = subscribeFollow(() => setFollowerCount(getFollowerCount(targetId)));
+    return () => { unsub(); };
+  }, [targetId]);
 
   return (
     <div className="app-shell dark bg-background">
@@ -40,7 +53,7 @@ const OwnerProfilePage = () => {
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-4 mb-3">
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-2xl font-bold text-primary">{owner.avatar}</span>
           </div>
@@ -51,6 +64,18 @@ const OwnerProfilePage = () => {
               <span className="text-xs text-muted-foreground">{owner.location}</span>
             </div>
           </div>
+        </div>
+
+        {/* Followers + Follow */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Users className="w-4 h-4" />
+            <span className="text-sm">
+              <span className="font-bold text-foreground">{followerCount.toLocaleString()}</span>{" "}
+              Followers
+            </span>
+          </div>
+          <FollowButton viewerId={viewerId} targetId={targetId} />
         </div>
 
         {/* Tenure */}
