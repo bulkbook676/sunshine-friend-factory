@@ -81,6 +81,7 @@ import DistributorHealthBreakdownPage from "./pages/distributor/DistributorHealt
 import DistributorOrdersPage from "./pages/distributor/DistributorOrdersPage";
 import DistributorOrderDetailPage from "./pages/distributor/DistributorOrderDetailPage";
 import DistributorReportsPage from "./pages/distributor/DistributorReportsPage";
+import DistributorGoodwillTrackerPage from "./pages/distributor/DistributorGoodwillTrackerPage";
 import DistributorNotificationsPage from "./pages/distributor/DistributorNotificationsPage";
 import DistributorSettingsPage from "./pages/distributor/DistributorSettingsPage";
 import DistributorProfileSelfPage from "./pages/distributor/DistributorProfileSelfPage";
@@ -206,6 +207,7 @@ const App = () => (
                       <Route path="/distributor/orders" element={<DistributorOrdersPage />} />
                       <Route path="/distributor/order/:id" element={<DistributorOrderDetailPage />} />
                       <Route path="/distributor/reports" element={<DistributorReportsPage />} />
+                      <Route path="/distributor/reports/goodwill" element={<DistributorGoodwillTrackerPage />} />
                       <Route path="/distributor/notifications" element={<DistributorNotificationsPage />} />
                       <Route path="/distributor/settings" element={<DistributorSettingsPage />} />
                       <Route path="/distributor/profile" element={<DistributorProfileSelfPage />} />
