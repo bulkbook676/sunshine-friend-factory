@@ -114,7 +114,7 @@ const DistributorHealthBreakdownPage = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Back</span>
           </button>
-          <h1 className="text-base font-bold text-foreground">How Your Business Is Doing</h1>
+          <h1 className="text-base font-bold text-foreground">Business Health</h1>
           <div className="w-12" />
         </div>
 
@@ -146,7 +146,7 @@ const DistributorHealthBreakdownPage = () => {
         {activeTab === "breakdown" && (
           <>
         {businessTarget && (
-          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-3">
+          <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 mb-3">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Target className="w-4 h-4 text-primary" />
@@ -162,7 +162,7 @@ const DistributorHealthBreakdownPage = () => {
           </div>
         )}
 
-        <div className="bg-card rounded-lg p-4 mb-3 border border-border">
+        <div className="bg-card rounded-2xl p-4 mb-3 border border-border">
           <button
             onClick={() => navigate("/owner/health/what-you-have")}
             className="w-full flex items-center justify-between mb-3 active:opacity-80"
@@ -210,7 +210,7 @@ const DistributorHealthBreakdownPage = () => {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 mb-3 border border-border">
+        <div className="bg-card rounded-2xl p-4 mb-3 border border-border">
           <button
             onClick={() => navigate("/owner/health/what-you-spent")}
             className="w-full flex items-center justify-between mb-3 active:opacity-80"
@@ -252,7 +252,7 @@ const DistributorHealthBreakdownPage = () => {
 
         {/* Relationships */}
         <h2 className="text-sm font-semibold text-foreground mb-3">Your Business Relationships</h2>
-        <div className="bg-card rounded-lg p-4 mb-3 border border-border">
+        <div className="bg-card rounded-2xl p-4 mb-3 border border-border">
           <div className="flex items-center gap-2 mb-2">
             <Store className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">Buyers You've Supplied</span>
@@ -273,7 +273,7 @@ const DistributorHealthBreakdownPage = () => {
           )}
         </div>
 
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-6">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">Tip</span>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowLeft, Plus, Check, Camera } from "lucide-react";
 import { useDistributor, GoodwillConditions } from "@/contexts/DistributorContext";
@@ -20,6 +20,7 @@ interface FormState {
 }
 
 const STORAGE_KEY = "distributor-addproduct-draft";
+const UNITS = ["Carton", "Bag", "Crate", "Sack", "Pack", "Bundle", "Tray", "Box"];
 
 const DistributorAddProductPage = () => {
   const navigate = useNavigate();
@@ -64,6 +65,52 @@ const DistributorAddProductPage = () => {
   const [activePhotoId, setActivePhotoId] = useState<string | null>(null);
   const [showAddCat, setShowAddCat] = useState(false);
   const [newCat, setNewCat] = useState("");
+
+  // Cost calculator helper state
+  const [calc, setCalc] = useState({
+    buyingUnit: "",
+    sellingUnit: "Piece",
+    buyingUnitsOrdered: "",
+    sellingUnitsPerBuying: "",
+    totalOrderAmount: "",
+    transportFee: "",
+    targetMargin: "30",
+  });
+  const updateCalc = (k: keyof typeof calc, v: string) => setCalc((p) => ({ ...p, [k]: v }));
+  const fmt = (n: number) => `₦${Math.round(n).toLocaleString()}`;
+
+  const calcResult = useMemo(() => {
+    const orderQty = parseFloat(calc.buyingUnitsOrdered) || 0;
+    const perBuying = parseFloat(calc.sellingUnitsPerBuying) || 0;
+    const total = parseFloat(calc.totalOrderAmount) || 0;
+    const transport = parseFloat(calc.transportFee) || 0;
+    const margin = parseFloat(calc.targetMargin) || 0;
+    if (!orderQty || !perBuying || !total) {
+      return { cogPerBuying: 0, expPerBuying: 0, totalCostPerBuying: 0, costPerSelling: 0, minPrice: 0, idealPrice: 0 };
+    }
+    const cogPerBuying = total / orderQty;
+    const expPerBuying = transport / orderQty;
+    const totalCostPerBuying = cogPerBuying + expPerBuying;
+    const costPerSelling = totalCostPerBuying / perBuying;
+    const minPrice = costPerSelling * 1.1; // 10% safety
+    const idealPrice = costPerSelling * (1 + margin / 100);
+    return { cogPerBuying, expPerBuying, totalCostPerBuying, costPerSelling, minPrice, idealPrice };
+  }, [calc]);
+
+  const applyCalc = () => {
+    if (!calcResult.costPerSelling) {
+      toast.error("Fill in the cost calculator first");
+      return;
+    }
+    setForm((p) => ({
+      ...p,
+      costPrice: Math.round(calcResult.costPerSelling).toString(),
+      sellingPrice: Math.round(calcResult.idealPrice).toString(),
+    }));
+    toast.success("Prices filled from calculator");
+  };
+
+  const buyingLabel = (calc.buyingUnit || "buying unit").toLowerCase();
 
   // Receive goodwill result from sub-page
   useEffect(() => {
@@ -327,6 +374,106 @@ const DistributorAddProductPage = () => {
             />
           </div>
 
+          {/* Cost Calculator (helper) */}
+          <div className="border-t border-border pt-4 mt-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Cost Calculator</p>
+            <p className="text-[11px] text-muted-foreground mb-3">Work out exactly what each piece costs you, then auto-fill the prices above.</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-medium text-foreground block mb-1.5">How you buy it</label>
+              <select
+                value={calc.buyingUnit}
+                onChange={(e) => updateCalc("buyingUnit", e.target.value)}
+                className="w-full h-12 px-3 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="">Select…</option>
+                {UNITS.map((u) => <option key={u} value={u}>{u}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground block mb-1.5">How you sell it</label>
+              <select
+                value={calc.sellingUnit}
+                onChange={(e) => updateCalc("sellingUnit", e.target.value)}
+                className="w-full h-12 px-3 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {["Piece", ...UNITS].map((u) => <option key={u} value={u}>{u}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-medium text-foreground block mb-1.5">
+                How many {buyingLabel}{calc.buyingUnit ? "s" : ""} did you order?
+              </label>
+              <input
+                type="number" value={calc.buyingUnitsOrdered}
+                onChange={(e) => updateCalc("buyingUnitsOrdered", e.target.value)}
+                placeholder="e.g. 10"
+                className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-foreground block mb-1.5">
+                How many {calc.sellingUnit.toLowerCase()}s in one {buyingLabel}?
+              </label>
+              <input
+                type="number" value={calc.sellingUnitsPerBuying}
+                onChange={(e) => updateCalc("sellingUnitsPerBuying", e.target.value)}
+                placeholder="e.g. 40"
+                className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground block mb-1.5">Total amount paid for this order</label>
+            <input
+              type="number" value={calc.totalOrderAmount}
+              onChange={(e) => updateCalc("totalOrderAmount", e.target.value)}
+              placeholder="e.g. 50000"
+              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-foreground block mb-1.5">Total transport and handling for this order</label>
+            <input
+              type="number" value={calc.transportFee}
+              onChange={(e) => updateCalc("transportFee", e.target.value)}
+              placeholder="e.g. 2000"
+              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium text-foreground block mb-1.5">Profit you want on each piece (%)</label>
+            <input
+              type="number" value={calc.targetMargin}
+              onChange={(e) => updateCalc("targetMargin", e.target.value)}
+              placeholder="e.g. 30"
+              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div className="bg-card rounded-2xl border border-border p-4 space-y-2">
+            <Row label={`How much you paid per ${buyingLabel}`} value={calcResult.cogPerBuying ? fmt(calcResult.cogPerBuying) : "—"} />
+            <Row label={`Expenses per ${buyingLabel}`} value={calcResult.expPerBuying ? fmt(calcResult.expPerBuying) : "—"} />
+            <Row label={`Full cost per ${buyingLabel} including transport`} value={calcResult.totalCostPerBuying ? fmt(calcResult.totalCostPerBuying) : "—"} />
+            <Row label="What each piece costs you" value={calcResult.costPerSelling ? fmt(calcResult.costPerSelling) : "—"} highlight />
+            <div className="border-t border-border pt-2 mt-2 space-y-2">
+              <Row label="Lowest price you should sell at" value={calcResult.minPrice ? fmt(calcResult.minPrice) : "—"} tone="warning" />
+              <Row label="Best price to sell at (good profit)" value={calcResult.idealPrice ? fmt(calcResult.idealPrice) : "—"} tone="success" />
+            </div>
+            <button
+              type="button" onClick={applyCalc}
+              className="w-full h-10 mt-2 rounded-lg bg-primary/10 text-primary text-sm font-semibold border border-primary/20"
+            >
+              Use these prices
+            </button>
+          </div>
+
           <div>
             <label className="text-sm font-medium text-foreground block mb-1.5">
               Free shipping on orders above (optional)
@@ -343,7 +490,7 @@ const DistributorAddProductPage = () => {
           {/* Goodwill conditions card */}
           <button
             onClick={openGoodwillPage}
-            className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+            className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -387,3 +534,29 @@ const DistributorAddProductPage = () => {
 };
 
 export default DistributorAddProductPage;
+
+function Row({
+  label,
+  value,
+  highlight,
+  tone,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+  tone?: "warning" | "success";
+}) {
+  const valueClass = tone === "warning"
+    ? "text-warning"
+    : tone === "success"
+    ? "text-success"
+    : highlight
+    ? "text-primary font-bold"
+    : "text-foreground";
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={`font-semibold ${valueClass}`}>{value}</span>
+    </div>
+  );
+}

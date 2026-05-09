@@ -43,7 +43,7 @@ const NotificationsSettingsPage = () => {
         <h1 className="text-lg font-bold text-foreground mb-6">Alerts and Notifications</h1>
 
         {/* Master */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-5 flex items-center justify-between">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-5 flex items-center justify-between">
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground">All notifications</p>
             <p className="text-xs text-muted-foreground">
@@ -57,7 +57,7 @@ const NotificationsSettingsPage = () => {
           {ROWS.map((r) => (
             <div
               key={r.key}
-              className={`bg-card rounded-lg p-4 border border-border flex items-center justify-between ${
+              className={`bg-card rounded-2xl p-4 border border-border flex items-center justify-between ${
                 master ? "" : "opacity-50"
               }`}
             >

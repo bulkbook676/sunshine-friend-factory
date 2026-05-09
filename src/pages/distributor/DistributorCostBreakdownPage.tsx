@@ -80,11 +80,11 @@ const DistributorCostBreakdownPage = () => {
           Price you paid for the goods Sold
         </h3>
         {cogsList.length === 0 ? (
-          <p className="text-sm text-muted-foreground mb-4">No COGS this period.</p>
+          <p className="text-sm text-muted-foreground mb-4">No cost of goods this period.</p>
         ) : (
           <div className="space-y-2 mb-5">
             {cogsList.map((p, i) => (
-              <div key={i} className="bg-card rounded-lg p-3 border border-border flex items-center justify-between">
+              <div key={i} className="bg-card rounded-2xl p-3 border border-border flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">{p.name}</p>
                   <p className="text-xs text-muted-foreground">{p.units} units</p>
@@ -103,7 +103,7 @@ const DistributorCostBreakdownPage = () => {
         ) : (
           <div className="space-y-2 mb-5">
             {periodExpenses.map((e) => (
-              <div key={e.id} className="bg-card rounded-lg p-3 border border-border flex items-center justify-between">
+              <div key={e.id} className="bg-card rounded-2xl p-3 border border-border flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">{e.name}</p>
                   <p className="text-xs text-muted-foreground">{e.type}</p>

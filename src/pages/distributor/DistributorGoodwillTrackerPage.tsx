@@ -141,7 +141,7 @@ const DistributorGoodwillTrackerPage = () => {
         ) : (
           <div className="space-y-3">
             {filtered.map((c) => (
-              <div key={c.key} className="bg-card rounded-lg p-4 border border-border">
+              <div key={c.key} className="bg-card rounded-2xl p-4 border border-border">
                 {/* Header */}
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

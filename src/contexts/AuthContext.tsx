@@ -30,6 +30,8 @@ interface AuthState {
   linkedBusinessId: string | null;
   /** Stable id for the current user (used to key per-user mock data). */
   userId: string;
+  /** Short free-text business intro shown on the profile card. Max 300 chars. */
+  businessIntro: string;
 }
 
 interface AuthContextType extends AuthState {
@@ -41,6 +43,7 @@ interface AuthContextType extends AuthState {
   setPersonalTarget: (target: PersonalTarget | null) => void;
   setBusinessType: (type: BusinessType) => void;
   setLinkedBusiness: (businessId: string | null, businessName?: string) => void;
+  setBusinessIntro: (intro: string) => void;
   logout: () => void;
 }
 
@@ -64,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     personalTarget: null,
     linkedBusinessId: null,
     userId: "",
+    businessIntro: "",
   });
 
   const loginAsOwner = (businessName: string, ownerName: string, businessType: BusinessType = "product") => {
@@ -102,12 +106,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const setBusinessIntro = (intro: string) => {
+    setAuth((prev) => ({ ...prev, businessIntro: intro.slice(0, 300) }));
+  };
+
   const logout = () => {
-    setAuth({ isAuthenticated: false, role: null, businessType: null, userName: "", businessName: "", isAuthorized: false, businessTarget: null, personalTarget: null, linkedBusinessId: null, userId: "" });
+    setAuth({ isAuthenticated: false, role: null, businessType: null, userName: "", businessName: "", isAuthorized: false, businessTarget: null, personalTarget: null, linkedBusinessId: null, userId: "", businessIntro: "" });
   };
 
   return (
-    <AuthContext.Provider value={{ ...auth, loginAsOwner, loginAsAgent, loginAsDistributor, setAuthorized, setBusinessTarget, setPersonalTarget, setBusinessType, setLinkedBusiness, logout }}>
+    <AuthContext.Provider value={{ ...auth, loginAsOwner, loginAsAgent, loginAsDistributor, setAuthorized, setBusinessTarget, setPersonalTarget, setBusinessType, setLinkedBusiness, setBusinessIntro, logout }}>
       {children}
     </AuthContext.Provider>
   );

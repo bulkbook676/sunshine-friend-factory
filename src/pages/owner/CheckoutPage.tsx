@@ -61,7 +61,7 @@ const CheckoutPage = () => {
         <h3 className="text-sm font-semibold text-foreground mb-3">Order Summary</h3>
         <div className="space-y-4 mb-6">
           {Object.entries(grouped).map(([did, group]) => (
-            <div key={did} className="bg-card rounded-lg p-4 border border-border">
+            <div key={did} className="bg-card rounded-2xl p-4 border border-border">
               <p className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-3">
                 {group.name}
               </p>
@@ -78,7 +78,7 @@ const CheckoutPage = () => {
                               : "bg-primary/10 text-primary"
                           }`}
                         >
-                          {it.paymentType === "goodwill" ? "Pay after selling" : "Pay Now"}
+                          {it.paymentType === "goodwill" ? "Goodwill" : "Pay Now"}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground">
@@ -96,7 +96,7 @@ const CheckoutPage = () => {
         </div>
 
         {/* Totals */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-6 space-y-3">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6 space-y-3">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Total Amount</span>
             <span className="text-foreground font-semibold">₦{grandTotal.toLocaleString()}</span>

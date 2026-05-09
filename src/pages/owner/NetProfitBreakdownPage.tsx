@@ -48,7 +48,7 @@ const NetProfitBreakdownPage = () => {
         </div>
 
         {/* Summary */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-4 space-y-2">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4 space-y-2">
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Total Revenue</span>
             <span className="text-sm font-semibold text-success">₦{totalRevenue.toLocaleString()}</span>
@@ -78,7 +78,7 @@ const NetProfitBreakdownPage = () => {
           {productBreakdown.map((p) => (
             <div
               key={p.id}
-              className={`bg-card rounded-lg p-4 border ${p.profit < 0 ? "border-critical/30" : "border-border"}`}
+              className={`bg-card rounded-2xl p-4 border ${p.profit < 0 ? "border-critical/30" : "border-border"}`}
             >
               <div className="flex items-center justify-between mb-1">
                 <p className="text-sm font-medium text-foreground">{p.name}</p>

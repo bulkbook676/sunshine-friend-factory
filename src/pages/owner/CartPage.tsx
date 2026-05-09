@@ -52,7 +52,7 @@ const CartPage = () => {
                     return (
                       <div
                         key={`${it.productId}-${it.paymentType}`}
-                        className="bg-card rounded-lg p-4 border border-border"
+                        className="bg-card rounded-2xl p-4 border border-border"
                       >
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex-1 min-w-0">
@@ -129,7 +129,7 @@ const CartPage = () => {
             ))}
 
             {/* Totals breakdown */}
-            <div className="bg-card rounded-lg p-4 border border-border mb-4 space-y-2">
+            <div className="bg-card rounded-2xl p-4 border border-border mb-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Total Amount</span>
                 <span className="text-foreground font-semibold">₦{grandTotal.toLocaleString()}</span>

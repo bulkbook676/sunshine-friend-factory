@@ -72,7 +72,7 @@ const ExpensesHistoryPage = () => {
         <h1 className="text-xl font-bold text-foreground mb-1">Expenses</h1>
 
         {/* Total */}
-        <div className="bg-critical/10 border border-critical/20 rounded-lg p-4 mb-4">
+        <div className="bg-critical/10 border border-critical/20 rounded-2xl p-4 mb-4">
           <p className="text-xs text-muted-foreground">Total for selected period</p>
           <p className="text-2xl font-bold text-critical">₦{total.toLocaleString()}</p>
         </div>

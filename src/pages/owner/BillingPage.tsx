@@ -136,7 +136,7 @@ const BillingPage = () => {
         <h1 className="text-lg font-bold text-foreground mb-6">Payments and Plans</h1>
 
         {/* Current plan */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-5">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-5">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
             Current plan
           </p>
@@ -162,7 +162,7 @@ const BillingPage = () => {
             Active subscriptions
           </p>
           {activeSubs.length === 0 ? (
-            <div className="bg-card rounded-lg p-4 border border-border">
+            <div className="bg-card rounded-2xl p-4 border border-border">
               <p className="text-sm text-muted-foreground">
                 No paid subscriptions yet.
               </p>
@@ -178,7 +178,7 @@ const BillingPage = () => {
               {activeSubs.map((s) => (
                 <div
                   key={s.id}
-                  className="bg-card rounded-lg p-3 border border-border"
+                  className="bg-card rounded-2xl p-3 border border-border"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div className="min-w-0 flex-1">
@@ -245,7 +245,7 @@ const BillingPage = () => {
             Payment history
           </p>
           {history.length === 0 ? (
-            <div className="bg-card rounded-lg p-4 border border-border">
+            <div className="bg-card rounded-2xl p-4 border border-border">
               <p className="text-sm text-muted-foreground">No payments yet.</p>
             </div>
           ) : (
@@ -253,7 +253,7 @@ const BillingPage = () => {
               {history.map((p) => (
                 <div
                   key={p.id}
-                  className="bg-card rounded-lg p-3 border border-border flex items-center justify-between"
+                  className="bg-card rounded-2xl p-3 border border-border flex items-center justify-between"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground truncate">
@@ -290,7 +290,7 @@ const BillingPage = () => {
             </button>
           </div>
           {methods.length === 0 ? (
-            <div className="bg-card rounded-lg p-4 border border-border">
+            <div className="bg-card rounded-2xl p-4 border border-border">
               <p className="text-sm text-muted-foreground">
                 No payment methods saved.
               </p>
@@ -300,7 +300,7 @@ const BillingPage = () => {
               {methods.map((m) => (
                 <div
                   key={m.id}
-                  className="bg-card rounded-lg p-3 border border-border flex items-center gap-3"
+                  className="bg-card rounded-2xl p-3 border border-border flex items-center gap-3"
                 >
                   {m.type === "card" ? (
                     <CreditCard className="w-4 h-4 text-muted-foreground" />

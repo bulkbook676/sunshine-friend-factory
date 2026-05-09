@@ -62,9 +62,9 @@ const ServiceDashboard = () => {
         </div>
 
         {/* Health Score */}
-        <div onClick={() => navigate("/owner/health")} className="bg-card rounded-lg p-4 mb-4 border border-border cursor-pointer active:opacity-80 transition-opacity">
+        <div onClick={() => navigate("/owner/health")} className="bg-card rounded-2xl p-4 mb-4 border border-border cursor-pointer active:opacity-80 transition-opacity">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground font-medium">How Your Business Is Doing</span>
+            <span className="text-sm text-muted-foreground font-medium">Business Health</span>
             <Zap className="w-4 h-4 text-warning" />
           </div>
           <div className="flex items-baseline gap-1">
@@ -77,7 +77,7 @@ const ServiceDashboard = () => {
         </div>
 
         {/* AI Brief */}
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
               <Zap className="w-3 h-3 text-primary-foreground" />
@@ -96,13 +96,13 @@ const ServiceDashboard = () => {
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-foreground mb-3">Today's Sessions</h2>
           {Object.keys(sessionsByService).length === 0 ? (
-            <div className="bg-card rounded-lg p-4 border border-border text-center">
+            <div className="bg-card rounded-2xl p-4 border border-border text-center">
               <p className="text-sm text-muted-foreground">No sessions yet today</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">
               {Object.entries(sessionsByService).map(([name, count]) => (
-                <div key={name} className="bg-card rounded-lg p-3 border border-border text-center">
+                <div key={name} className="bg-card rounded-2xl p-3 border border-border text-center">
                   <p className="text-2xl font-bold text-primary">{count}</p>
                   <p className="text-xs text-muted-foreground truncate">{name}</p>
                 </div>
@@ -137,7 +137,7 @@ const ServiceDashboard = () => {
 
         {/* Pending Chip Requests */}
         {pendingRequests.length > 0 && (
-          <div className="bg-warning/5 border border-warning/20 rounded-lg p-4 mb-4">
+          <div className="bg-warning/5 border border-warning/20 rounded-2xl p-4 mb-4">
             <h3 className="text-sm font-semibold text-foreground mb-3">Pending Chip Requests</h3>
             {pendingRequests.map((r) => (
               <div key={r.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
@@ -156,7 +156,7 @@ const ServiceDashboard = () => {
 
         {/* Revenue / Expenses */}
         <div className="grid grid-cols-2 gap-3 mb-3">
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground mb-1">Today's Revenue</p>
             <p className="text-xl font-bold text-success">₦{todayRevenue.toLocaleString()}</p>
             <div className="flex items-center gap-1 mt-1">
@@ -166,7 +166,7 @@ const ServiceDashboard = () => {
           </div>
           <button
             onClick={() => navigate("/owner/expenses")}
-            className="bg-card rounded-lg p-4 border border-border text-left"
+            className="bg-card rounded-2xl p-4 border border-border text-left"
           >
             <p className="text-xs text-muted-foreground mb-1">Today's Expenses</p>
             <p className="text-xl font-bold text-critical">₦{todaysExpenseTotal.toLocaleString()}</p>

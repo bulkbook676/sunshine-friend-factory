@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const DistributorSettingsPage = () => {
   const navigate = useNavigate();
-  const { logout, businessName, userName } = useAuth();
+  const { logout, businessName, userName, businessIntro } = useAuth();
   const { autoApproveGoodwill, defaultGoodwillDays, setProfile } = useDistributor();
   const [editingRepayment, setEditingRepayment] = useState(false);
   const [draftRepayment, setDraftRepayment] = useState<string>(defaultGoodwillDays.toString());
@@ -65,7 +65,7 @@ const DistributorSettingsPage = () => {
           name={userName || "Tunde Adebayo"}
           role="Distributor"
           business={businessName || "Adebayo Wholesale Depot"}
-          bio="Verified bulk supplier serving 38 retailers across Lagos & Ogun State."
+          bio={businessIntro || undefined}
           followers={2147}
           following={89}
           totalSales="₦18.5M"
@@ -76,7 +76,7 @@ const DistributorSettingsPage = () => {
           <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
             {accountSection.title}
           </h3>
-          <div className="bg-card rounded-lg border border-border overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border overflow-hidden">
             {accountSection.items.map((item, idx) => (
               <button
                 key={idx}
@@ -97,7 +97,7 @@ const DistributorSettingsPage = () => {
           <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
             Goodwill Settings
           </h3>
-          <div className="bg-card rounded-lg border border-border overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border overflow-hidden">
             {/* How long they have to pay you back — view + edit */}
             <div className="p-4">
               <p className="text-xs text-muted-foreground mb-1">Default repayment period</p>
@@ -174,7 +174,7 @@ const DistributorSettingsPage = () => {
           <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
             {otherSection.title}
           </h3>
-          <div className="bg-card rounded-lg border border-border overflow-hidden">
+          <div className="bg-card rounded-2xl border border-border overflow-hidden">
             {otherSection.items.map((item, idx) => (
               <button
                 key={idx}

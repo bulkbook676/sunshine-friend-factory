@@ -72,7 +72,7 @@ const OwnerOrdersPage = () => {
                 <button
                   key={o.id}
                   onClick={() => navigate(`/owner/order/${o.id}`)}
-                  className="w-full text-left bg-card rounded-lg p-4 border border-border active:opacity-80"
+                  className="w-full text-left bg-card rounded-2xl p-4 border border-border active:opacity-80"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <div>

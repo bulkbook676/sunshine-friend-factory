@@ -9,7 +9,7 @@ const CATEGORIES = ["Dairy", "Beverages", "Grains", "Provisions", "Cosmetics", "
 
 const DistributorProfilePage = () => {
   const navigate = useNavigate();
-  const { businessName } = useAuth();
+  const { businessName, businessIntro, setBusinessIntro } = useAuth();
   const dist = useDistributor();
   const [form, setForm] = useState({
     businessName: dist.businessName || businessName,
@@ -18,6 +18,7 @@ const DistributorProfilePage = () => {
     freeShippingThreshold: dist.freeShippingThreshold?.toString() || "",
     defaultGoodwillDays: dist.defaultGoodwillDays.toString(),
   });
+  const [intro, setIntro] = useState(businessIntro || "");
   const [categories, setCategories] = useState<string[]>(dist.categories);
 
   const update = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
@@ -34,6 +35,7 @@ const DistributorProfilePage = () => {
       freeShippingThreshold: form.freeShippingThreshold ? parseFloat(form.freeShippingThreshold) : undefined,
       defaultGoodwillDays: parseInt(form.defaultGoodwillDays) || 30,
     });
+    setBusinessIntro(intro.trim());
     toast.success("Profile updated");
   };
 
@@ -54,6 +56,21 @@ const DistributorProfilePage = () => {
               value={form.businessName}
               onChange={(e) => update("businessName", e.target.value)}
               className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-sm font-medium text-foreground">Business intro</label>
+              <span className="text-[10px] text-muted-foreground">{intro.length}/300</span>
+            </div>
+            <textarea
+              value={intro}
+              onChange={(e) => setIntro(e.target.value.slice(0, 300))}
+              placeholder="Say something about your business in a few words. This shows on your profile."
+              rows={4}
+              maxLength={300}
+              className="w-full px-4 py-3 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
             />
           </div>
 

@@ -66,7 +66,7 @@ const DistributorOrderDetailPage = () => {
 
         <button
           onClick={() => navigate(`/distributor/owner/${order.buyerId}`)}
-          className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 mb-4 active:opacity-80"
+          className="w-full bg-card rounded-2xl p-4 border border-border flex items-center gap-3 mb-4 active:opacity-80"
         >
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
             <User className="w-5 h-5 text-primary" />
@@ -81,7 +81,7 @@ const DistributorOrderDetailPage = () => {
         <h3 className="text-sm font-semibold text-foreground mb-2">Items</h3>
         <div className="space-y-2 mb-4">
           {order.items.map((i, idx) => (
-            <div key={idx} className="bg-card rounded-lg p-3 border border-border">
+            <div key={idx} className="bg-card rounded-2xl p-3 border border-border">
               <div className="flex items-start justify-between gap-2 mb-1">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground">{i.productName}</p>
@@ -94,7 +94,7 @@ const DistributorOrderDetailPage = () => {
                       : "bg-success/10 text-success"
                   }`}
                 >
-                  {i.paymentType === "goodwill" ? "Pay after selling" : "Paid"}
+                  {i.paymentType === "goodwill" ? "Goodwill" : "Paid"}
                 </span>
               </div>
               <p className="text-sm font-bold text-foreground text-right">
@@ -104,7 +104,7 @@ const DistributorOrderDetailPage = () => {
           ))}
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6">
           <div className="flex items-center justify-between mb-1 text-sm">
             <span className="text-muted-foreground">Payment</span>
             <span className="text-foreground">{order.paymentMethod}</span>

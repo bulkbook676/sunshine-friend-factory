@@ -118,7 +118,7 @@ const AgentDetailPage = () => {
 
         {/* Permissions */}
         {authorized && (
-          <div className="bg-card rounded-lg p-4 border border-border mb-4">
+          <div className="bg-card rounded-2xl p-4 border border-border mb-4">
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-3">
               Permissions
             </p>
@@ -194,7 +194,7 @@ const AgentDetailPage = () => {
         {activeTab === "activity" && (
           <>
             {/* Performance chart */}
-            <div className="bg-card rounded-lg p-4 border border-border mb-4">
+            <div className="bg-card rounded-2xl p-4 border border-border mb-4">
               <h3 className="text-sm font-semibold text-foreground mb-4">Performance — 7 Days</h3>
               <div className="flex items-end justify-between gap-1 h-20">
                 {perfData.map((v, i) => (
@@ -211,7 +211,7 @@ const AgentDetailPage = () => {
               <h3 className="text-sm font-semibold text-foreground mb-3">Today's Sales</h3>
               <div className="space-y-2">
                 {agent.salesLog.map((sale, i) => (
-                  <div key={i} className="bg-card rounded-lg p-3 border border-border flex items-center justify-between">
+                  <div key={i} className="bg-card rounded-2xl p-3 border border-border flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-foreground">{sale.product}</p>
                       <p className="text-xs text-muted-foreground">{sale.qty} units · {sale.time}</p>
@@ -233,7 +233,7 @@ const AgentDetailPage = () => {
                 <div
                   key={rec.id}
                   onClick={() => !rec.seen && markSeen(rec.id)}
-                  className={`bg-card rounded-lg p-4 border border-border cursor-pointer transition-colors ${
+                  className={`bg-card rounded-2xl p-4 border border-border cursor-pointer transition-colors ${
                     !rec.seen ? "border-l-2 border-l-primary" : ""
                   }`}
                 >

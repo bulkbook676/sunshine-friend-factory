@@ -112,7 +112,7 @@ const FeedPage = ({ variant, BottomNav }: FeedPageProps) => {
         {loading ? (
           <div className="space-y-3">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="bg-card rounded-lg p-4 border border-border">
+              <div key={i} className="bg-card rounded-2xl p-4 border border-border">
                 <Skeleton className="h-3 w-24 mb-2" />
                 <Skeleton className="h-4 w-full mb-1.5" />
                 <Skeleton className="h-4 w-4/5 mb-3" />
@@ -126,7 +126,7 @@ const FeedPage = ({ variant, BottomNav }: FeedPageProps) => {
               <button
                 key={item.id}
                 onClick={() => setReading(item)}
-                className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+                className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[10px] text-primary uppercase tracking-wider font-semibold">

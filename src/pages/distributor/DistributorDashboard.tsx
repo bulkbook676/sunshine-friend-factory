@@ -86,10 +86,10 @@ const DistributorDashboard = () => {
         {/* Health Score */}
         <button
           onClick={() => navigate("/distributor/health")}
-          className="w-full text-left bg-card rounded-lg p-4 mb-4 border border-border active:opacity-80"
+          className="w-full text-left bg-card rounded-2xl p-4 mb-4 border border-border active:opacity-80"
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground font-medium">How Your Business Is Doing</span>
+            <span className="text-sm text-muted-foreground font-medium">Business Health</span>
             <Zap className="w-4 h-4 text-warning" />
           </div>
           <div className="flex items-baseline gap-1">
@@ -116,7 +116,7 @@ const DistributorDashboard = () => {
         {/* Inventory entry — bottom nav no longer shows it as a tab */}
         <button
           onClick={() => navigate("/distributor/inventory")}
-          className="w-full bg-card rounded-lg p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
+          className="w-full bg-card rounded-2xl p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-secondary/20 flex items-center justify-center">
@@ -131,7 +131,7 @@ const DistributorDashboard = () => {
         </button>
 
         {/* AI Brief */}
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
               <Zap className="w-3 h-3 text-primary-foreground" />
@@ -150,7 +150,7 @@ const DistributorDashboard = () => {
             <h2 className="text-sm font-semibold text-foreground mb-3">Top Moving Products</h2>
             <div className="grid grid-cols-3 gap-2">
               {topMovers.map((p) => (
-                <div key={p.id} className="bg-card rounded-lg p-3 border border-border text-center">
+                <div key={p.id} className="bg-card rounded-2xl p-3 border border-border text-center">
                   <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-2">
                     <TrendingUp className="w-4 h-4 text-success" />
                   </div>
@@ -193,7 +193,7 @@ const DistributorDashboard = () => {
             </div>
             <div className="space-y-2">
               {restockItems.slice(0, 3).map((p) => (
-                <div key={p.id} className="bg-card rounded-lg p-3 border border-border flex items-center gap-3">
+                <div key={p.id} className="bg-card rounded-2xl p-3 border border-border flex items-center gap-3">
                   <div className="w-9 h-9 rounded-lg bg-warning/10 flex items-center justify-center shrink-0">
                     <Package className="w-4 h-4 text-warning" />
                   </div>
@@ -218,7 +218,7 @@ const DistributorDashboard = () => {
         {/* Daily expenses */}
         <button
           onClick={() => navigate("/distributor/expenses")}
-          className="w-full bg-card rounded-lg p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
+          className="w-full bg-card rounded-2xl p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-critical/10 flex items-center justify-center">
@@ -235,7 +235,7 @@ const DistributorDashboard = () => {
         {/* Today's Orders */}
         <button
           onClick={() => navigate("/distributor/orders")}
-          className="w-full bg-card rounded-lg p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
+          className="w-full bg-card rounded-2xl p-4 mb-4 border border-border flex items-center justify-between active:opacity-80"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -252,7 +252,7 @@ const DistributorDashboard = () => {
         {/* Request Feed */}
         <h2 className="text-sm font-semibold text-foreground mb-3">Request Feed</h2>
         {orders.length === 0 ? (
-          <div className="bg-card rounded-lg p-6 border border-border text-center">
+          <div className="bg-card rounded-2xl p-6 border border-border text-center">
             <p className="text-sm text-muted-foreground">No orders yet</p>
           </div>
         ) : (
@@ -261,7 +261,7 @@ const DistributorDashboard = () => {
               const total = o.items.reduce((s, i) => s + i.qty * i.unitPrice, 0);
               const hasGoodwill = o.items.some((i) => i.paymentType === "goodwill");
               return (
-                <div key={o.id} className="bg-card rounded-lg p-4 border border-border">
+                <div key={o.id} className="bg-card rounded-2xl p-4 border border-border">
                   <div className="flex items-start justify-between mb-2">
                     <button
                       onClick={() => navigate(`/distributor/owner/${o.buyerId}`)}
@@ -305,7 +305,7 @@ const DistributorDashboard = () => {
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-border">
                     <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${hasGoodwill ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}`}>
-                      {hasGoodwill ? "Pay after selling" : "Paid"}
+                      {hasGoodwill ? "Goodwill" : "Paid"}
                     </span>
                     <button
                       onClick={() => navigate(`/distributor/order/${o.id}`)}

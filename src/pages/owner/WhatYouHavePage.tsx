@@ -52,7 +52,7 @@ const WhatYouHavePage = () => {
         </div>
 
         {mostSold && (
-          <div className="bg-success/5 border border-success/20 rounded-lg p-4 mb-4">
+          <div className="bg-success/5 border border-success/20 rounded-2xl p-4 mb-4">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="w-4 h-4 text-success" />
               <p className="text-xs font-semibold text-success uppercase tracking-wider">Most Sold</p>

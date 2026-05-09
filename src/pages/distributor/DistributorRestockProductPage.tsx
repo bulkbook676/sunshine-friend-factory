@@ -308,9 +308,9 @@ const DistributorRestockProductPage = () => {
           <div className="border-t border-border pt-4 mt-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Cost Calculator</p>
           </div>
-          <ReadOnlyField label="How much you paid per buying unit" value={calc.cogPerBuying > 0 ? fmt(calc.cogPerBuying) : "—"} color="text-primary" />
-          <ReadOnlyField label="Expenses per How you buy it" value={calc.expPerBuying > 0 ? fmt(calc.expPerBuying) : "—"} color="text-primary" />
-          <ReadOnlyField label="Full cost per buying unit including transport" value={calc.totalCostPerBuying > 0 ? fmt(calc.totalCostPerBuying) : "—"} />
+          <ReadOnlyField label={`How much you paid per ${(buyingUnitLabel||"buying unit").toLowerCase()}`} value={calc.cogPerBuying > 0 ? fmt(calc.cogPerBuying) : "—"} color="text-primary" />
+          <ReadOnlyField label={`Expenses per ${(buyingUnitLabel||"buying unit").toLowerCase()}`} value={calc.expPerBuying > 0 ? fmt(calc.expPerBuying) : "—"} color="text-primary" />
+          <ReadOnlyField label={`Full cost per ${(buyingUnitLabel||"buying unit").toLowerCase()} including transport`} value={calc.totalCostPerBuying > 0 ? fmt(calc.totalCostPerBuying) : "—"} />
           <ReadOnlyField label="What each piece costs you" value={calc.costPerSelling > 0 ? fmt(calc.costPerSelling) : "—"} />
 
           {/* Pricing */}
@@ -349,7 +349,7 @@ const DistributorRestockProductPage = () => {
               <p className="text-2xl font-bold text-foreground">{onShelf.toLocaleString()}</p>
               <p className="text-[11px] text-muted-foreground mt-1">units</p>
             </div>
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
               <p className="text-xs text-muted-foreground mb-1">Adding to Stock</p>
               <p className="text-2xl font-bold text-primary">{Math.round(calc.addingStock).toLocaleString()}</p>
               <p className="text-[11px] text-muted-foreground mt-1">{sellingUnitLabel}{calc.addingStock !== 1 ? "s" : ""}</p>
@@ -380,7 +380,7 @@ const DistributorRestockProductPage = () => {
           {/* Projected revenue */}
           {(onShelf > 0 || calc.addingStock > 0) && (
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-success/5 border border-success/20 rounded-lg p-4">
+              <div className="bg-success/5 border border-success/20 rounded-2xl p-4">
                 <p className="text-xs text-muted-foreground mb-2">Money you'd make if sold at best price</p>
                 {form.applyPriceToCurrent ? (
                   <>
@@ -396,7 +396,7 @@ const DistributorRestockProductPage = () => {
                   </>
                 )}
               </div>
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
                 <p className="text-xs text-muted-foreground mb-2">Money you'd make at your price</p>
                 {form.applyPriceToCurrent ? (
                   <>
@@ -431,7 +431,7 @@ const DistributorRestockProductPage = () => {
 
           <button
             onClick={openGoodwillPage}
-            className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+            className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
           >
             <div className="flex items-center justify-between">
               <div>

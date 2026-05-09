@@ -49,7 +49,7 @@ const DistributorProductDetailPage = () => {
         </div>
 
         {/* Stock */}
-        <div className="bg-card rounded-lg p-5 border border-border mb-4 text-center">
+        <div className="bg-card rounded-2xl p-5 border border-border mb-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">Current Stock</p>
           <p className="text-5xl font-bold text-foreground">{product.currentStock.toLocaleString()}</p>
           <p className="text-sm text-muted-foreground mt-1">units</p>
@@ -57,17 +57,17 @@ const DistributorProductDetailPage = () => {
 
         {/* Pricing */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground">Cost Price</p>
             <p className="text-lg font-bold text-foreground mt-1">₦{product.costPrice.toLocaleString()}</p>
           </div>
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground">Selling Price</p>
             <p className="text-lg font-bold text-primary mt-1">₦{product.sellingPrice.toLocaleString()}</p>
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-4">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Profit per piece</span>
             <span className="text-foreground font-medium">
@@ -77,7 +77,7 @@ const DistributorProductDetailPage = () => {
         </div>
 
         {/* Free shipping */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-4">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4">
           <div className="flex items-center gap-2 mb-1">
             <Truck className="w-4 h-4 text-success" />
             <span className="text-sm font-semibold text-foreground">Free Shipping</span>
@@ -92,7 +92,7 @@ const DistributorProductDetailPage = () => {
         </div>
 
         {/* Goodwill */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-4">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Handshake className="w-4 h-4 text-warning" />
@@ -153,7 +153,7 @@ const DistributorProductDetailPage = () => {
         </div>
 
         {/* Payment methods */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6">
           <p className="text-sm font-semibold text-foreground mb-2">Payment Methods Accepted</p>
           <div className="flex flex-wrap gap-2">
             {product.paymentMethods.map((m) => (

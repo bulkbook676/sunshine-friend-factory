@@ -1,20 +1,18 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Camera, Package, Clock } from "lucide-react";
+import { ArrowLeft, Camera } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 import { toast } from "sonner";
 
 const BusinessProfilePage = () => {
   const navigate = useNavigate();
-  const { businessName, businessType, setBusinessType } = useAuth();
+  const { businessName, businessIntro, setBusinessIntro } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(businessName || "");
   const [location, setLocation] = useState("");
-  const [type, setType] = useState<"product" | "service">(
-    businessType === "service" ? "service" : "product",
-  );
+  const [intro, setIntro] = useState(businessIntro || "");
   const [logo, setLogo] = useState<string | null>(null);
 
   const onPickPhoto = () => fileRef.current?.click();
@@ -36,7 +34,7 @@ const BusinessProfilePage = () => {
       toast.error("Business name is required");
       return;
     }
-    setBusinessType(type);
+    setBusinessIntro(intro.trim());
     toast.success("Business profile updated");
     navigate(-1);
   };
@@ -109,35 +107,22 @@ const BusinessProfilePage = () => {
           />
         </div>
 
-        {/* Business type */}
+        {/* Business intro */}
         <div className="mb-6">
-          <label className="text-xs text-muted-foreground font-medium uppercase tracking-wider block mb-2">
-            Business type
-          </label>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => setType("product")}
-              className={`flex items-center gap-2 p-3 rounded-lg border ${
-                type === "product"
-                  ? "bg-primary/10 border-primary"
-                  : "bg-card border-border"
-              }`}
-            >
-              <Package className="w-4 h-4 text-foreground" />
-              <span className="text-sm font-medium text-foreground">Product</span>
-            </button>
-            <button
-              onClick={() => setType("service")}
-              className={`flex items-center gap-2 p-3 rounded-lg border ${
-                type === "service"
-                  ? "bg-primary/10 border-primary"
-                  : "bg-card border-border"
-              }`}
-            >
-              <Clock className="w-4 h-4 text-foreground" />
-              <span className="text-sm font-medium text-foreground">Service</span>
-            </button>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+              Business intro
+            </label>
+            <span className="text-[10px] text-muted-foreground">{intro.length}/300</span>
           </div>
+          <textarea
+            value={intro}
+            onChange={(e) => setIntro(e.target.value.slice(0, 300))}
+            placeholder="Say something about your business in a few words. This shows on your profile."
+            rows={4}
+            maxLength={300}
+            className="w-full bg-card border border-border rounded-lg px-3 py-2.5 text-sm text-foreground resize-none"
+          />
         </div>
 
         <button

@@ -71,7 +71,7 @@ const DistributorGoodwillConditionsPage = () => {
         <h1 className="text-2xl font-bold text-foreground mb-6">Set Goodwill Conditions</h1>
 
         {/* Master toggle */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-5">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-foreground">Allow buyers to pay after selling</p>

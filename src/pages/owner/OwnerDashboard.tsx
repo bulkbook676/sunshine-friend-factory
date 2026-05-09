@@ -49,9 +49,9 @@ const OwnerDashboard = () => {
         </div>
 
         {/* Health Score */}
-        <div onClick={() => navigate("/owner/health")} className="bg-card rounded-lg p-4 mb-4 border border-border cursor-pointer active:opacity-80 transition-opacity">
+        <div onClick={() => navigate("/owner/health")} className="bg-card rounded-2xl p-4 mb-4 border border-border cursor-pointer active:opacity-80 transition-opacity">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground font-medium">How Your Business Is Doing</span>
+            <span className="text-sm text-muted-foreground font-medium">Business Health</span>
             <Zap className="w-4 h-4 text-warning" />
           </div>
           <div className="flex items-baseline gap-1">
@@ -73,7 +73,7 @@ const OwnerDashboard = () => {
         </button>
 
         {/* AI Brief */}
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
               <Zap className="w-3 h-3 text-primary-foreground" />
@@ -91,7 +91,7 @@ const OwnerDashboard = () => {
           <h2 className="text-sm font-semibold text-foreground mb-3">Top Moving Products</h2>
           <div className="grid grid-cols-3 gap-2">
             {topMovers.map((p) => (
-              <div key={p.id} className="bg-card rounded-lg p-3 border border-border text-center">
+              <div key={p.id} className="bg-card rounded-2xl p-3 border border-border text-center">
                 <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-2">
                   <TrendingUp className="w-4 h-4 text-success" />
                 </div>
@@ -120,7 +120,7 @@ const OwnerDashboard = () => {
         )}
 
         {/* Restock Alerts */}
-        <button onClick={() => navigate("/owner/restock")} className="w-full bg-card rounded-lg p-4 mb-3 border border-border flex items-center justify-between">
+        <button onClick={() => navigate("/owner/restock")} className="w-full bg-card rounded-2xl p-4 mb-3 border border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-warning/10 flex items-center justify-center">
               <Package className="w-5 h-5 text-warning" />
@@ -136,7 +136,7 @@ const OwnerDashboard = () => {
         </button>
 
         {/* My Orders */}
-        <button onClick={() => navigate("/owner/orders")} className="w-full bg-card rounded-lg p-4 mb-4 border border-border flex items-center justify-between active:opacity-80">
+        <button onClick={() => navigate("/owner/orders")} className="w-full bg-card rounded-2xl p-4 mb-4 border border-border flex items-center justify-between active:opacity-80">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <ShoppingBag className="w-5 h-5 text-primary" />
@@ -155,7 +155,7 @@ const OwnerDashboard = () => {
 
         {/* Revenue / Cost / Expenses Snapshot */}
         <div className="grid grid-cols-2 gap-3 mb-3">
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground mb-1">Today's Revenue</p>
             <p className="text-xl font-bold text-success">₦{todayRevenue.toLocaleString()}</p>
             <div className="flex items-center gap-1 mt-1">
@@ -163,7 +163,7 @@ const OwnerDashboard = () => {
               <span className="text-[10px] text-success">+12%</span>
             </div>
           </div>
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground mb-1">Today's Cost</p>
             <p className="text-xl font-bold text-foreground">₦{Math.round(todayCost).toLocaleString()}</p>
             <div className="flex items-center gap-1 mt-1">
@@ -176,7 +176,7 @@ const OwnerDashboard = () => {
         {/* Today's Expenses */}
         <button
           onClick={() => navigate("/owner/expenses")}
-          className="w-full bg-card rounded-lg p-4 mb-6 border border-border flex items-center justify-between active:opacity-80 transition-opacity"
+          className="w-full bg-card rounded-2xl p-4 mb-6 border border-border flex items-center justify-between active:opacity-80 transition-opacity"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-critical/10 flex items-center justify-center">
@@ -203,7 +203,7 @@ const OwnerDashboard = () => {
           </div>
           <div className="space-y-3">
             {distributorFeedItems.slice(0, 8).map((item) => (
-              <div key={item.id} className="bg-card rounded-lg p-4 border border-border">
+              <div key={item.id} className="bg-card rounded-2xl p-4 border border-border">
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                     <Package className="w-6 h-6 text-primary" />

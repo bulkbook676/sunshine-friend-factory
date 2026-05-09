@@ -66,7 +66,7 @@ const CostBreakdownPage = () => {
         <h3 className="text-sm font-semibold text-foreground mb-3">Price you paid for the goods</h3>
         <div className="space-y-3 mb-6">
           {cogBreakdown.map((p, i) => (
-            <div key={i} className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+            <div key={i} className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-foreground">{p.name}</p>
                 <p className="text-xs text-muted-foreground">{p.unitsSold} units</p>
@@ -79,7 +79,7 @@ const CostBreakdownPage = () => {
         <h3 className="text-sm font-semibold text-foreground mb-3">Product Expenses (Transport & Handling)</h3>
         <div className="space-y-3 mb-6">
           {productExpenseBreakdown.map((p, i) => (
-            <div key={i} className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+            <div key={i} className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-foreground">{p.name}</p>
               </div>
@@ -92,7 +92,7 @@ const CostBreakdownPage = () => {
         <h3 className="text-sm font-semibold text-foreground mb-3">Money spent running your business</h3>
         <div className="space-y-3 mb-6">
           {operationalExpenses.map((e) => (
-            <div key={e.id} className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+            <div key={e.id} className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <p className="text-sm font-medium text-foreground truncate">{e.name}</p>

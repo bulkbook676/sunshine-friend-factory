@@ -653,9 +653,9 @@ const AddProductPage = () => {
           <TextField label="Total amount paid for this order" placeholder="e.g. ₦50,000" value={form.totalOrderAmount} onChange={(v) => update("totalOrderAmount", v)} type="number" prefix="₦" error={errors.totalOrderAmount} />
           <TextField label="Total transport and handling for this order" placeholder="e.g. ₦2,000" value={form.transportFee} onChange={(v) => update("transportFee", v)} type="number" prefix="₦" />
 
-          <ReadOnlyField label="How much you paid per buying unit" value={calc.cogPerBuying > 0 ? fmt(calc.cogPerBuying) : "—"} color="text-primary" />
-          <ReadOnlyField label="Expenses per How you buy it" value={calc.expPerBuying > 0 ? fmt(calc.expPerBuying) : "—"} color="text-primary" />
-          <ReadOnlyField label="Full cost per buying unit including transport" value={calc.totalCostPerBuying > 0 ? fmt(calc.totalCostPerBuying) : "—"} />
+          <ReadOnlyField label={`How much you paid per ${(buyingUnitLabel||"buying unit").toLowerCase()}`} value={calc.cogPerBuying > 0 ? fmt(calc.cogPerBuying) : "—"} color="text-primary" />
+          <ReadOnlyField label={`Expenses per ${(buyingUnitLabel||"buying unit").toLowerCase()}`} value={calc.expPerBuying > 0 ? fmt(calc.expPerBuying) : "—"} color="text-primary" />
+          <ReadOnlyField label={`Full cost per ${(buyingUnitLabel||"buying unit").toLowerCase()} including transport`} value={calc.totalCostPerBuying > 0 ? fmt(calc.totalCostPerBuying) : "—"} />
           <ReadOnlyField label="What each piece costs you" value={calc.costPerSelling > 0 ? fmt(calc.costPerSelling) : "—"} />
 
           {/* Pricing */}
@@ -696,7 +696,7 @@ const AddProductPage = () => {
               <p className="text-2xl font-bold text-foreground">{Math.round(calc.openingStock).toLocaleString()}</p>
               <p className="text-[11px] text-muted-foreground mt-1">{sellingUnitLabel}{calc.openingStock !== 1 ? "s" : ""}</p>
             </div>
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
               <p className="text-xs text-muted-foreground mb-1">How many you have left</p>
               <p className="text-2xl font-bold text-primary">{Math.round(calc.openingStock).toLocaleString()}</p>
               <p className="text-[11px] text-muted-foreground mt-1">{sellingUnitLabel}{calc.openingStock !== 1 ? "s" : ""}</p>
@@ -727,12 +727,12 @@ const AddProductPage = () => {
             if (openStock > 0 && calc.idealPrice > 0) {
               return (
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-success/5 border border-success/20 rounded-lg p-4">
+                  <div className="bg-success/5 border border-success/20 rounded-2xl p-4">
                     <p className="text-xs text-muted-foreground mb-1">Money you'd make if sold at best price</p>
                     <p className="text-lg font-bold text-success">{fmt(idealRev)}</p>
                     <p className="text-[10px] text-muted-foreground mt-1">If sold at ideal price (30% margin)</p>
                   </div>
-                  <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                  <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
                     <p className="text-xs text-muted-foreground mb-1">Money you'd make at your price</p>
                     <p className="text-lg font-bold text-primary">{yourRev > 0 ? fmt(yourRev) : "—"}</p>
                     <p className="text-[10px] text-muted-foreground mt-1">If sold at your price</p>
