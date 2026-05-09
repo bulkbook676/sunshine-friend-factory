@@ -534,3 +534,29 @@ const DistributorAddProductPage = () => {
 };
 
 export default DistributorAddProductPage;
+
+function Row({
+  label,
+  value,
+  highlight,
+  tone,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+  tone?: "warning" | "success";
+}) {
+  const valueClass = tone === "warning"
+    ? "text-warning"
+    : tone === "success"
+    ? "text-success"
+    : highlight
+    ? "text-primary font-bold"
+    : "text-foreground";
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={`font-semibold ${valueClass}`}>{value}</span>
+    </div>
+  );
+}
