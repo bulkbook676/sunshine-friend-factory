@@ -23,7 +23,7 @@ const DistributorAboutPage = () => {
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm">Back</span>
         </button>
-        <h1 className="text-lg font-bold text-foreground mb-6">About Bulkbook</h1>
+        <h1 className="text-lg font-bold text-foreground mb-6">About This App</h1>
 
         <div className="bg-card rounded-lg p-4 border border-border mb-5">
           <p className="text-xs text-muted-foreground mb-1">Version</p>

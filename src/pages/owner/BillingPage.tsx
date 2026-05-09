@@ -133,7 +133,7 @@ const BillingPage = () => {
           <span className="text-sm">Back</span>
         </button>
 
-        <h1 className="text-lg font-bold text-foreground mb-6">Billing</h1>
+        <h1 className="text-lg font-bold text-foreground mb-6">Payments and Plans</h1>
 
         {/* Current plan */}
         <div className="bg-card rounded-lg p-4 border border-border mb-5">

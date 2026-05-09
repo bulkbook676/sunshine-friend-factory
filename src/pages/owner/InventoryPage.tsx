@@ -70,12 +70,12 @@ const InventoryPage = () => {
 
   const filters: { key: FilterType; label: string }[] = [
     { key: "all", label: "All" },
-    { key: "healthy", label: "Healthy" },
-    { key: "low", label: "Low Stock" },
-    { key: "dead", label: "Dead Stock" },
+    { key: "healthy", label: "Well Stocked" },
+    { key: "low", label: "Running Low" },
+    { key: "dead", label: "Not Moving" },
     { key: "restock", label: "Restock" },
-    { key: "top-selling", label: "Top Selling" },
-    { key: "trending", label: "Trending" },
+    { key: "top-selling", label: "Selling Fast" },
+    { key: "trending", label: "Hot Right Now" },
   ];
 
   return (

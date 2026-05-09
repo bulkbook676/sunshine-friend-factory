@@ -56,7 +56,7 @@ const PrivacySecurityPage = () => {
           <span className="text-sm">Back</span>
         </button>
         <h1 className="text-lg font-bold text-foreground mb-6">
-          Privacy & Security
+          Password and Security
         </h1>
 
         {/* Two-factor */}

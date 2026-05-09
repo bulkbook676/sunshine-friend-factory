@@ -185,7 +185,7 @@ const OwnerOrderDetailPage = () => {
                           : "bg-primary/10 text-primary"
                       }`}
                     >
-                      {i.paymentType === "goodwill" ? "Goodwill" : "Pay Now"}
+                      {i.paymentType === "goodwill" ? "Pay after selling" : "Pay Now"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -213,7 +213,7 @@ const OwnerOrderDetailPage = () => {
             </div>
           )}
           <div className="flex items-center justify-between pt-2 border-t border-border">
-            <span className="text-sm text-foreground font-semibold">Grand Total</span>
+            <span className="text-sm text-foreground font-semibold">Total Amount</span>
             <span className="text-xl font-bold text-foreground">₦{total.toLocaleString()}</span>
           </div>
         </div>

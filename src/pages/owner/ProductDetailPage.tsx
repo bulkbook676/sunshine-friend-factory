@@ -74,7 +74,7 @@ const ProductDetailPage = () => {
         {/* Units & Pricing */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-card rounded-lg p-4 border border-border">
-            <p className="text-xs text-muted-foreground">Buying Unit</p>
+            <p className="text-xs text-muted-foreground">How you buy it</p>
             <p className="text-sm font-semibold text-foreground">{product.buyingUnit}</p>
             {editing ? (
               <div className="mt-1 relative">
@@ -91,7 +91,7 @@ const ProductDetailPage = () => {
             )}
           </div>
           <div className="bg-card rounded-lg p-4 border border-border">
-            <p className="text-xs text-muted-foreground">Selling Unit</p>
+            <p className="text-xs text-muted-foreground">How you sell it</p>
             <p className="text-sm font-semibold text-foreground">{product.sellingUnit}</p>
             {editing ? (
               <div className="mt-1 relative">

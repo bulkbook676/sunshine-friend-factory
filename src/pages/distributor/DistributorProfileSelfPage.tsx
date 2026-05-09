@@ -45,7 +45,7 @@ const DistributorProfilePage = () => {
           <span className="text-sm">Back</span>
         </button>
 
-        <h1 className="text-2xl font-bold text-foreground mb-6">Business Profile</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Your Business Details</h1>
 
         <div className="space-y-4">
           <div>

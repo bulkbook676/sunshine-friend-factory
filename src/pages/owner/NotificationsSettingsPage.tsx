@@ -40,7 +40,7 @@ const NotificationsSettingsPage = () => {
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm">Back</span>
         </button>
-        <h1 className="text-lg font-bold text-foreground mb-6">Notifications</h1>
+        <h1 className="text-lg font-bold text-foreground mb-6">Alerts and Notifications</h1>
 
         {/* Master */}
         <div className="bg-card rounded-lg p-4 border border-border mb-5 flex items-center justify-between">

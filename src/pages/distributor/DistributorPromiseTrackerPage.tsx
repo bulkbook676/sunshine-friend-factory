@@ -59,9 +59,9 @@ const DistributorPromiseTrackerPage = () => {
     const remaining = outstandingFor(o);
     if (remaining <= 0) return { label: "Paid", color: "bg-success/10 text-success" };
     const due = daysToDue(o);
-    if (due < 0) return { label: "Overdue", color: "bg-critical/10 text-critical" };
-    if (due <= 3) return { label: "Due Soon", color: "bg-warning/10 text-warning" };
-    return { label: "On Track", color: "bg-primary/10 text-primary" };
+    if (due < 0) return { label: "Late — follow up", color: "bg-critical/10 text-critical" };
+    if (due <= 3) return { label: "Pay back soon", color: "bg-warning/10 text-warning" };
+    return { label: "Paying on time", color: "bg-primary/10 text-primary" };
   };
 
   const handleMarkPaid = (id: string) => {
@@ -100,12 +100,12 @@ const DistributorPromiseTrackerPage = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Back</span>
           </button>
-          <h1 className="text-base font-bold text-foreground">Cash In Promise</h1>
+          <h1 className="text-base font-bold text-foreground">Money owed to you</h1>
           <div className="w-12" />
         </div>
 
         <div className="text-center mb-6">
-          <p className="text-xs text-muted-foreground mb-1">Total Outstanding</p>
+          <p className="text-xs text-muted-foreground mb-1">Total Owed to You</p>
           <p className="text-3xl font-bold text-primary">₦{totalOutstanding.toLocaleString()}</p>
         </div>
 
@@ -195,7 +195,7 @@ const DistributorPromiseTrackerPage = () => {
                         <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden mb-2">
                           <div
                             className={`h-full rounded-full ${
-                              status.label === "Overdue" ? "bg-critical" : status.label === "Due Soon" ? "bg-warning" : "bg-primary"
+                              status.label === "Late — follow up" ? "bg-critical" : status.label === "Pay back soon" ? "bg-warning" : "bg-primary"
                             }`}
                             style={{ width: `${repaid}%` }}
                           />
@@ -220,7 +220,7 @@ const DistributorPromiseTrackerPage = () => {
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-success text-primary-foreground text-xs font-medium"
                       >
                         <Check className="w-3 h-3" />
-                        Mark as Paid
+                        They've Paid
                       </button>
                       <button
                         onClick={() => {
@@ -230,7 +230,7 @@ const DistributorPromiseTrackerPage = () => {
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium border border-primary/30"
                       >
                         <Wallet className="w-3 h-3" />
-                        Record Deposit
+                        They Paid Part of It
                       </button>
                     </div>
                   </div>

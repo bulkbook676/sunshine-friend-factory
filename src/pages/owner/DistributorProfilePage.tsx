@@ -276,7 +276,7 @@ const DistributorProfilePage = () => {
 
                   {/* Subtotal */}
                   <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <span className="text-sm text-muted-foreground">Subtotal</span>
+                    <span className="text-sm text-muted-foreground">Amount to Collect Now</span>
                     <span className="text-xl font-bold text-primary">₦{subtotal.toLocaleString()}</span>
                   </div>
                 </div>

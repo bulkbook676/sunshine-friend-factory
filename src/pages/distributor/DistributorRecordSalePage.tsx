@@ -21,7 +21,7 @@ type Payment = "cash" | "transfer" | "goodwill";
 const PAYMENTS: { value: Payment; label: string }[] = [
   { value: "cash", label: "Cash" },
   { value: "transfer", label: "Transfer" },
-  { value: "goodwill", label: "Goodwill" },
+  { value: "goodwill", label: "Pay after selling" },
 ];
 
 const DistributorRecordSalePage = () => {
@@ -42,7 +42,7 @@ const DistributorRecordSalePage = () => {
   const [confirmed, setConfirmed] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  // Returning from Edit Cart → go straight back to the preview screen.
+  // Returning from Change Items → go straight back to the preview screen.
   useEffect(() => {
     const fromEdit = (location.state as { fromEditCart?: boolean } | null)?.fromEditCart;
     if (fromEdit) setShowPreview(true);
@@ -161,7 +161,7 @@ const DistributorRecordSalePage = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Back to Cart</span>
           </button>
-          <h1 className="text-xl font-bold text-foreground mb-1">Sale Preview</h1>
+          <h1 className="text-xl font-bold text-foreground mb-1">Check Before Recording</h1>
           <p className="text-sm text-muted-foreground mb-6">Review before confirming</p>
 
           <div className="space-y-3 mb-6">
@@ -178,7 +178,7 @@ const DistributorRecordSalePage = () => {
 
           <div className="bg-primary/10 rounded-2xl p-4 mb-6">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-foreground">Grand Total</span>
+              <span className="text-sm font-medium text-foreground">Total Amount</span>
               <span className="text-2xl font-bold text-primary">₦{grandTotal.toLocaleString()}</span>
             </div>
           </div>
@@ -232,7 +232,7 @@ const DistributorRecordSalePage = () => {
               Edit
             </button>
             <button onClick={handleConfirm} className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold">
-              Confirm Sale
+              Record This Sale
             </button>
           </div>
         </div>

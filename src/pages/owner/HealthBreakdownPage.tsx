@@ -92,7 +92,7 @@ const HealthBreakdownPage = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Back</span>
           </button>
-          <h1 className="text-base font-bold text-foreground">Business Health Score</h1>
+          <h1 className="text-base font-bold text-foreground">How Your Business Is Doing</h1>
           <div className="w-12" />
         </div>
 
@@ -117,7 +117,7 @@ const HealthBreakdownPage = () => {
             onClick={() => setActiveTab("target")}
             className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === "target" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            Set Target
+            Set Your Target
           </button>
         </div>
 
@@ -158,7 +158,7 @@ const HealthBreakdownPage = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <Package className="w-3.5 h-3.5 text-foreground" />
-                      <span className="text-sm text-foreground">Your Stock Value</span>
+                      <span className="text-sm text-foreground">Your Value of your current stock</span>
                     </div>
                     <span className="text-sm font-medium text-foreground">{fmt(stockValue)}</span>
                   </div>
@@ -168,7 +168,7 @@ const HealthBreakdownPage = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <Clock className="w-3.5 h-3.5 text-warning" />
-                      <span className="text-sm text-warning">Goods Not Moving</span>
+                      <span className="text-sm text-warning">Stock that hasn't sold in 30 days</span>
                     </div>
                     <span className="text-sm font-medium text-warning">{fmt(goodsNotMoving)}</span>
                   </div>
@@ -178,7 +178,7 @@ const HealthBreakdownPage = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <Banknote className="w-3.5 h-3.5 text-success" />
-                      <span className="text-sm text-success">Cash In Hand</span>
+                      <span className="text-sm text-success">Money you've already collected</span>
                     </div>
                     <span className="text-sm font-medium text-success">{fmt(cashInHand)}</span>
                   </div>
@@ -188,7 +188,7 @@ const HealthBreakdownPage = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                       <HandCoins className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-sm text-primary">Cash In Promise</span>
+                      <span className="text-sm text-primary">Money owed to you</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-primary">{fmt(cashInPromise)}</span>
@@ -200,7 +200,7 @@ const HealthBreakdownPage = () => {
                   <p className="text-[10px] text-muted-foreground ml-5.5 mt-0.5">Sales made but not yet paid</p>
                 </div>
                 <div className="border-t border-border pt-2 flex justify-between">
-                  <span className="text-sm font-semibold text-foreground">Total Assets</span>
+                  <span className="text-sm font-semibold text-foreground">Total of what you have</span>
                   <span className="text-base font-bold text-foreground">{fmt(totalAssets)}</span>
                 </div>
               </div>
@@ -220,7 +220,7 @@ const HealthBreakdownPage = () => {
               </button>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-foreground">Cost of Goods</span>
+                  <span className="text-sm text-foreground">Price you paid for the goods</span>
                   <span className="text-sm text-foreground">{fmt(totalCostOfGoods)}</span>
                 </div>
                 <div className="flex justify-between">
@@ -228,11 +228,11 @@ const HealthBreakdownPage = () => {
                   <span className="text-sm text-foreground">{fmt(productExpenses)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-foreground">Daily Expenses</span>
+                  <span className="text-sm text-foreground">Money spent running your business</span>
                   <span className="text-sm text-foreground">{fmt(dailyExpenses)}</span>
                 </div>
                 <div className="border-t border-border pt-2 flex justify-between">
-                  <span className="text-sm font-semibold text-foreground">Total Liabilities</span>
+                  <span className="text-sm font-semibold text-foreground">Total of what you've spent</span>
                   <span className="text-base font-bold text-foreground">{fmt(totalLiabilities)}</span>
                 </div>
               </div>
@@ -320,7 +320,7 @@ const HealthBreakdownPage = () => {
             <div>
               <label className="text-xs text-muted-foreground mb-2 block">Target metric</label>
               <div className="flex bg-muted rounded-xl p-1">
-                <button onClick={() => setTargetMetric("revenue")} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${targetMetric === "revenue" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Revenue</button>
+                <button onClick={() => setTargetMetric("revenue")} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${targetMetric === "revenue" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Money Collected</button>
                 <button onClick={() => setTargetMetric("units")} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${targetMetric === "units" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>Units Sold</button>
               </div>
             </div>

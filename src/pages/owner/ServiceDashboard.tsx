@@ -64,7 +64,7 @@ const ServiceDashboard = () => {
         {/* Health Score */}
         <div onClick={() => navigate("/owner/health")} className="bg-card rounded-lg p-4 mb-4 border border-border cursor-pointer active:opacity-80 transition-opacity">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground font-medium">Business Health Score</span>
+            <span className="text-sm text-muted-foreground font-medium">How Your Business Is Doing</span>
             <Zap className="w-4 h-4 text-warning" />
           </div>
           <div className="flex items-baseline gap-1">

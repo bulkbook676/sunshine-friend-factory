@@ -65,7 +65,7 @@ const DistributorBillingPage = () => {
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm">Back</span>
         </button>
-        <h1 className="text-lg font-bold text-foreground mb-6">Billing</h1>
+        <h1 className="text-lg font-bold text-foreground mb-6">Payments and Plans</h1>
 
         {/* Plan */}
         <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-5">

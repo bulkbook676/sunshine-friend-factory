@@ -94,7 +94,7 @@ const DistributorOrderDetailPage = () => {
                       : "bg-success/10 text-success"
                   }`}
                 >
-                  {i.paymentType === "goodwill" ? "Goodwill" : "Paid"}
+                  {i.paymentType === "goodwill" ? "Pay after selling" : "Paid"}
                 </span>
               </div>
               <p className="text-sm font-bold text-foreground text-right">

@@ -91,14 +91,14 @@ const WhatYouSpentPage = () => {
             </div>
           ))}
           <div className="border-t border-border pt-2 flex justify-between">
-            <span className="text-sm font-semibold text-foreground">Subtotal</span>
+            <span className="text-sm font-semibold text-foreground">Amount to Collect Now</span>
             <span className="text-base font-bold text-foreground">{fmt(totalRecurring)}</span>
           </div>
         </div>
 
-        {/* Cost of Goods Sold */}
+        {/* Price you paid for the goods Sold */}
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-          Cost of Goods Sold
+          Price you paid for the goods Sold
         </h2>
         <div className="bg-card border border-border rounded-lg p-4 mb-4">
           <div className="flex items-center gap-3">
@@ -117,7 +117,7 @@ const WhatYouSpentPage = () => {
 
         {/* Daily logged expenses */}
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-          Daily Expenses by Category
+          Money spent running your business by Category
         </h2>
         <div className="bg-card border border-border rounded-lg p-4 mb-4">
           {Object.keys(byCategory).length === 0 ? (
@@ -134,7 +134,7 @@ const WhatYouSpentPage = () => {
                 </div>
               ))}
               <div className="border-t border-border pt-2 flex justify-between">
-                <span className="text-sm font-semibold text-foreground">Subtotal</span>
+                <span className="text-sm font-semibold text-foreground">Amount to Collect Now</span>
                 <span className="text-base font-bold text-foreground">{fmt(dailyExpensesTotal)}</span>
               </div>
             </div>
@@ -151,7 +151,7 @@ const WhatYouSpentPage = () => {
           }`}
         >
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-foreground">Revenue</span>
+            <span className="text-sm text-foreground">Money Collected</span>
             <span className="text-sm font-semibold text-foreground">{fmt(revenue)}</span>
           </div>
           <div className="flex items-center justify-between mb-1">
