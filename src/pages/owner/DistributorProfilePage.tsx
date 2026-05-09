@@ -170,9 +170,7 @@ const DistributorProfilePage = () => {
                 <p className="text-sm font-medium text-foreground">{p.name}</p>
                 <p className="text-xs text-muted-foreground">{p.availableQty.toLocaleString()} available</p>
                 {p.goodwillAvailable && (
-                  <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning font-medium">
-                    Goodwill available
-                  </span>
+                  <span className="inline-block mt-1 text-xs">🤝</span>
                 )}
               </div>
               <p className="text-sm font-bold text-foreground">₦{p.price.toLocaleString()}</p>
