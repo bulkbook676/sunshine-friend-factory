@@ -332,41 +332,10 @@ const DistributorAddProductPage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-sm font-medium text-foreground block mb-1.5">Cost Price (₦)</label>
-              <input
-                type="number"
-                value={form.costPrice}
-                onChange={(e) => update("costPrice", e.target.value)}
-                className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground block mb-1.5">Selling Price (₦)</label>
-              <input
-                type="number"
-                value={form.sellingPrice}
-                onChange={(e) => update("sellingPrice", e.target.value)}
-                className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-1.5">Current Stock</label>
-            <input
-              type="number"
-              value={form.currentStock}
-              onChange={(e) => update("currentStock", e.target.value)}
-              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
           {/* Cost Calculator (helper) */}
           <div className="border-t border-border pt-4 mt-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Cost Calculator</p>
-            <p className="text-[11px] text-muted-foreground mb-3">Work out exactly what each piece costs you, then auto-fill the prices above.</p>
+            <p className="text-[11px] text-muted-foreground mb-3">Work out exactly what each piece costs you and set your own price.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -436,16 +405,6 @@ const DistributorAddProductPage = () => {
               className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-1.5">Profit you want on each piece (%)</label>
-            <input
-              type="number" value={calc.targetMargin}
-              onChange={(e) => updateCalc("targetMargin", e.target.value)}
-              placeholder="e.g. 30"
-              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
           <div className="bg-card rounded-2xl border border-border p-4 space-y-2">
             <Row label={`How much you paid per ${buyingLabel}`} value={calcResult.cogPerBuying ? fmt(calcResult.cogPerBuying) : "—"} />
             <Row label={`Expenses per ${buyingLabel}`} value={calcResult.expPerBuying ? fmt(calcResult.expPerBuying) : "—"} />
@@ -455,13 +414,43 @@ const DistributorAddProductPage = () => {
               <Row label="Lowest price you should sell at" value={calcResult.minPrice ? fmt(calcResult.minPrice) : "—"} tone="warning" />
               <Row label="Best price to sell at (good profit)" value={calcResult.idealPrice ? fmt(calcResult.idealPrice) : "—"} tone="success" />
             </div>
-            <button
-              type="button" onClick={applyCalc}
-              className="w-full h-10 mt-2 rounded-lg bg-primary/10 text-primary text-sm font-semibold border border-primary/20"
-            >
-              Use these prices
-            </button>
           </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground block mb-1.5">Your selling price</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₦</span>
+              <input
+                type="number"
+                value={calc.actualSellingPrice}
+                onChange={(e) => updateCalc("actualSellingPrice", e.target.value)}
+                placeholder="Your price per selling unit"
+                className="w-full h-12 pl-8 pr-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          {calcResult.verdictLabel && (
+            <div className={`rounded-2xl p-4 border ${calcResult.verdictColor === "text-success" ? "bg-success/5 border-success/20" : calcResult.verdictColor === "text-warning" ? "bg-warning/5 border-warning/20" : "bg-critical/5 border-critical/20"}`}>
+              <p className={`text-sm font-semibold mb-2 ${calcResult.verdictColor}`}>{calcResult.verdictLabel}</p>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Profit per piece</span>
+                <span className={`font-semibold ${calcResult.verdictColor}`}>{fmt(calcResult.marginPerUnit)}</span>
+              </div>
+              <div className="flex justify-between text-sm mt-1">
+                <span className="text-muted-foreground">Profit percentage</span>
+                <span className={`font-semibold ${calcResult.verdictColor}`}>{Math.round(calcResult.marginPct)}%</span>
+              </div>
+            </div>
+          )}
+
+          {calcResult.openingStock > 0 && (
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">Opening Stock</p>
+              <p className="text-2xl font-bold text-primary">{Math.round(calcResult.openingStock).toLocaleString()}</p>
+              <p className="text-[11px] text-muted-foreground mt-1">{calc.sellingUnit.toLowerCase()}s ready to sell</p>
+            </div>
+          )}
 
           <div>
             <label className="text-sm font-medium text-foreground block mb-1.5">
