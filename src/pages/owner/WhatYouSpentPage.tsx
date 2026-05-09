@@ -68,7 +68,7 @@ const WhatYouSpentPage = () => {
         </div>
 
         {/* Total spent header */}
-        <div className="bg-critical/5 border border-critical/20 rounded-lg p-4 mb-4">
+        <div className="bg-critical/5 border border-critical/20 rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-1">
             <TrendingDown className="w-4 h-4 text-critical" />
             <p className="text-xs font-semibold text-critical uppercase tracking-wider">Total spent (this period)</p>
@@ -104,7 +104,7 @@ const WhatYouSpentPage = () => {
           <div className="flex items-center gap-3">
             <Package className="w-5 h-5 text-warning" />
             <div className="flex-1">
-              <p className="text-sm text-foreground">COGS (last 7 days)</p>
+              <p className="text-sm text-foreground">Cost of goods you sold (last 7 days)</p>
               <p className="text-[11px] text-muted-foreground">Direct cost of items sold</p>
             </div>
             <p className="text-base font-bold text-warning">{fmt(cogs)}</p>
@@ -155,7 +155,7 @@ const WhatYouSpentPage = () => {
             <span className="text-sm font-semibold text-foreground">{fmt(revenue)}</span>
           </div>
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm text-foreground">Less: COGS + Expenses</span>
+            <span className="text-sm text-foreground">Less: Cost of goods + Expenses</span>
             <span className="text-sm font-semibold text-foreground">{fmt(cogs + dailyExpensesTotal + totalRecurring)}</span>
           </div>
           <div className="border-t border-border pt-2 flex items-center justify-between">

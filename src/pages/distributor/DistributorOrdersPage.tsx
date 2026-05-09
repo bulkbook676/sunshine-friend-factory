@@ -13,7 +13,7 @@ const DistributorOrdersPage = () => {
         <h1 className="text-2xl font-bold text-foreground mb-6">Orders</h1>
 
         {orders.length === 0 ? (
-          <div className="bg-card rounded-lg p-6 border border-border text-center">
+          <div className="bg-card rounded-2xl p-6 border border-border text-center">
             <p className="text-sm text-muted-foreground">No orders yet</p>
           </div>
         ) : (
@@ -24,7 +24,7 @@ const DistributorOrdersPage = () => {
                 <button
                   key={o.id}
                   onClick={() => navigate(`/distributor/order/${o.id}`)}
-                  className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+                  className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">

@@ -61,7 +61,7 @@ const AccountSettingsPage = () => {
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
           Phone number
         </p>
-        <div className="bg-card rounded-lg p-4 border border-border mb-6 flex items-center justify-between">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6 flex items-center justify-between">
           <p className="text-sm text-foreground tabular-nums">{phone}</p>
           <button
             onClick={() => toast.info("Phone change requires verification")}
@@ -75,7 +75,7 @@ const AccountSettingsPage = () => {
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
           Change password
         </p>
-        <div className="bg-card rounded-lg p-4 border border-border space-y-3 mb-6">
+        <div className="bg-card rounded-2xl p-4 border border-border space-y-3 mb-6">
           <div>
             <label className="text-[11px] text-muted-foreground block mb-1">
               Current password

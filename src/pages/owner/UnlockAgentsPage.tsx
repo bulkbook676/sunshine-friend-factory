@@ -76,7 +76,7 @@ const UnlockAgentsPage = () => {
         )}
 
         {/* Quantity selector */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-4">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-3">
             Additional slots
           </p>
@@ -108,7 +108,7 @@ const UnlockAgentsPage = () => {
         </div>
 
         {/* Total */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-4 flex items-center justify-between">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4 flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground">Total monthly cost</p>
             <p className="text-2xl font-bold text-foreground tabular-nums">

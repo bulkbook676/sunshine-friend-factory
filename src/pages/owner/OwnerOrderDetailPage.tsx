@@ -69,7 +69,7 @@ const OwnerOrderDetailPage = () => {
         {/* Distributor */}
         <button
           onClick={() => navigate(`/owner/distributor/${order.distributorId}`)}
-          className="w-full bg-card rounded-lg p-4 border border-border flex items-center justify-between mb-4 active:opacity-80"
+          className="w-full bg-card rounded-2xl p-4 border border-border flex items-center justify-between mb-4 active:opacity-80"
         >
           <div className="text-left">
             <p className="text-xs text-muted-foreground">Distributor</p>
@@ -80,7 +80,7 @@ const OwnerOrderDetailPage = () => {
 
         {/* Timeline */}
         {!isDeclined && (
-          <div className="bg-card rounded-lg p-4 border border-border mb-4">
+          <div className="bg-card rounded-2xl p-4 border border-border mb-4">
             <p className="text-sm font-semibold text-foreground mb-4">Delivery Status</p>
             <div className="space-y-3">
               {STEPS.map((s, idx) => {
@@ -173,7 +173,7 @@ const OwnerOrderDetailPage = () => {
         <h3 className="text-sm font-semibold text-foreground mb-2">Items</h3>
         <div className="space-y-2 mb-4">
           {order.items.map((i, idx) => (
-            <div key={idx} className="bg-card rounded-lg p-3 border border-border">
+            <div key={idx} className="bg-card rounded-2xl p-3 border border-border">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ const OwnerOrderDetailPage = () => {
                           : "bg-primary/10 text-primary"
                       }`}
                     >
-                      {i.paymentType === "goodwill" ? "Pay after selling" : "Pay Now"}
+                      {i.paymentType === "goodwill" ? "Goodwill" : "Pay Now"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
@@ -201,7 +201,7 @@ const OwnerOrderDetailPage = () => {
         </div>
 
         {/* Payment Summary */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-6 space-y-2">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6 space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">Cash Paid</span>
             <span className="text-foreground font-semibold">₦{cashPaid.toLocaleString()}</span>

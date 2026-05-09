@@ -322,7 +322,7 @@ const DistributorReportsPage = () => {
         </div>
 
         {/* Range navigation */}
-        <div className="flex items-center justify-between bg-card rounded-lg p-3 border border-border mb-4">
+        <div className="flex items-center justify-between bg-card rounded-2xl p-3 border border-border mb-4">
           <button
             onClick={goPrev}
             className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center"
@@ -361,7 +361,7 @@ const DistributorReportsPage = () => {
         </div>
 
         {/* Summary */}
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-4">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">Summary</span>
@@ -373,7 +373,7 @@ const DistributorReportsPage = () => {
         <div className="grid grid-cols-2 gap-3 mb-3">
           <button
             onClick={() => navigate(`/distributor/reports/revenue?period=${period}`)}
-            className="bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity"
+            className="bg-card rounded-2xl p-4 border border-border text-left active:opacity-80 transition-opacity"
           >
             <p className="text-xs text-muted-foreground">Money Collected</p>
             <p className="text-xl font-bold text-success">₦{totalRevenue.toLocaleString()}</p>
@@ -381,7 +381,7 @@ const DistributorReportsPage = () => {
           </button>
           <button
             onClick={() => navigate(`/distributor/reports/cost?period=${period}`)}
-            className="bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity"
+            className="bg-card rounded-2xl p-4 border border-border text-left active:opacity-80 transition-opacity"
           >
             <p className="text-xs text-muted-foreground">Money Spent</p>
             <p className="text-xl font-bold text-foreground">₦{Math.round(totalCost).toLocaleString()}</p>
@@ -395,7 +395,7 @@ const DistributorReportsPage = () => {
         {/* Your Profit card */}
         <button
           onClick={() => navigate(`/distributor/reports/profit?period=${period}`)}
-          className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity mb-4"
+          className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80 transition-opacity mb-4"
         >
           <p className="text-xs text-muted-foreground">Your Profit</p>
           <p className={`text-xl font-bold ${netProfit >= 0 ? "text-success" : "text-critical"}`}>
@@ -409,7 +409,7 @@ const DistributorReportsPage = () => {
         </button>
 
         {/* Goodwill Tracker — permanent section (period-independent) */}
-        <div className="bg-card rounded-lg border border-border mb-4">
+        <div className="bg-card rounded-2xl border border-border mb-4">
           <button
             onClick={() => setGoodwillExpanded((v) => !v)}
             className="w-full flex items-center justify-between p-4"
@@ -510,7 +510,7 @@ const DistributorReportsPage = () => {
         </div>
 
         {topProducts.length > 0 && (
-          <div className="bg-card rounded-lg p-4 border border-border mb-4">
+          <div className="bg-card rounded-2xl p-4 border border-border mb-4">
             <h3 className="text-sm font-semibold text-foreground mb-3">Best Selling Products</h3>
             {topProducts.map((p, i) => (
               <div
@@ -550,7 +550,7 @@ const DistributorReportsPage = () => {
                   <button
                     key={g.orderId}
                     onClick={() => navigate("/distributor/promises")}
-                    className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+                    className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-semibold text-foreground">

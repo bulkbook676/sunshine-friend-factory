@@ -83,15 +83,15 @@ const DistributorNetProfitBreakdownPage = () => {
         <p className="text-sm text-muted-foreground mb-6 capitalize">{period} profitability</p>
 
         <div className="space-y-3 mb-5">
-          <div className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+          <div className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
             <span className="text-sm text-foreground">Money Collected</span>
             <span className="text-sm font-bold text-success">₦{revenue.toLocaleString()}</span>
           </div>
-          <div className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+          <div className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
             <span className="text-sm text-foreground">— Price you paid for the goods Sold</span>
             <span className="text-sm font-bold text-foreground">₦{Math.round(cogs).toLocaleString()}</span>
           </div>
-          <div className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+          <div className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
             <span className="text-sm text-foreground">— Operational Expenses</span>
             <span className="text-sm font-bold text-foreground">₦{expenses.toLocaleString()}</span>
           </div>

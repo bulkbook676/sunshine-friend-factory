@@ -39,7 +39,7 @@ const DistributorPrivacySecurityPage = () => {
         </button>
         <h1 className="text-lg font-bold text-foreground mb-6">Password and Security</h1>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-3 flex items-center justify-between">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Shield className="w-5 h-5 text-primary" />
             <div>
@@ -52,7 +52,7 @@ const DistributorPrivacySecurityPage = () => {
 
         <button
           onClick={onExport}
-          className="w-full bg-card rounded-lg p-4 border border-border mb-3 flex items-center gap-3 active:opacity-70"
+          className="w-full bg-card rounded-2xl p-4 border border-border mb-3 flex items-center gap-3 active:opacity-70"
         >
           <Download className="w-5 h-5 text-primary" />
           <div className="flex-1 text-left">
@@ -63,7 +63,7 @@ const DistributorPrivacySecurityPage = () => {
 
         <button
           onClick={() => setConfirmDelete(true)}
-          className="w-full bg-card rounded-lg p-4 border border-critical/40 flex items-center gap-3 active:opacity-70"
+          className="w-full bg-card rounded-2xl p-4 border border-critical/40 flex items-center gap-3 active:opacity-70"
         >
           <Trash2 className="w-5 h-5 text-critical" />
           <div className="flex-1 text-left">

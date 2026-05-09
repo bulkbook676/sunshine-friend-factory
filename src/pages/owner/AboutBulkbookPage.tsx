@@ -38,14 +38,14 @@ const AboutBulkbookPage = () => {
           About This App
         </h1>
 
-        <div className="bg-card rounded-lg p-5 border border-border mb-5 text-center">
+        <div className="bg-card rounded-2xl p-5 border border-border mb-5 text-center">
           <p className="text-2xl font-bold text-primary mb-1">Bulkbook</p>
           <p className="text-xs text-muted-foreground">
             Version {APP_VERSION}
           </p>
         </div>
 
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           {items.map((item, i) => (
             <button
               key={item.label}

@@ -343,7 +343,7 @@ const DistributorAddProductPage = () => {
           {/* Goodwill conditions card */}
           <button
             onClick={openGoodwillPage}
-            className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80"
+            className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
           >
             <div className="flex items-center justify-between">
               <div>

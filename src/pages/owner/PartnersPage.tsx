@@ -78,7 +78,7 @@ const PartnersPage = () => {
         </p>
 
         {/* Add partner */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6">
           <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
             Add partner
           </p>
@@ -118,7 +118,7 @@ const PartnersPage = () => {
           Partners ({partners.length})
         </p>
         {partners.length === 0 ? (
-          <div className="bg-card rounded-lg p-4 border border-border text-center">
+          <div className="bg-card rounded-2xl p-4 border border-border text-center">
             <p className="text-sm text-muted-foreground">
               No partners yet. Add one above.
             </p>
@@ -128,7 +128,7 @@ const PartnersPage = () => {
             {partners.map((p) => (
               <div
                 key={p.id}
-                className="bg-card rounded-lg p-3 border border-border"
+                className="bg-card rounded-2xl p-3 border border-border"
               >
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">

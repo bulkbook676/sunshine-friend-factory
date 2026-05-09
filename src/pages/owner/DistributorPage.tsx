@@ -40,7 +40,7 @@ const DistributorPage = () => {
           </div>
           <p className="text-xs text-muted-foreground">{90 - daysCompleted} days to go</p>
 
-          <div className="mt-10 bg-card rounded-lg p-5 border border-border text-left w-full">
+          <div className="mt-10 bg-card rounded-2xl p-5 border border-border text-left w-full">
             <h3 className="text-sm font-semibold text-foreground mb-3">What you unlock</h3>
             <ul className="space-y-2">
               {[

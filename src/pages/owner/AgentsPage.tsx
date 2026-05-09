@@ -126,7 +126,7 @@ const AgentsPage = () => {
               <button
                 key={agent.id}
                 onClick={() => navigate(`/owner/agent/${agent.id}`)}
-                className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 text-left relative"
+                className="w-full bg-card rounded-2xl p-4 border border-border flex items-center gap-3 text-left relative"
               >
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 relative">
                   <span className="text-sm font-bold text-primary">{agent.name[0]}</span>

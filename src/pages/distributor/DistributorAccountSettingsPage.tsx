@@ -35,7 +35,7 @@ const DistributorAccountSettingsPage = () => {
         <h1 className="text-lg font-bold text-foreground mb-6">Account</h1>
 
         {/* Phone */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6">
           <p className="text-xs text-muted-foreground mb-1">Phone number</p>
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-foreground">{phone}</span>
@@ -49,7 +49,7 @@ const DistributorAccountSettingsPage = () => {
         </div>
 
         {/* Password */}
-        <div className="bg-card rounded-lg p-4 border border-border space-y-3">
+        <div className="bg-card rounded-2xl p-4 border border-border space-y-3">
           <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
             Change password
           </p>

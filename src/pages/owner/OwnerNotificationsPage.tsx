@@ -35,7 +35,7 @@ const OwnerNotificationsPage = () => {
           {notifications.map((n) => {
             const Icon = iconMap[n.type] || Bell;
             return (
-              <div key={n.id} className={`bg-card rounded-lg p-4 border border-border flex gap-3 ${!n.read ? "border-l-2 border-l-primary" : ""}`}>
+              <div key={n.id} className={`bg-card rounded-2xl p-4 border border-border flex gap-3 ${!n.read ? "border-l-2 border-l-primary" : ""}`}>
                 <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${colorMap[n.type]}`}>
                   <Icon className="w-4 h-4" />
                 </div>

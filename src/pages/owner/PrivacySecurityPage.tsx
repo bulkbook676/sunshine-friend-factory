@@ -60,7 +60,7 @@ const PrivacySecurityPage = () => {
         </h1>
 
         {/* Two-factor */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-3 flex items-center justify-between">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-3 flex items-center justify-between">
           <div className="flex items-start gap-3">
             <Shield className="w-4 h-4 text-foreground mt-0.5" />
             <div>
@@ -79,7 +79,7 @@ const PrivacySecurityPage = () => {
         {role === "agent" && (
           <button
             onClick={() => setPinModal(true)}
-            className="w-full bg-card rounded-lg p-4 border border-border mb-3 flex items-center gap-3"
+            className="w-full bg-card rounded-2xl p-4 border border-border mb-3 flex items-center gap-3"
           >
             <KeyRound className="w-4 h-4 text-foreground" />
             <div className="flex-1 text-left">
@@ -94,7 +94,7 @@ const PrivacySecurityPage = () => {
         {/* Export */}
         <button
           onClick={onExport}
-          className="w-full bg-card rounded-lg p-4 border border-border mb-3 flex items-center gap-3"
+          className="w-full bg-card rounded-2xl p-4 border border-border mb-3 flex items-center gap-3"
         >
           <Download className="w-4 h-4 text-foreground" />
           <div className="flex-1 text-left">

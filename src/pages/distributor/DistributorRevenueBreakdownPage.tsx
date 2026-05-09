@@ -80,7 +80,7 @@ const DistributorRevenueBreakdownPage = () => {
         ) : (
           <div className="space-y-3 mb-6">
             {breakdown.map((p, i) => (
-              <div key={i} className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
+              <div key={i} className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">{p.name}</p>
                   <p className="text-xs text-muted-foreground">{p.units} units sold</p>

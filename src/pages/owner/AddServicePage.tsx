@@ -78,7 +78,7 @@ const AddServicePage = () => {
             <label className="text-sm font-medium text-foreground block mb-3">Session Tiers</label>
             <div className="space-y-3">
               {tiers.map((tier, idx) => (
-                <div key={idx} className="bg-card rounded-lg p-4 border border-border relative">
+                <div key={idx} className="bg-card rounded-2xl p-4 border border-border relative">
                   {tiers.length > 1 && (
                     <button onClick={() => removeTier(idx)} className="absolute top-2 right-2 text-muted-foreground">
                       <X className="w-4 h-4" />

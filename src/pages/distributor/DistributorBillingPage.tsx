@@ -68,7 +68,7 @@ const DistributorBillingPage = () => {
         <h1 className="text-lg font-bold text-foreground mb-6">Payments and Plans</h1>
 
         {/* Plan */}
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-5">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-5">
           <p className="text-xs text-muted-foreground mb-1">Current plan</p>
           <p className="text-base font-bold text-foreground">Distributor Pro</p>
           <p className="text-xs text-muted-foreground mt-1">Listing, orders, goodwill, and analytics included</p>
@@ -83,7 +83,7 @@ const DistributorBillingPage = () => {
         ) : (
           <div className="space-y-2 mb-5">
             {subs.map((s) => (
-              <div key={s.id} className="bg-card rounded-lg p-3 border border-border flex items-center justify-between">
+              <div key={s.id} className="bg-card rounded-2xl p-3 border border-border flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-foreground">{s.agentName}</p>
                   <p className="text-xs text-muted-foreground">Renews {fmtDate(s.nextRenewal)}</p>
@@ -111,7 +111,7 @@ const DistributorBillingPage = () => {
             </h3>
             <div className="space-y-2 mb-5">
               {pending.map((s) => (
-                <div key={s.id} className="bg-card rounded-lg p-3 border border-warning/40 flex items-center justify-between">
+                <div key={s.id} className="bg-card rounded-2xl p-3 border border-warning/40 flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-foreground">{s.agentName}</p>
                     <p className="text-xs text-warning">Due {fmtDate(s.nextRenewal)}</p>
@@ -141,7 +141,7 @@ const DistributorBillingPage = () => {
         ) : (
           <div className="space-y-2 mb-5">
             {history.map((p) => (
-              <div key={p.id} className="bg-card rounded-lg p-3 border border-border flex items-center justify-between">
+              <div key={p.id} className="bg-card rounded-2xl p-3 border border-border flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{p.description}</p>
                   <p className="text-xs text-muted-foreground">{fmtDate(p.date)} • ₦{p.amount.toLocaleString()}</p>
@@ -175,7 +175,7 @@ const DistributorBillingPage = () => {
         ) : (
           <div className="space-y-2 mb-5">
             {methods.map((m) => (
-              <div key={m.id} className="bg-card rounded-lg p-3 border border-border flex items-center gap-3">
+              <div key={m.id} className="bg-card rounded-2xl p-3 border border-border flex items-center gap-3">
                 <CreditCard className="w-5 h-5 text-muted-foreground" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{m.label}</p>

@@ -74,12 +74,12 @@ const DistributorInventoryPage = () => {
 
         <div className="space-y-3 mb-6">
           {filtered.length === 0 ? (
-            <div className="bg-card rounded-lg p-6 border border-border text-center">
+            <div className="bg-card rounded-2xl p-6 border border-border text-center">
               <p className="text-sm text-muted-foreground">No products found</p>
             </div>
           ) : (
             filtered.map((p) => (
-              <div key={p.id} className="bg-card rounded-lg border border-border overflow-hidden">
+              <div key={p.id} className="bg-card rounded-2xl border border-border overflow-hidden">
                 <button
                   onClick={() => navigate(`/distributor/inventory/${p.id}`)}
                   className="w-full p-4 text-left active:opacity-80"

@@ -35,7 +35,7 @@ const RestockPage = () => {
               const avgDaily = Math.round(p.salesHistory.reduce((a, b) => a + b, 0) / 7);
               const suggestedRestock = avgDaily * 7;
               return (
-                <div key={p.id} className="bg-card rounded-lg p-4 border border-border">
+                <div key={p.id} className="bg-card rounded-2xl p-4 border border-border">
                   <div className="flex items-center gap-3 mb-3">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${p.status === "critical" ? "bg-critical/10" : "bg-warning/10"}`}>
                       <Package className={`w-5 h-5 ${p.status === "critical" ? "text-critical" : "text-warning"}`} />

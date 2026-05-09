@@ -112,7 +112,7 @@ const InventoryPage = () => {
         {/* Products */}
         <div className="space-y-2">
           {filtered.map((p) => (
-            <div key={p.id} className="bg-card rounded-lg border border-border overflow-hidden">
+            <div key={p.id} className="bg-card rounded-2xl border border-border overflow-hidden">
               <button
                 onClick={() => navigate(`/owner/product/${p.id}`)}
                 className="w-full p-4 flex items-center gap-3 text-left"

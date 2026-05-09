@@ -40,7 +40,7 @@ const GoodwillDistributorsPage = () => {
               <button
                 key={d.id}
                 onClick={() => navigate(`/owner/distributor/${d.id}`)}
-                className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 text-left active:opacity-80"
+                className="w-full bg-card rounded-2xl p-4 border border-border flex items-center gap-3 text-left active:opacity-80"
               >
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <span className="text-lg font-bold text-primary">{d.logo}</span>

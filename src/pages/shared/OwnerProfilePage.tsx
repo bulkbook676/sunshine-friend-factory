@@ -79,7 +79,7 @@ const OwnerProfilePage = () => {
         </div>
 
         {/* Tenure */}
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-4 flex items-center gap-3">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 mb-4 flex items-center gap-3">
           <Calendar className="w-5 h-5 text-primary" />
           <div>
             <p className="text-sm font-semibold text-foreground">
@@ -91,11 +91,11 @@ const OwnerProfilePage = () => {
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground mb-1">Products in Inventory</p>
             <p className="text-2xl font-bold text-foreground">{products.length}</p>
           </div>
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground mb-1">Months Active</p>
             <p className="text-2xl font-bold text-foreground">{owner.monthsActive}</p>
           </div>
@@ -107,7 +107,7 @@ const OwnerProfilePage = () => {
           {products.map((p) => {
             const totalSold = p.salesHistory.reduce((s, n) => s + n, 0);
             return (
-              <div key={p.id} className="bg-card rounded-lg p-4 border border-border flex items-center gap-3">
+              <div key={p.id} className="bg-card rounded-2xl p-4 border border-border flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <Package className="w-5 h-5 text-primary" />
                 </div>

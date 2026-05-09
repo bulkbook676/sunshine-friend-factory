@@ -161,7 +161,7 @@ const DistributorProfilePage = () => {
             <button
               key={p.id}
               onClick={() => openProduct(p)}
-              className="w-full bg-card rounded-lg p-4 border border-border flex items-center gap-3 active:opacity-80 text-left"
+              className="w-full bg-card rounded-2xl p-4 border border-border flex items-center gap-3 active:opacity-80 text-left"
             >
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <Package className="w-5 h-5 text-primary" />

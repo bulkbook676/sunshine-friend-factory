@@ -32,7 +32,7 @@ const ServicesChipsPage = () => {
             <button
               key={s.id}
               onClick={() => navigate(`/owner/service/${s.id}`)}
-              className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity"
+              className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80 transition-opacity"
             >
               <div className="flex items-center justify-between mb-1">
                 <p className="text-sm font-semibold text-foreground">{s.name}</p>
@@ -57,7 +57,7 @@ const ServicesChipsPage = () => {
         {/* Chip Management */}
         <h2 className="text-sm font-semibold text-foreground mb-3">Chip Management</h2>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-3">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-3">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Coins className="w-4 h-4 text-primary" />
@@ -81,7 +81,7 @@ const ServicesChipsPage = () => {
           )}
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-6">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-6">
           <button
             onClick={() => setAutoApproveChips(!autoApproveChips)}
             className="w-full flex items-center justify-between"
@@ -102,7 +102,7 @@ const ServicesChipsPage = () => {
         <h2 className="text-sm font-semibold text-foreground mb-3">Agent Chip Allocations</h2>
         <div className="space-y-2 mb-6">
           {agentAllocations.map((a) => (
-            <div key={a.agentName} className="bg-card rounded-lg p-4 border border-border">
+            <div key={a.agentName} className="bg-card rounded-2xl p-4 border border-border">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-semibold text-foreground">{a.agentName}</p>
                 <button

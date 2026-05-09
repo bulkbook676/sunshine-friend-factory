@@ -65,7 +65,7 @@ const ProductDetailPage = () => {
         {!lastUpdated && <div className="mb-6" />}
 
         {/* Stock Level */}
-        <div className="bg-card rounded-lg p-5 border border-border mb-4 text-center">
+        <div className="bg-card rounded-2xl p-5 border border-border mb-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">Current Stock</p>
           <p className="text-5xl font-bold text-foreground">{product.currentStock}</p>
           <p className="text-sm text-muted-foreground mt-1">{product.sellingUnit}s</p>
@@ -73,7 +73,7 @@ const ProductDetailPage = () => {
 
         {/* Units & Pricing */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground">How you buy it</p>
             <p className="text-sm font-semibold text-foreground">{product.buyingUnit}</p>
             {editing ? (
@@ -90,7 +90,7 @@ const ProductDetailPage = () => {
               <p className="text-xs text-muted-foreground mt-1">₦{costPrice.toLocaleString()}</p>
             )}
           </div>
-          <div className="bg-card rounded-lg p-4 border border-border">
+          <div className="bg-card rounded-2xl p-4 border border-border">
             <p className="text-xs text-muted-foreground">How you sell it</p>
             <p className="text-sm font-semibold text-foreground">{product.sellingUnit}</p>
             {editing ? (
@@ -109,13 +109,13 @@ const ProductDetailPage = () => {
           </div>
         </div>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-4">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4">
           <p className="text-xs text-muted-foreground">1 {product.buyingUnit} = {product.unitsPerBuyingUnit} {product.sellingUnit}s</p>
         </div>
 
         {/* Revenue — two cards */}
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-success/5 border border-success/20 rounded-lg p-4">
+          <div className="bg-success/5 border border-success/20 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="w-4 h-4 text-success" />
               <span className="text-xs text-muted-foreground">Current Revenue</span>
@@ -123,7 +123,7 @@ const ProductDetailPage = () => {
             <p className="text-xl font-bold text-success">₦{currentRevenue.toLocaleString()}</p>
             <p className="text-[10px] text-muted-foreground mt-1">From sales recorded</p>
           </div>
-          <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+          <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="w-4 h-4 text-primary" />
               <span className="text-xs text-muted-foreground">Total Revenue</span>
@@ -134,7 +134,7 @@ const ProductDetailPage = () => {
         </div>
 
         {/* Sales Chart */}
-        <div className="bg-card rounded-lg p-4 border border-border mb-4">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-4">
           <h3 className="text-sm font-semibold text-foreground mb-4">Sales — Last 7 Days</h3>
           <div className="flex items-end justify-between gap-1 h-24">
             {product.salesHistory.map((v, i) => (

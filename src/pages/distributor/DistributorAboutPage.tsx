@@ -25,12 +25,12 @@ const DistributorAboutPage = () => {
         </button>
         <h1 className="text-lg font-bold text-foreground mb-6">About This App</h1>
 
-        <div className="bg-card rounded-lg p-4 border border-border mb-5">
+        <div className="bg-card rounded-2xl p-4 border border-border mb-5">
           <p className="text-xs text-muted-foreground mb-1">Version</p>
           <p className="text-base font-bold text-foreground">Bulkbook {APP_VERSION}</p>
         </div>
 
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
+        <div className="bg-card rounded-2xl border border-border overflow-hidden">
           {items.map((item, idx) => (
             <button
               key={idx}
