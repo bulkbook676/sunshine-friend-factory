@@ -230,7 +230,7 @@ const DistributorPromiseTrackerPage = () => {
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium border border-primary/30"
                       >
                         <Wallet className="w-3 h-3" />
-                        They Paid Part of It
+                        Deposit
                       </button>
                     </div>
                   </div>

@@ -11,9 +11,6 @@ const PAYMENT_OPTS = ["Cash", "Bank Transfer", "Online Payment", "Goodwill"];
 interface FormState {
   name: string;
   category: string;
-  costPrice: string;
-  sellingPrice: string;
-  currentStock: string;
   freeShippingThreshold: string;
   goodwillEnabled: boolean;
   goodwillConditions?: GoodwillConditions;
@@ -44,9 +41,6 @@ const DistributorAddProductPage = () => {
     restoredDraft ?? {
       name: existing?.name ?? "",
       category: existing?.category ?? "",
-      costPrice: existing?.costPrice?.toString() ?? "",
-      sellingPrice: existing?.sellingPrice?.toString() ?? "",
-      currentStock: existing?.currentStock?.toString() ?? "",
       freeShippingThreshold: existing?.freeShippingThreshold?.toString() ?? "",
       goodwillEnabled: existing?.goodwillEnabled ?? false,
       goodwillConditions:
@@ -74,7 +68,7 @@ const DistributorAddProductPage = () => {
     sellingUnitsPerBuying: "",
     totalOrderAmount: "",
     transportFee: "",
-    targetMargin: "30",
+    actualSellingPrice: existing?.sellingPrice?.toString() ?? "",
   });
   const updateCalc = (k: keyof typeof calc, v: string) => setCalc((p) => ({ ...p, [k]: v }));
   const fmt = (n: number) => `₦${Math.round(n).toLocaleString()}`;
@@ -84,31 +78,25 @@ const DistributorAddProductPage = () => {
     const perBuying = parseFloat(calc.sellingUnitsPerBuying) || 0;
     const total = parseFloat(calc.totalOrderAmount) || 0;
     const transport = parseFloat(calc.transportFee) || 0;
-    const margin = parseFloat(calc.targetMargin) || 0;
-    if (!orderQty || !perBuying || !total) {
-      return { cogPerBuying: 0, expPerBuying: 0, totalCostPerBuying: 0, costPerSelling: 0, minPrice: 0, idealPrice: 0 };
-    }
-    const cogPerBuying = total / orderQty;
-    const expPerBuying = transport / orderQty;
+    const asp = parseFloat(calc.actualSellingPrice) || 0;
+    const cogPerBuying = orderQty > 0 ? total / orderQty : 0;
+    const expPerBuying = orderQty > 0 ? transport / orderQty : 0;
     const totalCostPerBuying = cogPerBuying + expPerBuying;
-    const costPerSelling = totalCostPerBuying / perBuying;
-    const minPrice = costPerSelling * 1.1; // 10% safety
-    const idealPrice = costPerSelling * (1 + margin / 100);
-    return { cogPerBuying, expPerBuying, totalCostPerBuying, costPerSelling, minPrice, idealPrice };
-  }, [calc]);
-
-  const applyCalc = () => {
-    if (!calcResult.costPerSelling) {
-      toast.error("Fill in the cost calculator first");
-      return;
+    const costPerSelling = perBuying > 0 ? totalCostPerBuying / perBuying : 0;
+    const minPrice = costPerSelling * 1.1;
+    const idealPrice = costPerSelling * 1.3;
+    const openingStock = orderQty * perBuying;
+    const marginPerUnit = asp - costPerSelling;
+    const marginPct = costPerSelling > 0 ? ((asp - costPerSelling) / costPerSelling) * 100 : 0;
+    let verdictLabel = "";
+    let verdictColor = "";
+    if (asp > 0 && costPerSelling > 0) {
+      if (marginPerUnit < 0) { verdictLabel = "You are losing money at this price"; verdictColor = "text-critical"; }
+      else if (marginPct < 15) { verdictLabel = "Small profit — consider increasing price"; verdictColor = "text-warning"; }
+      else { verdictLabel = "Good profit"; verdictColor = "text-success"; }
     }
-    setForm((p) => ({
-      ...p,
-      costPrice: Math.round(calcResult.costPerSelling).toString(),
-      sellingPrice: Math.round(calcResult.idealPrice).toString(),
-    }));
-    toast.success("Prices filled from calculator");
-  };
+    return { cogPerBuying, expPerBuying, totalCostPerBuying, costPerSelling, minPrice, idealPrice, openingStock, marginPerUnit, marginPct, verdictLabel, verdictColor };
+  }, [calc]);
 
   const buyingLabel = (calc.buyingUnit || "buying unit").toLowerCase();
 
@@ -130,11 +118,11 @@ const DistributorAddProductPage = () => {
   useEffect(() => {
     if (isEdit) return;
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...form, paymentMethods }));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...form, paymentMethods, calc }));
     } catch {
       // ignore
     }
-  }, [form, paymentMethods, isEdit]);
+  }, [form, paymentMethods, calc, isEdit]);
 
   const allCategories = [...BASE_CATEGORIES, ...customCategories];
 
@@ -161,16 +149,17 @@ const DistributorAddProductPage = () => {
   };
 
   const handleSave = () => {
-    if (!form.name || !form.category || !form.costPrice || !form.sellingPrice || !form.currentStock) {
-      toast.error("Fill in required fields");
+    const sellingPrice = parseFloat(calc.actualSellingPrice) || 0;
+    if (!form.name || !form.category || !calcResult.costPerSelling || !sellingPrice || !calcResult.openingStock) {
+      toast.error("Fill in product details and the cost calculator");
       return;
     }
     const payload = {
       name: form.name,
       category: form.category,
-      costPrice: parseFloat(form.costPrice),
-      sellingPrice: parseFloat(form.sellingPrice),
-      currentStock: parseInt(form.currentStock),
+      costPrice: Math.round(calcResult.totalCostPerBuying),
+      sellingPrice,
+      currentStock: Math.round(calcResult.openingStock),
       freeShippingThreshold: form.freeShippingThreshold ? parseFloat(form.freeShippingThreshold) : undefined,
       goodwillEnabled: form.goodwillEnabled,
       goodwillRepaymentDays: form.goodwillEnabled ? form.goodwillConditions?.repaymentDays : undefined,
@@ -343,41 +332,10 @@ const DistributorAddProductPage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-sm font-medium text-foreground block mb-1.5">Cost Price (₦)</label>
-              <input
-                type="number"
-                value={form.costPrice}
-                onChange={(e) => update("costPrice", e.target.value)}
-                className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground block mb-1.5">Selling Price (₦)</label>
-              <input
-                type="number"
-                value={form.sellingPrice}
-                onChange={(e) => update("sellingPrice", e.target.value)}
-                className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-1.5">Current Stock</label>
-            <input
-              type="number"
-              value={form.currentStock}
-              onChange={(e) => update("currentStock", e.target.value)}
-              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
           {/* Cost Calculator (helper) */}
           <div className="border-t border-border pt-4 mt-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Cost Calculator</p>
-            <p className="text-[11px] text-muted-foreground mb-3">Work out exactly what each piece costs you, then auto-fill the prices above.</p>
+            <p className="text-[11px] text-muted-foreground mb-3">Work out exactly what each piece costs you and set your own price.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -447,16 +405,6 @@ const DistributorAddProductPage = () => {
               className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-1.5">Profit you want on each piece (%)</label>
-            <input
-              type="number" value={calc.targetMargin}
-              onChange={(e) => updateCalc("targetMargin", e.target.value)}
-              placeholder="e.g. 30"
-              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
           <div className="bg-card rounded-2xl border border-border p-4 space-y-2">
             <Row label={`How much you paid per ${buyingLabel}`} value={calcResult.cogPerBuying ? fmt(calcResult.cogPerBuying) : "—"} />
             <Row label={`Expenses per ${buyingLabel}`} value={calcResult.expPerBuying ? fmt(calcResult.expPerBuying) : "—"} />
@@ -466,13 +414,43 @@ const DistributorAddProductPage = () => {
               <Row label="Lowest price you should sell at" value={calcResult.minPrice ? fmt(calcResult.minPrice) : "—"} tone="warning" />
               <Row label="Best price to sell at (good profit)" value={calcResult.idealPrice ? fmt(calcResult.idealPrice) : "—"} tone="success" />
             </div>
-            <button
-              type="button" onClick={applyCalc}
-              className="w-full h-10 mt-2 rounded-lg bg-primary/10 text-primary text-sm font-semibold border border-primary/20"
-            >
-              Use these prices
-            </button>
           </div>
+
+          <div>
+            <label className="text-sm font-medium text-foreground block mb-1.5">Your selling price</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₦</span>
+              <input
+                type="number"
+                value={calc.actualSellingPrice}
+                onChange={(e) => updateCalc("actualSellingPrice", e.target.value)}
+                placeholder="Your price per selling unit"
+                className="w-full h-12 pl-8 pr-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          {calcResult.verdictLabel && (
+            <div className={`rounded-2xl p-4 border ${calcResult.verdictColor === "text-success" ? "bg-success/5 border-success/20" : calcResult.verdictColor === "text-warning" ? "bg-warning/5 border-warning/20" : "bg-critical/5 border-critical/20"}`}>
+              <p className={`text-sm font-semibold mb-2 ${calcResult.verdictColor}`}>{calcResult.verdictLabel}</p>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Profit per piece</span>
+                <span className={`font-semibold ${calcResult.verdictColor}`}>{fmt(calcResult.marginPerUnit)}</span>
+              </div>
+              <div className="flex justify-between text-sm mt-1">
+                <span className="text-muted-foreground">Profit percentage</span>
+                <span className={`font-semibold ${calcResult.verdictColor}`}>{Math.round(calcResult.marginPct)}%</span>
+              </div>
+            </div>
+          )}
+
+          {calcResult.openingStock > 0 && (
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">Opening Stock</p>
+              <p className="text-2xl font-bold text-primary">{Math.round(calcResult.openingStock).toLocaleString()}</p>
+              <p className="text-[11px] text-muted-foreground mt-1">{calc.sellingUnit.toLowerCase()}s ready to sell</p>
+            </div>
+          )}
 
           <div>
             <label className="text-sm font-medium text-foreground block mb-1.5">
