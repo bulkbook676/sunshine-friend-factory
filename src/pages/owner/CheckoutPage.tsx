@@ -78,7 +78,7 @@ const CheckoutPage = () => {
                               : "bg-primary/10 text-primary"
                           }`}
                         >
-                          {it.paymentType === "goodwill" ? "Goodwill" : "Pay Now"}
+                          {it.paymentType === "goodwill" ? "Pay after selling" : "Pay Now"}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground">

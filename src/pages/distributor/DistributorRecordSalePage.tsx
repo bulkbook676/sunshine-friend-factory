@@ -21,7 +21,7 @@ type Payment = "cash" | "transfer" | "goodwill";
 const PAYMENTS: { value: Payment; label: string }[] = [
   { value: "cash", label: "Cash" },
   { value: "transfer", label: "Transfer" },
-  { value: "goodwill", label: "Goodwill" },
+  { value: "goodwill", label: "Pay after selling" },
 ];
 
 const DistributorRecordSalePage = () => {

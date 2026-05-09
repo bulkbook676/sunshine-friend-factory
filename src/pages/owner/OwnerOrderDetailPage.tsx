@@ -185,7 +185,7 @@ const OwnerOrderDetailPage = () => {
                           : "bg-primary/10 text-primary"
                       }`}
                     >
-                      {i.paymentType === "goodwill" ? "Goodwill" : "Pay Now"}
+                      {i.paymentType === "goodwill" ? "Pay after selling" : "Pay Now"}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">
