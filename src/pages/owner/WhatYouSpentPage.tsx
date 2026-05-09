@@ -91,7 +91,7 @@ const WhatYouSpentPage = () => {
             </div>
           ))}
           <div className="border-t border-border pt-2 flex justify-between">
-            <span className="text-sm font-semibold text-foreground">Amount to Collect Now</span>
+            <span className="text-sm font-semibold text-foreground">Total</span>
             <span className="text-base font-bold text-foreground">{fmt(totalRecurring)}</span>
           </div>
         </div>
@@ -134,7 +134,7 @@ const WhatYouSpentPage = () => {
                 </div>
               ))}
               <div className="border-t border-border pt-2 flex justify-between">
-                <span className="text-sm font-semibold text-foreground">Amount to Collect Now</span>
+                <span className="text-sm font-semibold text-foreground">Total</span>
                 <span className="text-base font-bold text-foreground">{fmt(dailyExpensesTotal)}</span>
               </div>
             </div>
