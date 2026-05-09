@@ -27,8 +27,7 @@ const GoodwillDistributorsPage = () => {
         </button>
 
         <div className="flex items-center gap-2 mb-2">
-          <Handshake className="w-5 h-5 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Products In Good Faith</h1>
+          <h1 className="text-xl font-bold text-foreground">Good Faith Distributors</h1>
         </div>
         <p className="text-sm text-muted-foreground mb-6">
           Distributors offering goods you can pay for after selling
