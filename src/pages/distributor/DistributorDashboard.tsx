@@ -305,7 +305,7 @@ const DistributorDashboard = () => {
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-border">
                     <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${hasGoodwill ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}`}>
-                      {hasGoodwill ? "Goodwill" : "Paid"}
+                      {hasGoodwill ? "Pay after selling" : "Paid"}
                     </span>
                     <button
                       onClick={() => navigate(`/distributor/order/${o.id}`)}
