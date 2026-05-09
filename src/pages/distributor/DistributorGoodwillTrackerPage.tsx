@@ -81,9 +81,9 @@ const DistributorGoodwillTrackerPage = () => {
 
   const filters: { key: Filter; label: string }[] = [
     { key: "all", label: "All" },
-    { key: "ontrack", label: "On Track" },
-    { key: "duesoon", label: "Due Soon" },
-    { key: "overdue", label: "Overdue" },
+    { key: "ontrack", label: "Paying on time" },
+    { key: "duesoon", label: "Pay back soon" },
+    { key: "overdue", label: "Late — follow up" },
   ];
 
   const statusColor = (s: "ontrack" | "duesoon" | "overdue") =>
@@ -181,10 +181,10 @@ const DistributorGoodwillTrackerPage = () => {
                   </div>
                 </div>
 
-                {/* Sell-through */}
+                {/* How much has been sold */}
                 <div className="mb-3">
                   <div className="flex items-center justify-between text-[10px] mb-1">
-                    <span className="text-muted-foreground">Sell-through</span>
+                    <span className="text-muted-foreground">How much has been sold</span>
                     <span className="text-foreground font-medium">{c.sellThroughPct}%</span>
                   </div>
                   <div className="w-full h-1.5 rounded-full bg-muted">
@@ -195,7 +195,7 @@ const DistributorGoodwillTrackerPage = () => {
                   </div>
                 </div>
 
-                {/* Repayment deadline */}
+                {/* Pay back by */}
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-muted-foreground">Repayment due</span>
                   <span className="text-foreground font-medium">

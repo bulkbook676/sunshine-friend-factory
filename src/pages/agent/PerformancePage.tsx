@@ -72,7 +72,7 @@ const PerformancePage = () => {
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium"
           >
             <Target className="w-3.5 h-3.5" />
-            Set Target
+            Set Your Target
           </button>
         </div>
 

@@ -51,7 +51,7 @@ const OwnerDashboard = () => {
         {/* Health Score */}
         <div onClick={() => navigate("/owner/health")} className="bg-card rounded-lg p-4 mb-4 border border-border cursor-pointer active:opacity-80 transition-opacity">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground font-medium">Business Health Score</span>
+            <span className="text-sm text-muted-foreground font-medium">How Your Business Is Doing</span>
             <Zap className="w-4 h-4 text-warning" />
           </div>
           <div className="flex items-baseline gap-1">
@@ -103,12 +103,12 @@ const OwnerDashboard = () => {
           </div>
         </div>
 
-        {/* Dead Stock */}
+        {/* Not Moving */}
         {deadStock.length > 0 && (
           <div className="bg-muted/50 rounded-lg p-4 mb-4 border border-border">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-semibold text-foreground">Dead Stock Alert</span>
+              <span className="text-sm font-semibold text-foreground">Not Moving Alert</span>
             </div>
             {deadStock.map((p) => (
               <div key={p.id} className="flex items-center justify-between py-2">

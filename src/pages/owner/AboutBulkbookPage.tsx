@@ -35,7 +35,7 @@ const AboutBulkbookPage = () => {
           <span className="text-sm">Back</span>
         </button>
         <h1 className="text-lg font-bold text-foreground mb-6">
-          About Bulkbook
+          About This App
         </h1>
 
         <div className="bg-card rounded-lg p-5 border border-border mb-5 text-center">

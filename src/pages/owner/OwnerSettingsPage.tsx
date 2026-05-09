@@ -22,7 +22,7 @@ const OwnerSettingsPage = () => {
 
   const sections = [
     {
-      title: "Business Profile",
+      title: "Your Business Details",
       items: [
         {
           icon: Building2,
@@ -42,13 +42,13 @@ const OwnerSettingsPage = () => {
       ],
     },
     {
-      title: "Billing",
+      title: "Payments and Plans",
       items: [
         { icon: CreditCard, label: "Sub account plan & upgrade", action: () => navigate("/owner/billing") },
       ],
     },
     {
-      title: "Notifications",
+      title: "Alerts and Notifications",
       items: [
         {
           icon: Bell,
@@ -58,7 +58,7 @@ const OwnerSettingsPage = () => {
       ],
     },
     {
-      title: "Privacy & Security",
+      title: "Password and Security",
       items: [
         {
           icon: Lock,
@@ -68,7 +68,7 @@ const OwnerSettingsPage = () => {
       ],
     },
     {
-      title: "Partners",
+      title: "Business Partners",
       items: [
         {
           icon: Users,
@@ -92,7 +92,7 @@ const OwnerSettingsPage = () => {
       items: [
         {
           icon: Info,
-          label: "About Bulkbook",
+          label: "About This App",
           action: () => navigate("/owner/settings/about"),
         },
       ],

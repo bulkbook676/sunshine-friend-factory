@@ -24,13 +24,13 @@ const DistributorSettingsPage = () => {
     setProfile({ defaultGoodwillDays: next });
     setEditingRepayment(false);
     setCustomMode(false);
-    toast.success(`Repayment period set to ${next} days`);
+    toast.success(`How long they have to pay you back set to ${next} days`);
   };
 
   const accountSection = {
     title: "Account",
     items: [
-      { label: "Business Profile", action: () => navigate("/distributor/profile") },
+      { label: "Your Business Details", action: () => navigate("/distributor/profile") },
       { label: "Phone & Password", action: () => navigate("/distributor/settings/account") },
       { label: "Agents", action: () => navigate("/distributor/agents") },
     ],
@@ -40,11 +40,11 @@ const DistributorSettingsPage = () => {
     title: "Other",
     items: [
       { label: "Stock Audit", action: () => navigate("/distributor/stock-audit") },
-      { label: "Notifications", action: () => navigate("/distributor/settings/notifications") },
-      { label: "Partners", action: () => navigate("/distributor/settings/partners") },
-      { label: "Billing", action: () => navigate("/distributor/settings/billing") },
-      { label: "Privacy & Security", action: () => navigate("/distributor/settings/privacy") },
-      { label: "About Bulkbook", action: () => navigate("/distributor/settings/about") },
+      { label: "Alerts and Notifications", action: () => navigate("/distributor/settings/notifications") },
+      { label: "Business Partners", action: () => navigate("/distributor/settings/partners") },
+      { label: "Payments and Plans", action: () => navigate("/distributor/settings/billing") },
+      { label: "Password and Security", action: () => navigate("/distributor/settings/privacy") },
+      { label: "About This App", action: () => navigate("/distributor/settings/about") },
     ],
   };
 
@@ -98,7 +98,7 @@ const DistributorSettingsPage = () => {
             Goodwill Settings
           </h3>
           <div className="bg-card rounded-lg border border-border overflow-hidden">
-            {/* Repayment period — view + edit */}
+            {/* How long they have to pay you back — view + edit */}
             <div className="p-4">
               <p className="text-xs text-muted-foreground mb-1">Default repayment period</p>
               {editingRepayment ? (

@@ -31,7 +31,7 @@ const PromiseTrackerPage = () => {
 
   const handleMarkPaid = (id: string) => {
     markPromisePaid(id);
-    toast.success("Marked as paid — moved to Cash In Hand");
+    toast.success("Marked as paid — moved to Money you've already collected");
   };
 
   const openDeposit = (id: string) => {
@@ -77,12 +77,12 @@ const PromiseTrackerPage = () => {
             <ArrowLeft className="w-5 h-5" />
             <span className="text-sm">Back</span>
           </button>
-          <h1 className="text-base font-bold text-foreground">Cash In Promise</h1>
+          <h1 className="text-base font-bold text-foreground">Money owed to you</h1>
           <div className="w-12" />
         </div>
 
         <div className="text-center mb-6">
-          <p className="text-xs text-muted-foreground mb-1">Total Outstanding</p>
+          <p className="text-xs text-muted-foreground mb-1">Total Owed to You</p>
           <p className="text-3xl font-bold text-primary">₦{totalOutstanding.toLocaleString()}</p>
         </div>
 
@@ -154,14 +154,14 @@ const PromiseTrackerPage = () => {
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-success text-primary-foreground text-xs font-medium"
                       >
                         <Check className="w-3 h-3" />
-                        Mark as Paid
+                        They've Paid
                       </button>
                       <button
                         onClick={() => openDeposit(s.id)}
                         className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium border border-primary/30"
                       >
                         <Wallet className="w-3 h-3" />
-                        Record Deposit
+                        They Paid Part of It
                       </button>
                     </div>
                   </div>

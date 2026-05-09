@@ -52,7 +52,7 @@ const BusinessProfilePage = () => {
           <span className="text-sm">Back</span>
         </button>
         <h1 className="text-lg font-bold text-foreground mb-6">
-          Business Profile
+          Your Business Details
         </h1>
 
         {/* Logo */}

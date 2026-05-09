@@ -44,7 +44,7 @@ const NetProfitBreakdownPage = () => {
           <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-muted-foreground">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-lg font-bold text-foreground">Net Profit Breakdown</h1>
+          <h1 className="text-lg font-bold text-foreground">Your Profit Breakdown</h1>
         </div>
 
         {/* Summary */}
@@ -58,12 +58,12 @@ const NetProfitBreakdownPage = () => {
             <span className="text-sm font-semibold text-foreground">₦{Math.round(totalProductCost).toLocaleString()}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-sm text-muted-foreground">Daily Expenses</span>
+            <span className="text-sm text-muted-foreground">Money spent running your business</span>
             <span className="text-sm font-semibold text-critical">₦{totalOperational.toLocaleString()}</span>
           </div>
           <div className="border-t border-border pt-2">
             <div className="flex justify-between">
-              <span className="text-sm font-semibold text-foreground">Net Profit</span>
+              <span className="text-sm font-semibold text-foreground">Your Profit</span>
               <span className={`text-lg font-bold ${netProfit >= 0 ? "text-success" : "text-critical"}`}>
                 ₦{Math.abs(Math.round(netProfit)).toLocaleString()}
                 {netProfit < 0 && " (loss)"}

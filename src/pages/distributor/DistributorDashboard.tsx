@@ -89,7 +89,7 @@ const DistributorDashboard = () => {
           className="w-full text-left bg-card rounded-lg p-4 mb-4 border border-border active:opacity-80"
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground font-medium">Business Health Score</span>
+            <span className="text-sm text-muted-foreground font-medium">How Your Business Is Doing</span>
             <Zap className="w-4 h-4 text-warning" />
           </div>
           <div className="flex items-baseline gap-1">
@@ -163,12 +163,12 @@ const DistributorDashboard = () => {
           </div>
         )}
 
-        {/* Dead Stock Alert */}
+        {/* Not Moving Alert */}
         {deadStock.length > 0 && (
           <div className="bg-muted/50 rounded-lg p-4 mb-4 border border-border">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-semibold text-foreground">Goods Not Moving</span>
+              <span className="text-sm font-semibold text-foreground">Stock that hasn't sold in 30 days</span>
             </div>
             {deadStock.slice(0, 3).map((p) => (
               <div key={p.id} className="flex items-center justify-between py-2">

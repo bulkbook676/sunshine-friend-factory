@@ -74,7 +74,7 @@ const DistributorGoodwillConditionsPage = () => {
         <div className="bg-card rounded-lg p-4 border border-border mb-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-foreground">Enable Goodwill for this product</p>
+              <p className="text-sm font-semibold text-foreground">Allow buyers to pay after selling</p>
               <p className="text-xs text-muted-foreground">Allow qualified buyers to pay later</p>
             </div>
             <button
@@ -136,9 +136,9 @@ const DistributorGoodwillConditionsPage = () => {
               />
             </div>
 
-            {/* Repayment period */}
+            {/* How long they have to pay you back */}
             <div>
-              <label className="text-sm font-medium text-foreground block mb-1">Repayment period</label>
+              <label className="text-sm font-medium text-foreground block mb-1">How long they have to pay you back</label>
               <select
                 value={repayment}
                 onChange={(e) => setRepayment(e.target.value)}

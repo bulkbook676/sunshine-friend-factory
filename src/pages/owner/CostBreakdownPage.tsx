@@ -63,7 +63,7 @@ const CostBreakdownPage = () => {
         <p className="text-sm text-muted-foreground mb-6">Where your money went</p>
 
         {/* Section 1: Product Costs */}
-        <h3 className="text-sm font-semibold text-foreground mb-3">Cost of Goods</h3>
+        <h3 className="text-sm font-semibold text-foreground mb-3">Price you paid for the goods</h3>
         <div className="space-y-3 mb-6">
           {cogBreakdown.map((p, i) => (
             <div key={i} className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
@@ -88,8 +88,8 @@ const CostBreakdownPage = () => {
           ))}
         </div>
 
-        {/* Section 2: Daily Expenses */}
-        <h3 className="text-sm font-semibold text-foreground mb-3">Daily Expenses</h3>
+        {/* Section 2: Money spent running your business */}
+        <h3 className="text-sm font-semibold text-foreground mb-3">Money spent running your business</h3>
         <div className="space-y-3 mb-6">
           {operationalExpenses.map((e) => (
             <div key={e.id} className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
@@ -119,7 +119,7 @@ const CostBreakdownPage = () => {
         <div className="bg-primary/10 rounded-lg p-5 mb-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Cost of Goods</span>
+              <span className="text-xs text-muted-foreground">Price you paid for the goods</span>
               <span className="text-sm font-semibold text-foreground">₦{Math.round(totalCog).toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between">
@@ -127,7 +127,7 @@ const CostBreakdownPage = () => {
               <span className="text-sm font-semibold text-foreground">₦{totalProductExpenses.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Daily Expenses</span>
+              <span className="text-xs text-muted-foreground">Money spent running your business</span>
               <span className="text-sm font-semibold text-critical">₦{totalOperational.toLocaleString()}</span>
             </div>
             <div className="h-px bg-border my-1" />

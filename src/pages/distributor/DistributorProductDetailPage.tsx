@@ -69,7 +69,7 @@ const DistributorProductDetailPage = () => {
 
         <div className="bg-card rounded-lg p-4 border border-border mb-4">
           <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Margin per unit</span>
+            <span className="text-muted-foreground">Profit per piece</span>
             <span className="text-foreground font-medium">
               ₦{margin.toLocaleString()} ({marginPct.toFixed(0)}%)
             </span>
@@ -111,7 +111,7 @@ const DistributorProductDetailPage = () => {
           {product.goodwillEnabled && product.goodwillConditions && (
             <div className="space-y-1.5 mt-3">
               <p className="text-xs text-muted-foreground">
-                Repayment period:{" "}
+                How long they have to pay you back:{" "}
                 <span className="text-foreground font-medium">
                   {product.goodwillConditions.repaymentDays} days
                 </span>

@@ -98,12 +98,12 @@ const CheckoutPage = () => {
         {/* Totals */}
         <div className="bg-card rounded-lg p-4 border border-border mb-6 space-y-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Grand Total</span>
+            <span className="text-muted-foreground">Total Amount</span>
             <span className="text-foreground font-semibold">₦{grandTotal.toLocaleString()}</span>
           </div>
           {goodwillTotal > 0 && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-warning">Goodwill Amount (To be repaid later)</span>
+              <span className="text-warning">Amount to Pay Later (To be repaid later)</span>
               <span className="text-warning font-semibold">₦{goodwillTotal.toLocaleString()}</span>
             </div>
           )}

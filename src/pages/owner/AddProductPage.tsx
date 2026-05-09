@@ -243,9 +243,9 @@ const AddProductPage = () => {
     let verdictLabel = "";
     let verdictColor = "";
     if (asp > 0 && costPerSelling > 0) {
-      if (marginPerUnit < 0) { verdictLabel = "Selling at a loss"; verdictColor = "text-critical"; }
-      else if (marginPct < 15) { verdictLabel = "Low margin"; verdictColor = "text-warning"; }
-      else { verdictLabel = "Healthy margin"; verdictColor = "text-success"; }
+      if (marginPerUnit < 0) { verdictLabel = "You are losing money at this price"; verdictColor = "text-critical"; }
+      else if (marginPct < 15) { verdictLabel = "Small profit — consider increasing price"; verdictColor = "text-warning"; }
+      else { verdictLabel = "Good profit"; verdictColor = "text-success"; }
     }
 
     return {
@@ -608,7 +608,7 @@ const AddProductPage = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <SelectField
-              label="Buying Unit"
+              label="How you buy it"
               value={form.buyingUnit}
               onChange={(v) => update("buyingUnit", v)}
               options={allUnits}
@@ -616,7 +616,7 @@ const AddProductPage = () => {
               error={errors.buyingUnit}
             />
             <SelectField
-              label="Selling Unit"
+              label="How you sell it"
               value={form.sellingUnit}
               onChange={(v) => update("sellingUnit", v)}
               options={allUnits}
@@ -653,20 +653,20 @@ const AddProductPage = () => {
           <TextField label="Total amount paid for this order" placeholder="e.g. ₦50,000" value={form.totalOrderAmount} onChange={(v) => update("totalOrderAmount", v)} type="number" prefix="₦" error={errors.totalOrderAmount} />
           <TextField label="Total transport and handling for this order" placeholder="e.g. ₦2,000" value={form.transportFee} onChange={(v) => update("transportFee", v)} type="number" prefix="₦" />
 
-          <ReadOnlyField label="Cost of Goods per Buying Unit" value={calc.cogPerBuying > 0 ? fmt(calc.cogPerBuying) : "—"} color="text-primary" />
-          <ReadOnlyField label="Expenses per Buying Unit" value={calc.expPerBuying > 0 ? fmt(calc.expPerBuying) : "—"} color="text-primary" />
-          <ReadOnlyField label="Total Cost per Buying Unit" value={calc.totalCostPerBuying > 0 ? fmt(calc.totalCostPerBuying) : "—"} />
-          <ReadOnlyField label="Cost per Selling Unit" value={calc.costPerSelling > 0 ? fmt(calc.costPerSelling) : "—"} />
+          <ReadOnlyField label="How much you paid per buying unit" value={calc.cogPerBuying > 0 ? fmt(calc.cogPerBuying) : "—"} color="text-primary" />
+          <ReadOnlyField label="Expenses per How you buy it" value={calc.expPerBuying > 0 ? fmt(calc.expPerBuying) : "—"} color="text-primary" />
+          <ReadOnlyField label="Full cost per buying unit including transport" value={calc.totalCostPerBuying > 0 ? fmt(calc.totalCostPerBuying) : "—"} />
+          <ReadOnlyField label="What each piece costs you" value={calc.costPerSelling > 0 ? fmt(calc.costPerSelling) : "—"} />
 
           {/* Pricing */}
           <div className="border-t border-border pt-4 mt-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Pricing</p>
           </div>
 
-          <ReadOnlyField label="Minimum Viable Price (10% margin)" value={calc.minViablePrice > 0 ? fmt(calc.minViablePrice) : "—"} color="text-warning" />
-          <ReadOnlyField label="Ideal Selling Price (30% margin)" value={calc.idealPrice > 0 ? fmt(calc.idealPrice) : "—"} color="text-success" />
+          <ReadOnlyField label="Lowest price you should sell at" value={calc.minViablePrice > 0 ? fmt(calc.minViablePrice) : "—"} color="text-warning" />
+          <ReadOnlyField label="Best price to sell at (good profit)" value={calc.idealPrice > 0 ? fmt(calc.idealPrice) : "—"} color="text-success" />
 
-          <TextField label="Actual Selling Price" placeholder="Your price per selling unit" value={form.actualSellingPrice} onChange={(v) => update("actualSellingPrice", v)} type="number" prefix="₦" error={errors.actualSellingPrice} />
+          <TextField label="Your selling price" placeholder="Your price per selling unit" value={form.actualSellingPrice} onChange={(v) => update("actualSellingPrice", v)} type="number" prefix="₦" error={errors.actualSellingPrice} />
 
           {calc.verdictLabel && (
             <div className={`rounded-lg p-4 border ${calc.verdictColor === "text-success" ? "bg-success/5 border-success/20" : calc.verdictColor === "text-warning" ? "bg-warning/5 border-warning/20" : "bg-critical/5 border-critical/20"}`}>
@@ -675,11 +675,11 @@ const AddProductPage = () => {
                 <span className={`text-sm font-semibold ${calc.verdictColor}`}>{calc.verdictLabel}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Margin per unit</span>
+                <span className="text-sm text-muted-foreground">Profit per piece</span>
                 <span className={`text-sm font-semibold ${calc.verdictColor}`}>{fmt(calc.marginPerUnit)}</span>
               </div>
               <div className="flex justify-between mt-1">
-                <span className="text-sm text-muted-foreground">Margin percentage</span>
+                <span className="text-sm text-muted-foreground">Profit percentage</span>
                 <span className={`text-sm font-semibold ${calc.verdictColor}`}>{Math.round(calc.marginPct)}%</span>
               </div>
             </div>
@@ -692,12 +692,12 @@ const AddProductPage = () => {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-card border border-border rounded-lg p-4">
-              <p className="text-xs text-muted-foreground mb-1">Opening Stock</p>
+              <p className="text-xs text-muted-foreground mb-1">How many you are adding</p>
               <p className="text-2xl font-bold text-foreground">{Math.round(calc.openingStock).toLocaleString()}</p>
               <p className="text-[11px] text-muted-foreground mt-1">{sellingUnitLabel}{calc.openingStock !== 1 ? "s" : ""}</p>
             </div>
             <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-              <p className="text-xs text-muted-foreground mb-1">Current Inventory</p>
+              <p className="text-xs text-muted-foreground mb-1">How many you have left</p>
               <p className="text-2xl font-bold text-primary">{Math.round(calc.openingStock).toLocaleString()}</p>
               <p className="text-[11px] text-muted-foreground mt-1">{sellingUnitLabel}{calc.openingStock !== 1 ? "s" : ""}</p>
             </div>
@@ -706,7 +706,7 @@ const AddProductPage = () => {
           {/* Apply price toggle */}
           <div className="bg-card border border-border rounded-lg p-4 flex items-start justify-between gap-3">
             <div className="flex-1">
-              <p className="text-sm font-medium text-foreground">Apply new price to current inventory</p>
+              <p className="text-sm font-medium text-foreground">Use this new price for existing stock too</p>
               <p className="text-[11px] text-muted-foreground mt-0.5">Turn on to update price for existing stock</p>
             </div>
             <button
@@ -728,12 +728,12 @@ const AddProductPage = () => {
               return (
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-success/5 border border-success/20 rounded-lg p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Projected Revenue at Ideal Price</p>
+                    <p className="text-xs text-muted-foreground mb-1">Money you'd make if sold at best price</p>
                     <p className="text-lg font-bold text-success">{fmt(idealRev)}</p>
                     <p className="text-[10px] text-muted-foreground mt-1">If sold at ideal price (30% margin)</p>
                   </div>
                   <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Projected Revenue at Your Price</p>
+                    <p className="text-xs text-muted-foreground mb-1">Money you'd make at your price</p>
                     <p className="text-lg font-bold text-primary">{yourRev > 0 ? fmt(yourRev) : "—"}</p>
                     <p className="text-[10px] text-muted-foreground mt-1">If sold at your price</p>
                   </div>

@@ -29,7 +29,7 @@ const OwnerNotificationsPage = () => {
           <span className="text-sm">Back</span>
         </button>
 
-        <h1 className="text-lg font-bold text-foreground mb-4">Notifications</h1>
+        <h1 className="text-lg font-bold text-foreground mb-4">Alerts and Notifications</h1>
 
         <div className="space-y-2">
           {notifications.map((n) => {

@@ -131,7 +131,7 @@ const CartPage = () => {
             {/* Totals breakdown */}
             <div className="bg-card rounded-lg p-4 border border-border mb-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Grand Total</span>
+                <span className="text-muted-foreground">Total Amount</span>
                 <span className="text-foreground font-semibold">₦{grandTotal.toLocaleString()}</span>
               </div>
               {goodwillTotal > 0 && (

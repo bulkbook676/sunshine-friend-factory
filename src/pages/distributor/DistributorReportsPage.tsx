@@ -375,29 +375,29 @@ const DistributorReportsPage = () => {
             onClick={() => navigate(`/distributor/reports/revenue?period=${period}`)}
             className="bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity"
           >
-            <p className="text-xs text-muted-foreground">Revenue</p>
+            <p className="text-xs text-muted-foreground">Money Collected</p>
             <p className="text-xl font-bold text-success">₦{totalRevenue.toLocaleString()}</p>
-            <p className="text-[10px] text-primary mt-1">Tap for breakdown →</p>
+            <p className="text-[10px] text-primary mt-1">See details →</p>
           </button>
           <button
             onClick={() => navigate(`/distributor/reports/cost?period=${period}`)}
             className="bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity"
           >
-            <p className="text-xs text-muted-foreground">Cost</p>
+            <p className="text-xs text-muted-foreground">Money Spent</p>
             <p className="text-xl font-bold text-foreground">₦{Math.round(totalCost).toLocaleString()}</p>
             <p className="text-[10px] text-muted-foreground mt-0.5">
               Incl. ₦{expenseTotal.toLocaleString()} expenses
             </p>
-            <p className="text-[10px] text-primary mt-0.5">Tap for breakdown →</p>
+            <p className="text-[10px] text-primary mt-0.5">See details →</p>
           </button>
         </div>
 
-        {/* Net Profit card */}
+        {/* Your Profit card */}
         <button
           onClick={() => navigate(`/distributor/reports/profit?period=${period}`)}
           className="w-full bg-card rounded-lg p-4 border border-border text-left active:opacity-80 transition-opacity mb-4"
         >
-          <p className="text-xs text-muted-foreground">Net Profit</p>
+          <p className="text-xs text-muted-foreground">Your Profit</p>
           <p className={`text-xl font-bold ${netProfit >= 0 ? "text-success" : "text-critical"}`}>
             ₦{Math.abs(Math.round(netProfit)).toLocaleString()}
             {netProfit < 0 && " (loss)"}
@@ -405,7 +405,7 @@ const DistributorReportsPage = () => {
           <p className={`text-[10px] mt-1 ${netProfit >= 0 ? "text-success" : "text-critical"}`}>
             {netProfit >= 0 ? "You are in profit" : "You are currently at a loss"}
           </p>
-          <p className="text-[10px] text-primary mt-0.5">Tap for breakdown →</p>
+          <p className="text-[10px] text-primary mt-0.5">See details →</p>
         </button>
 
         {/* Goodwill Tracker — permanent section (period-independent) */}
@@ -511,7 +511,7 @@ const DistributorReportsPage = () => {
 
         {topProducts.length > 0 && (
           <div className="bg-card rounded-lg p-4 border border-border mb-4">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Top Products</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Best Selling Products</h3>
             {topProducts.map((p, i) => (
               <div
                 key={p.name}

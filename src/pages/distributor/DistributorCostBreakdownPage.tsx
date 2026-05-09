@@ -77,7 +77,7 @@ const DistributorCostBreakdownPage = () => {
         <p className="text-sm text-muted-foreground mb-6 capitalize">{period} cost of goods + expenses</p>
 
         <h3 className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-2">
-          Cost of Goods Sold
+          Price you paid for the goods Sold
         </h3>
         {cogsList.length === 0 ? (
           <p className="text-sm text-muted-foreground mb-4">No COGS this period.</p>

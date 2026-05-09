@@ -134,13 +134,13 @@ const AgentHomePage = () => {
               <Flame className="w-4 h-4 text-warning" />
               <span className="text-lg font-bold text-foreground">5</span>
             </div>
-            <p className="text-[10px] text-muted-foreground">Day Streak</p>
+            <p className="text-[10px] text-muted-foreground">Days in a Row</p>
           </div>
         </div>
 
         {/* Recent Activity */}
         <div className="mb-4">
-          <h2 className="text-sm font-semibold text-foreground mb-3">{isService ? "Recent Sessions" : "Recent Sales"}</h2>
+          <h2 className="text-sm font-semibold text-foreground mb-3">{isService ? "Recent Sessions" : "Sales You Recorded Today"}</h2>
           <div className="space-y-2">
             {recentSales.map((sale, i) => (
               <div key={i} className="bg-card rounded-xl p-3 border border-border flex items-center justify-between">
@@ -163,14 +163,14 @@ const AgentHomePage = () => {
           Log Expense
         </button>
 
-        {/* Daily Total + All Time Total */}
+        {/* Daily Total + Total Since You Started */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="bg-card rounded-2xl p-4 border border-border text-center">
-            <p className="text-xs text-muted-foreground mb-1">Today's Total</p>
+            <p className="text-xs text-muted-foreground mb-1">Total Collected Today</p>
             <p className="text-xl font-bold text-success">₦{todaysTotal.toLocaleString()}</p>
           </div>
           <div className="bg-card rounded-2xl p-4 border border-border text-center">
-            <p className="text-xs text-muted-foreground mb-1">All Time Total</p>
+            <p className="text-xs text-muted-foreground mb-1">Total Since You Started</p>
             <p className="text-xl font-bold text-primary">₦{allTimeTotal.toLocaleString()}</p>
           </div>
         </div>

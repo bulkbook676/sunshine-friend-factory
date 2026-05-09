@@ -79,16 +79,16 @@ const DistributorNetProfitBreakdownPage = () => {
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm">Back</span>
         </button>
-        <h1 className="text-xl font-bold text-foreground mb-1">Net Profit Breakdown</h1>
+        <h1 className="text-xl font-bold text-foreground mb-1">Your Profit Breakdown</h1>
         <p className="text-sm text-muted-foreground mb-6 capitalize">{period} profitability</p>
 
         <div className="space-y-3 mb-5">
           <div className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
-            <span className="text-sm text-foreground">Revenue</span>
+            <span className="text-sm text-foreground">Money Collected</span>
             <span className="text-sm font-bold text-success">₦{revenue.toLocaleString()}</span>
           </div>
           <div className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
-            <span className="text-sm text-foreground">— Cost of Goods Sold</span>
+            <span className="text-sm text-foreground">— Price you paid for the goods Sold</span>
             <span className="text-sm font-bold text-foreground">₦{Math.round(cogs).toLocaleString()}</span>
           </div>
           <div className="bg-card rounded-lg p-4 border border-border flex items-center justify-between">
@@ -103,7 +103,7 @@ const DistributorNetProfitBreakdownPage = () => {
           }`}
         >
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium text-foreground">Net Profit</span>
+            <span className="text-sm font-medium text-foreground">Your Profit</span>
             <span
               className={`text-2xl font-bold ${profit >= 0 ? "text-success" : "text-critical"}`}
             >

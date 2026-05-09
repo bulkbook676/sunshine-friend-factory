@@ -5,10 +5,10 @@ import { toast } from "sonner";
 import { useRecordSaleCart, type RecordSaleCartItem } from "@/contexts/RecordSaleCartContext";
 
 /**
- * Generic Edit Cart page used by owner, agent and distributor record-sale flows.
+ * Generic Change Items page used by owner, agent and distributor record-sale flows.
  *
  * Cart state is held in the shared `RecordSaleCartProvider` keyed by `cartKey`,
- * so it survives navigation between the Sale Preview page and this page.
+ * so it survives navigation between the Check Before Recording page and this page.
  *
  * Required `location.state`:
  *   { returnTo: string; cartKey: string }
@@ -117,7 +117,7 @@ const EditCartPage = () => {
           <span className="text-sm">Back</span>
         </button>
 
-        <h1 className="text-xl font-bold text-foreground mb-1">Edit Cart</h1>
+        <h1 className="text-xl font-bold text-foreground mb-1">Change Items</h1>
         <p className="text-sm text-muted-foreground mb-6">
           Adjust quantities or remove items
         </p>
@@ -181,7 +181,7 @@ const EditCartPage = () => {
 
         <div className="bg-primary/10 rounded-2xl p-4 mb-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-foreground">Grand Total</span>
+            <span className="text-sm font-medium text-foreground">Total Amount</span>
             <span className="text-2xl font-bold text-primary">
               ₦{total.toLocaleString()}
             </span>

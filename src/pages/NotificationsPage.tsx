@@ -37,7 +37,7 @@ const NotificationsPage = () => {
     <div className="h-dvh bg-background flex flex-col">
       <div className="pt-12 px-5 pb-4 border-b border-border">
         <div className="flex items-center justify-between">
-          <h1 className="font-display text-2xl font-bold text-foreground italic">Notifications</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground italic">Alerts and Notifications</h1>
           <Bell className="w-5 h-5 text-muted-foreground" />
         </div>
       </div>

@@ -20,7 +20,7 @@ const DistributorNotificationsPage = () => {
           <span className="text-sm">Back</span>
         </button>
 
-        <h1 className="text-2xl font-bold text-foreground mb-6">Notifications</h1>
+        <h1 className="text-2xl font-bold text-foreground mb-6">Alerts and Notifications</h1>
 
         <div className="space-y-2">
           {notifications.map((n, idx) => {
