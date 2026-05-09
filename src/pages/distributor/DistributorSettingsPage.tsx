@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const DistributorSettingsPage = () => {
   const navigate = useNavigate();
-  const { logout, businessName, userName } = useAuth();
+  const { logout, businessName, userName, businessIntro } = useAuth();
   const { autoApproveGoodwill, defaultGoodwillDays, setProfile } = useDistributor();
   const [editingRepayment, setEditingRepayment] = useState(false);
   const [draftRepayment, setDraftRepayment] = useState<string>(defaultGoodwillDays.toString());
@@ -65,7 +65,7 @@ const DistributorSettingsPage = () => {
           name={userName || "Tunde Adebayo"}
           role="Distributor"
           business={businessName || "Adebayo Wholesale Depot"}
-          bio="Verified bulk supplier serving 38 retailers across Lagos & Ogun State."
+          bio={businessIntro || undefined}
           followers={2147}
           following={89}
           totalSales="₦18.5M"

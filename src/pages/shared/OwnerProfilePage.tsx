@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, MapPin, Package, Calendar, Users } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Users } from "lucide-react";
 import { products } from "@/data/mockData";
 import FollowButton from "@/components/FollowButton";
 import { getFollowerCount, seedFollowerBase, subscribeFollow } from "@/data/followStore";
@@ -101,24 +101,6 @@ const OwnerProfilePage = () => {
           </div>
         </div>
 
-        {/* Product list */}
-        <h3 className="text-sm font-semibold text-foreground mb-3">Product List</h3>
-        <div className="space-y-2">
-          {products.map((p) => {
-            const totalSold = p.salesHistory.reduce((s, n) => s + n, 0);
-            return (
-              <div key={p.id} className="bg-card rounded-2xl p-4 border border-border flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <Package className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">{p.name}</p>
-                  <p className="text-xs text-muted-foreground">{totalSold} units sold so far</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
     </div>
   );
