@@ -18,7 +18,7 @@ import ProfileSummaryCard from "@/components/ProfileSummaryCard";
 
 const OwnerSettingsPage = () => {
   const navigate = useNavigate();
-  const { logout, businessName, userName } = useAuth();
+  const { logout, businessName, userName, businessIntro } = useAuth();
 
   const sections = [
     {
