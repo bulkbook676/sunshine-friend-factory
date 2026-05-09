@@ -114,7 +114,7 @@ const OwnerSettingsPage = () => {
           name={userName || "Nkechi Okafor"}
           role="Owner"
           business={businessName || "Mama Nkechi Provisions"}
-          bio="Building Mama Nkechi into the most reliable provisions store in Surulere."
+          bio={businessIntro || undefined}
           followers={1284}
           following={342}
           totalSales="₦4.2M"
