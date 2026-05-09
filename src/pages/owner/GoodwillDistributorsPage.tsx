@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Lock, Handshake, MapPin } from "lucide-react";
+import { ArrowLeft, Lock, MapPin } from "lucide-react";
 import { distributors } from "@/data/distributors";
 import OwnerBottomNav from "@/components/OwnerBottomNav";
 
@@ -64,7 +64,7 @@ const GoodwillDistributorsPage = () => {
                 <Lock className="w-7 h-7 text-muted-foreground" />
               </div>
               <p className="text-sm font-semibold text-foreground mb-2">
-                Use Bulkbook actively for {REQUIRED_MONTHS} months to unlock Products In Good Faith.
+                Use Bulkbook actively for {REQUIRED_MONTHS} months to unlock Good Faith.
               </p>
               <p className="text-xs text-muted-foreground mb-4">
                 {REQUIRED_MONTHS - MONTHS_ACTIVE} months remaining
