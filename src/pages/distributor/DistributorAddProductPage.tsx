@@ -11,9 +11,6 @@ const PAYMENT_OPTS = ["Cash", "Bank Transfer", "Online Payment", "Goodwill"];
 interface FormState {
   name: string;
   category: string;
-  costPrice: string;
-  sellingPrice: string;
-  currentStock: string;
   freeShippingThreshold: string;
   goodwillEnabled: boolean;
   goodwillConditions?: GoodwillConditions;
@@ -44,9 +41,6 @@ const DistributorAddProductPage = () => {
     restoredDraft ?? {
       name: existing?.name ?? "",
       category: existing?.category ?? "",
-      costPrice: existing?.costPrice?.toString() ?? "",
-      sellingPrice: existing?.sellingPrice?.toString() ?? "",
-      currentStock: existing?.currentStock?.toString() ?? "",
       freeShippingThreshold: existing?.freeShippingThreshold?.toString() ?? "",
       goodwillEnabled: existing?.goodwillEnabled ?? false,
       goodwillConditions:
@@ -74,7 +68,7 @@ const DistributorAddProductPage = () => {
     sellingUnitsPerBuying: "",
     totalOrderAmount: "",
     transportFee: "",
-    targetMargin: "30",
+    actualSellingPrice: existing?.sellingPrice?.toString() ?? "",
   });
   const updateCalc = (k: keyof typeof calc, v: string) => setCalc((p) => ({ ...p, [k]: v }));
   const fmt = (n: number) => `₦${Math.round(n).toLocaleString()}`;
@@ -84,31 +78,25 @@ const DistributorAddProductPage = () => {
     const perBuying = parseFloat(calc.sellingUnitsPerBuying) || 0;
     const total = parseFloat(calc.totalOrderAmount) || 0;
     const transport = parseFloat(calc.transportFee) || 0;
-    const margin = parseFloat(calc.targetMargin) || 0;
-    if (!orderQty || !perBuying || !total) {
-      return { cogPerBuying: 0, expPerBuying: 0, totalCostPerBuying: 0, costPerSelling: 0, minPrice: 0, idealPrice: 0 };
-    }
-    const cogPerBuying = total / orderQty;
-    const expPerBuying = transport / orderQty;
+    const asp = parseFloat(calc.actualSellingPrice) || 0;
+    const cogPerBuying = orderQty > 0 ? total / orderQty : 0;
+    const expPerBuying = orderQty > 0 ? transport / orderQty : 0;
     const totalCostPerBuying = cogPerBuying + expPerBuying;
-    const costPerSelling = totalCostPerBuying / perBuying;
-    const minPrice = costPerSelling * 1.1; // 10% safety
-    const idealPrice = costPerSelling * (1 + margin / 100);
-    return { cogPerBuying, expPerBuying, totalCostPerBuying, costPerSelling, minPrice, idealPrice };
-  }, [calc]);
-
-  const applyCalc = () => {
-    if (!calcResult.costPerSelling) {
-      toast.error("Fill in the cost calculator first");
-      return;
+    const costPerSelling = perBuying > 0 ? totalCostPerBuying / perBuying : 0;
+    const minPrice = costPerSelling * 1.1;
+    const idealPrice = costPerSelling * 1.3;
+    const openingStock = orderQty * perBuying;
+    const marginPerUnit = asp - costPerSelling;
+    const marginPct = costPerSelling > 0 ? ((asp - costPerSelling) / costPerSelling) * 100 : 0;
+    let verdictLabel = "";
+    let verdictColor = "";
+    if (asp > 0 && costPerSelling > 0) {
+      if (marginPerUnit < 0) { verdictLabel = "You are losing money at this price"; verdictColor = "text-critical"; }
+      else if (marginPct < 15) { verdictLabel = "Small profit — consider increasing price"; verdictColor = "text-warning"; }
+      else { verdictLabel = "Good profit"; verdictColor = "text-success"; }
     }
-    setForm((p) => ({
-      ...p,
-      costPrice: Math.round(calcResult.costPerSelling).toString(),
-      sellingPrice: Math.round(calcResult.idealPrice).toString(),
-    }));
-    toast.success("Prices filled from calculator");
-  };
+    return { cogPerBuying, expPerBuying, totalCostPerBuying, costPerSelling, minPrice, idealPrice, openingStock, marginPerUnit, marginPct, verdictLabel, verdictColor };
+  }, [calc]);
 
   const buyingLabel = (calc.buyingUnit || "buying unit").toLowerCase();
 
@@ -130,11 +118,11 @@ const DistributorAddProductPage = () => {
   useEffect(() => {
     if (isEdit) return;
     try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...form, paymentMethods }));
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...form, paymentMethods, calc }));
     } catch {
       // ignore
     }
-  }, [form, paymentMethods, isEdit]);
+  }, [form, paymentMethods, calc, isEdit]);
 
   const allCategories = [...BASE_CATEGORIES, ...customCategories];
 
@@ -161,16 +149,17 @@ const DistributorAddProductPage = () => {
   };
 
   const handleSave = () => {
-    if (!form.name || !form.category || !form.costPrice || !form.sellingPrice || !form.currentStock) {
-      toast.error("Fill in required fields");
+    const sellingPrice = parseFloat(calc.actualSellingPrice) || 0;
+    if (!form.name || !form.category || !calcResult.costPerSelling || !sellingPrice || !calcResult.openingStock) {
+      toast.error("Fill in product details and the cost calculator");
       return;
     }
     const payload = {
       name: form.name,
       category: form.category,
-      costPrice: parseFloat(form.costPrice),
-      sellingPrice: parseFloat(form.sellingPrice),
-      currentStock: parseInt(form.currentStock),
+      costPrice: Math.round(calcResult.totalCostPerBuying),
+      sellingPrice,
+      currentStock: Math.round(calcResult.openingStock),
       freeShippingThreshold: form.freeShippingThreshold ? parseFloat(form.freeShippingThreshold) : undefined,
       goodwillEnabled: form.goodwillEnabled,
       goodwillRepaymentDays: form.goodwillEnabled ? form.goodwillConditions?.repaymentDays : undefined,
