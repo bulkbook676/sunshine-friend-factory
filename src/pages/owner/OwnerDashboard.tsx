@@ -194,12 +194,6 @@ const OwnerDashboard = () => {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-foreground">Distributor Feed</h2>
-            <button
-              onClick={() => navigate("/owner/goodwill-distributors")}
-              className="text-[11px] px-2.5 py-1 rounded-full bg-warning/10 text-warning border border-warning/30 font-medium"
-            >
-              🤝 Products In Good Faith
-            </button>
           </div>
           <div className="space-y-3">
             {distributorFeedItems.slice(0, 8).map((item) => (
@@ -219,6 +213,9 @@ const OwnerDashboard = () => {
                       {item.distributorName}
                     </button>
                   </div>
+                  {item.goodwillAvailable && (
+                    <span className="text-xs">🤝</span>
+                  )}
                 </div>
                 <div className="flex gap-2 mt-3">
                   <button className="flex-1 py-2 rounded-lg border border-primary text-primary text-xs font-medium flex items-center justify-center gap-1">
