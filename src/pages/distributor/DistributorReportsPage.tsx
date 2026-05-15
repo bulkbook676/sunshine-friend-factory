@@ -6,9 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarIcon,
-  Package,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import {
   format,
@@ -36,7 +33,6 @@ const DistributorReportsPage = () => {
   const { orders, products, ownSales, ownExpenses } = useDistributor();
   const [period, setPeriod] = useState<Period>("daily");
   const [anchorDate, setAnchorDate] = useState<Date>(new Date());
-  const [goodwillExpanded, setGoodwillExpanded] = useState(true);
 
   // Compute date range for selected period
   const range = useMemo(() => {
