@@ -6,9 +6,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarIcon,
-  Package,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import {
   format,
@@ -36,7 +33,6 @@ const DistributorReportsPage = () => {
   const { orders, products, ownSales, ownExpenses } = useDistributor();
   const [period, setPeriod] = useState<Period>("daily");
   const [anchorDate, setAnchorDate] = useState<Date>(new Date());
-  const [goodwillExpanded, setGoodwillExpanded] = useState(true);
 
   // Compute date range for selected period
   const range = useMemo(() => {
@@ -150,106 +146,6 @@ const DistributorReportsPage = () => {
         },
       ];
     });
-
-  // Goodwill product tracker — per product, per buyer with qty sent/sold/remaining.
-  // Mirrors DistributorGoodwillTrackerPage logic so this tab shows the same items.
-  const goodwillProducts = useMemo(() => {
-    type Row = {
-      key: string;
-      productName: string;
-      buyerId: string;
-      buyerName: string;
-      qtySent: number;
-      qtySold: number;
-      qtyRemaining: number;
-      sellThroughPct: number;
-      daysRemaining: number;
-      status: "ontrack" | "duesoon" | "overdue";
-    };
-    const rows: Row[] = [];
-    orders
-      .filter((o) => o.status === "confirmed" && !o.goodwillPaid)
-      .forEach((o) => {
-        o.items
-          .filter((i) => i.paymentType === "goodwill")
-          .forEach((item) => {
-            const product = products.find((p) => p.id === item.productId);
-            const repaymentDays = product?.goodwillRepaymentDays ?? 30;
-            const repaymentDate = new Date(
-              new Date(o.date).getTime() + repaymentDays * 86400000
-            );
-            const daysRemaining = Math.ceil(
-              (repaymentDate.getTime() - Date.now()) / 86400000
-            );
-            const seed = (item.productId + o.id)
-              .split("")
-              .reduce((s, c) => s + c.charCodeAt(0), 0);
-            const soldRatio = ((seed % 70) + 10) / 100;
-            const qtySold = Math.min(item.qty, Math.floor(item.qty * soldRatio));
-            const qtyRemaining = item.qty - qtySold;
-            const sellThroughPct =
-              item.qty > 0 ? Math.round((qtySold / item.qty) * 100) : 0;
-            const status: Row["status"] =
-              daysRemaining < 0
-                ? "overdue"
-                : daysRemaining <= 14
-                  ? "duesoon"
-                  : "ontrack";
-            rows.push({
-              key: `${o.id}-${item.productId}`,
-              productName: item.productName,
-              buyerId: o.buyerId,
-              buyerName: o.buyerName,
-              qtySent: item.qty,
-              qtySold,
-              qtyRemaining,
-              sellThroughPct,
-              daysRemaining,
-              status,
-            });
-          });
-      });
-    // Mock demo data — UI demonstration only. Replace with backend rows when wired.
-    const mocks: typeof rows = [
-      {
-        key: "mock-peak-milk",
-        productName: "Peak Milk (Tin)",
-        buyerId: "mock-mama-nkechi",
-        buyerName: "Mama Nkechi Provisions",
-        qtySent: 200,
-        qtySold: 143,
-        qtyRemaining: 57,
-        sellThroughPct: 72,
-        daysRemaining: 14,
-        status: "duesoon",
-      },
-      {
-        key: "mock-dangote-sugar",
-        productName: "Dangote Sugar (500g)",
-        buyerId: "mock-oga-emeka",
-        buyerName: "Oga Emeka Stores",
-        qtySent: 100,
-        qtySold: 18,
-        qtyRemaining: 82,
-        sellThroughPct: 18,
-        daysRemaining: 3,
-        status: "overdue",
-      },
-      {
-        key: "mock-indomie-chicken",
-        productName: "Indomie Chicken (70g)",
-        buyerId: "mock-aunty-chidinma",
-        buyerName: "Aunty Chidinma Supermart",
-        qtySent: 500,
-        qtySold: 490,
-        qtyRemaining: 10,
-        sellThroughPct: 98,
-        daysRemaining: 30,
-        status: "ontrack",
-      },
-    ];
-    return [...mocks, ...rows];
-  }, [orders, products]);
 
   // Range navigation
   const goPrev = () => {
@@ -407,107 +303,6 @@ const DistributorReportsPage = () => {
           </p>
           <p className="text-[10px] text-primary mt-0.5">See details →</p>
         </button>
-
-        {/* Goodwill Tracker — permanent section (period-independent) */}
-        <div className="bg-card rounded-2xl border border-border mb-4">
-          <button
-            onClick={() => setGoodwillExpanded((v) => !v)}
-            className="w-full flex items-center justify-between p-4"
-          >
-            <h3 className="text-sm font-semibold text-foreground">Goodwill Tracker</h3>
-            {goodwillExpanded ? (
-              <ChevronUp className="w-4 h-4 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            )}
-          </button>
-          {goodwillExpanded && (
-            <div className="px-4 pb-4 space-y-3">
-              {goodwillProducts.length === 0 ? (
-                <p className="text-xs text-muted-foreground text-center py-6">
-                  No goodwill products tracked yet.
-                </p>
-              ) : (
-                goodwillProducts.map((c) => {
-                  const remainingPct =
-                    c.qtySent > 0 ? c.qtyRemaining / c.qtySent : 0;
-                  const remainingPillClass =
-                    remainingPct < 0.2
-                      ? "bg-critical/15 text-critical"
-                      : remainingPct < 0.5
-                        ? "bg-warning/15 text-warning"
-                        : "bg-card text-foreground border border-border";
-                  const deadlineClass =
-                    c.status === "overdue"
-                      ? "text-critical"
-                      : c.status === "duesoon"
-                        ? "text-warning"
-                        : "text-success";
-                  const barColor =
-                    c.status === "overdue"
-                      ? "bg-critical"
-                      : c.status === "duesoon"
-                        ? "bg-warning"
-                        : "bg-success";
-                  return (
-                    <button
-                      key={c.key}
-                      onClick={() => navigate("/distributor/reports/goodwill")}
-                      className="w-full bg-muted/30 rounded-lg p-3 border border-border text-left active:opacity-80"
-                    >
-                      <div className="flex items-start gap-3 mb-2">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                          <Package className="w-4 h-4 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground truncate">
-                            {c.productName}
-                          </p>
-                          <span
-                            role="link"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/distributor/owner/${c.buyerId}`);
-                            }}
-                            className="text-xs text-primary underline-offset-2 hover:underline truncate block max-w-full"
-                          >
-                            {c.buyerName}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[10px] px-2 py-0.5 rounded font-medium bg-success/15 text-success">
-                          Sold: {c.qtySold}
-                        </span>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded font-medium ${remainingPillClass}`}
-                        >
-                          Remaining: {c.qtyRemaining}
-                        </span>
-                      </div>
-                      <div className="w-full h-1 rounded-full bg-muted mb-2">
-                        <div
-                          className={`h-full rounded-full ${barColor}`}
-                          style={{ width: `${c.sellThroughPct}%` }}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-muted-foreground">
-                          {c.sellThroughPct}% sold
-                        </span>
-                        <span className={`font-medium ${deadlineClass}`}>
-                          {c.status === "overdue"
-                            ? `${-c.daysRemaining}d overdue`
-                            : `${c.daysRemaining}d left`}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          )}
-        </div>
 
         {topProducts.length > 0 && (
           <div className="bg-card rounded-2xl p-4 border border-border mb-4">

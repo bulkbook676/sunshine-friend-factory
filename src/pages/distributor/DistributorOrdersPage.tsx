@@ -20,6 +20,15 @@ const DistributorOrdersPage = () => {
           <div className="space-y-3">
             {orders.map((o) => {
               const total = o.items.reduce((s, i) => s + i.qty * i.unitPrice, 0);
+              // Map raw statuses to plain English (no "pending")
+              const statusLabel =
+                o.status === "pending" || o.status === "confirmed"
+                  ? "Received"
+                  : o.status === "shipped"
+                  ? "Shipped"
+                  : o.status === "delivered"
+                  ? "Delivered"
+                  : "Cancelled";
               return (
                 <button
                   key={o.id}
@@ -38,9 +47,7 @@ const DistributorOrdersPage = () => {
                     </div>
                     <span
                       className={`text-[10px] px-2 py-0.5 rounded font-medium capitalize ${
-                        o.status === "pending"
-                          ? "bg-warning/10 text-warning"
-                          : o.status === "confirmed"
+                        o.status === "pending" || o.status === "confirmed"
                           ? "bg-secondary/20 text-foreground"
                           : o.status === "shipped"
                           ? "bg-primary/10 text-primary"
@@ -49,7 +56,7 @@ const DistributorOrdersPage = () => {
                           : "bg-critical/10 text-critical"
                       }`}
                     >
-                      {o.status}
+                      {statusLabel}
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-border">
