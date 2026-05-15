@@ -41,7 +41,7 @@ const DistributorAgentsPage = () => {
       return;
     }
     if (!slotsAvailable) {
-      navigate("/distributor/settings/billing");
+      navigate("/owner/billing");
       return;
     }
     try {
@@ -91,7 +91,7 @@ const DistributorAgentsPage = () => {
         )}
         {canGenerate && !slotsAvailable && (
           <button
-            onClick={() => navigate("/distributor/settings/billing")}
+            onClick={() => navigate("/owner/billing")}
             className="text-[11px] text-primary mb-4 underline-offset-2 hover:underline"
           >
             All slots used — tap Generate Key to unlock more.
