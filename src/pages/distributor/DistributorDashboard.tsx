@@ -324,72 +324,67 @@ const DistributorDashboard = () => {
           <p className="text-lg font-bold text-primary">₦{todayValue.toLocaleString()}</p>
         </button>
 
-        {/* Request Feed */}
-        <h2 className="text-sm font-semibold text-foreground mb-3">Request Feed</h2>
-        {orders.length === 0 ? (
-          <div className="bg-card rounded-2xl p-6 border border-border text-center">
-            <p className="text-sm text-muted-foreground">No orders yet</p>
+        {/* Goodwill Tracker */}
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-foreground">Goodwill Tracker</h2>
+          <button
+            onClick={() => navigate("/distributor/reports/goodwill")}
+            className="text-xs text-primary font-semibold"
+          >
+            See all →
+          </button>
+        </div>
+        {goodwillRows.length === 0 ? (
+          <div className="bg-card rounded-2xl p-6 border border-border text-center mb-6">
+            <p className="text-sm text-muted-foreground">No goodwill products tracked yet</p>
           </div>
         ) : (
           <div className="space-y-3 mb-6">
-            {orders.map((o) => {
-              const total = o.items.reduce((s, i) => s + i.qty * i.unitPrice, 0);
-              const hasGoodwill = o.items.some((i) => i.paymentType === "goodwill");
+            {goodwillRows.map((c) => {
+              const barColor =
+                c.status === "overdue" ? "bg-critical" : c.status === "duesoon" ? "bg-warning" : "bg-success";
+              const deadlineClass =
+                c.status === "overdue" ? "text-critical" : c.status === "duesoon" ? "text-warning" : "text-success";
               return (
-                <div key={o.id} className="bg-card rounded-2xl p-4 border border-border">
-                  <div className="flex items-start justify-between mb-2">
-                    <button
-                      onClick={() => navigate(`/distributor/owner/${o.buyerId}`)}
-                      className="flex items-center gap-2 text-left"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground hover:underline">{o.buyerName}</p>
-                        <p className="text-[10px] text-muted-foreground">
-                          {new Date(o.date).toLocaleString()}
-                        </p>
-                      </div>
-                    </button>
-                    <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-medium capitalize ${
-                        o.status === "pending"
-                          ? "bg-warning/10 text-warning"
-                          : o.status === "confirmed"
-                          ? "bg-secondary/20 text-foreground"
-                          : o.status === "shipped"
-                          ? "bg-primary/10 text-primary"
-                          : o.status === "delivered"
-                          ? "bg-success/10 text-success"
-                          : "bg-critical/10 text-critical"
-                      }`}
-                    >
-                      {o.status}
+                <button
+                  key={c.key}
+                  onClick={() => navigate("/distributor/reports/goodwill")}
+                  className="w-full bg-card rounded-2xl p-4 border border-border text-left active:opacity-80"
+                >
+                  <div className="flex items-start gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Package className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{c.productName}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{c.buyerName}</p>
+                    </div>
+                    <span className={`text-[10px] font-semibold ${deadlineClass}`}>
+                      {c.status === "overdue" ? `${-c.daysRemaining}d late` : `${c.daysRemaining}d left`}
                     </span>
                   </div>
-                  <div className="space-y-1 mb-3">
-                    {o.items.map((i, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">
-                          {i.productName} × {i.qty}
-                        </span>
-                        <span className="text-foreground">₦{(i.qty * i.unitPrice).toLocaleString()}</span>
-                      </div>
-                    ))}
+                  <div className="grid grid-cols-3 gap-2 mb-2">
+                    <div className="bg-muted/40 rounded p-1.5">
+                      <p className="text-[9px] text-muted-foreground">Sent</p>
+                      <p className="text-xs font-bold text-foreground">{c.qtySent}</p>
+                    </div>
+                    <div className="bg-muted/40 rounded p-1.5">
+                      <p className="text-[9px] text-muted-foreground">Sold</p>
+                      <p className="text-xs font-bold text-success">{c.qtySold}</p>
+                    </div>
+                    <div className="bg-muted/40 rounded p-1.5">
+                      <p className="text-[9px] text-muted-foreground">Left</p>
+                      <p className="text-xs font-bold text-foreground">{c.qtyRemaining}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-border">
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-medium ${hasGoodwill ? "bg-warning/10 text-warning" : "bg-success/10 text-success"}`}>
-                      {hasGoodwill ? "Goodwill" : "Paid"}
-                    </span>
-                    <button
-                      onClick={() => navigate(`/distributor/order/${o.id}`)}
-                      className="text-xs text-primary font-semibold"
-                    >
-                      Continue →
-                    </button>
+                  <div className="flex items-center justify-between text-[10px] mb-1">
+                    <span className="text-muted-foreground">How much has been sold</span>
+                    <span className="text-foreground font-medium">{c.sellThroughPct}%</span>
                   </div>
-                </div>
+                  <div className="w-full h-1.5 rounded-full bg-muted">
+                    <div className={`h-full rounded-full ${barColor}`} style={{ width: `${c.sellThroughPct}%` }} />
+                  </div>
+                </button>
               );
             })}
           </div>
