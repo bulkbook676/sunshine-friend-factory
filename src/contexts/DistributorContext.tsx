@@ -32,6 +32,8 @@ export interface DistributorIncomingOrder {
   buyerId: string;
   buyerName: string;
   buyerLocation: string;
+  buyerPhone?: string;
+  buyerAddress?: string;
   items: { productId: string; productName: string; qty: number; unitPrice: number; paymentType: "cash" | "goodwill" }[];
   paymentMethod: string;
   status: DistributorOrderStatus;
@@ -157,6 +159,8 @@ const seedOrders: DistributorIncomingOrder[] = [
     buyerId: "owner-mn",
     buyerName: "Mama Nkechi Provisions",
     buyerLocation: "Alaba, Lagos",
+    buyerPhone: "+234 803 123 4567",
+    buyerAddress: "Shop 24, Alaba International Market, Lagos",
     items: [
       { productId: "dop1", productName: "Peak Milk (Tin)", qty: 50, unitPrice: 350, paymentType: "goodwill" },
     ],
