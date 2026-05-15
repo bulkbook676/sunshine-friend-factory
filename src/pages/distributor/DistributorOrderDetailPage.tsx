@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, User, Check, X, Truck } from "lucide-react";
+import { ArrowLeft, User, Check, X, Truck, Phone, MapPin } from "lucide-react";
 import { useDistributor } from "@/contexts/DistributorContext";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
@@ -77,6 +77,38 @@ const DistributorOrderDetailPage = () => {
           </div>
           <span className="text-xs text-primary">View profile →</span>
         </button>
+
+        {/* Contact details */}
+        {(order.buyerPhone || order.buyerAddress) && (
+          <div className="bg-card rounded-2xl p-4 border border-border mb-4 space-y-3">
+            <p className="text-xs font-semibold text-foreground">Contact details</p>
+            {order.buyerPhone && (
+              <a
+                href={`tel:${order.buyerPhone}`}
+                className="flex items-start gap-3 active:opacity-80"
+              >
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Phone className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-muted-foreground">Phone number</p>
+                  <p className="text-sm font-medium text-foreground">{order.buyerPhone}</p>
+                </div>
+              </a>
+            )}
+            {order.buyerAddress && (
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] text-muted-foreground">Delivery address</p>
+                  <p className="text-sm font-medium text-foreground">{order.buyerAddress}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <h3 className="text-sm font-semibold text-foreground mb-2">Items</h3>
         <div className="space-y-2 mb-4">
