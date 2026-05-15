@@ -5,8 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useDistributor } from "@/contexts/DistributorContext";
 import { toast } from "sonner";
 
-const CATEGORIES = ["Dairy", "Beverages", "Grains", "Provisions", "Cosmetics", "Electronics", "Building Materials", "Other"];
-
 const DistributorProfilePage = () => {
   const navigate = useNavigate();
   const { businessName, businessIntro, setBusinessIntro } = useAuth();
@@ -16,24 +14,17 @@ const DistributorProfilePage = () => {
     state: dist.state,
     area: dist.area,
     freeShippingThreshold: dist.freeShippingThreshold?.toString() || "",
-    defaultGoodwillDays: dist.defaultGoodwillDays.toString(),
   });
   const [intro, setIntro] = useState(businessIntro || "");
-  const [categories, setCategories] = useState<string[]>(dist.categories);
 
   const update = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
-
-  const toggleCat = (c: string) =>
-    setCategories((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]));
 
   const save = () => {
     dist.setProfile({
       businessName: form.businessName,
       state: form.state,
       area: form.area,
-      categories,
       freeShippingThreshold: form.freeShippingThreshold ? parseFloat(form.freeShippingThreshold) : undefined,
-      defaultGoodwillDays: parseInt(form.defaultGoodwillDays) || 30,
     });
     setBusinessIntro(intro.trim());
     toast.success("Profile updated");
@@ -94,25 +85,6 @@ const DistributorProfilePage = () => {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-foreground block mb-2">Categories</label>
-            <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => toggleCat(c)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium border ${
-                    categories.includes(c)
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-card text-muted-foreground border-border"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
             <label className="text-sm font-medium text-foreground block mb-1.5">Free Shipping Threshold (₦)</label>
             <input
               type="number"
@@ -121,19 +93,6 @@ const DistributorProfilePage = () => {
               onChange={(e) => update("freeShippingThreshold", e.target.value)}
               className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-foreground block mb-1.5">Default Goodwill Repayment (days)</label>
-            <select
-              value={form.defaultGoodwillDays}
-              onChange={(e) => update("defaultGoodwillDays", e.target.value)}
-              className="w-full h-12 px-4 rounded-lg border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="30">30 days</option>
-              <option value="60">60 days</option>
-              <option value="90">90 days</option>
-            </select>
           </div>
 
           <button
