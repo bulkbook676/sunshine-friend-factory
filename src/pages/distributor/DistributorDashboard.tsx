@@ -1,5 +1,6 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Settings, Zap, ClipboardList, AlertTriangle, Package, User, Plus, Receipt, TrendingUp, Boxes } from "lucide-react";
+import { Bell, Settings, Zap, ClipboardList, AlertTriangle, Package, Plus, Receipt, TrendingUp, Boxes } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDistributor } from "@/contexts/DistributorContext";
 import DistributorBottomNav from "@/components/DistributorBottomNav";
@@ -60,6 +61,80 @@ const DistributorDashboard = () => {
   const todaysExpensesTotal = ownExpenses
     .filter((e) => e.date === new Date().toISOString().split("T")[0])
     .reduce((s, e) => s + e.amount, 0);
+
+  // Goodwill tracker rows — mirrors tracker page logic (mock sell-through).
+  const goodwillRows = useMemo(() => {
+    type Row = {
+      key: string;
+      productName: string;
+      buyerId: string;
+      buyerName: string;
+      qtySent: number;
+      qtySold: number;
+      qtyRemaining: number;
+      sellThroughPct: number;
+      daysRemaining: number;
+      status: "ontrack" | "duesoon" | "overdue";
+    };
+    const rows: Row[] = [];
+    orders
+      .filter((o) => o.status === "confirmed" && !o.goodwillPaid)
+      .forEach((o) => {
+        o.items
+          .filter((i) => i.paymentType === "goodwill")
+          .forEach((item) => {
+            const product = products.find((p) => p.id === item.productId);
+            const repaymentDays = product?.goodwillRepaymentDays ?? 30;
+            const repaymentDate = new Date(new Date(o.date).getTime() + repaymentDays * 86400000);
+            const daysRemaining = Math.ceil((repaymentDate.getTime() - Date.now()) / 86400000);
+            const seed = (item.productId + o.id).split("").reduce((s, c) => s + c.charCodeAt(0), 0);
+            const soldRatio = ((seed % 70) + 10) / 100;
+            const qtySold = Math.min(item.qty, Math.floor(item.qty * soldRatio));
+            const qtyRemaining = item.qty - qtySold;
+            const sellThroughPct = item.qty > 0 ? Math.round((qtySold / item.qty) * 100) : 0;
+            const status: Row["status"] = daysRemaining < 0 ? "overdue" : daysRemaining <= 14 ? "duesoon" : "ontrack";
+            rows.push({
+              key: `${o.id}-${item.productId}`,
+              productName: item.productName,
+              buyerId: o.buyerId,
+              buyerName: o.buyerName,
+              qtySent: item.qty,
+              qtySold,
+              qtyRemaining,
+              sellThroughPct,
+              daysRemaining,
+              status,
+            });
+          });
+      });
+    const mocks: Row[] = [
+      {
+        key: "mock-peak-milk",
+        productName: "Peak Milk (Tin)",
+        buyerId: "mock-mama-nkechi",
+        buyerName: "Mama Nkechi Provisions",
+        qtySent: 200,
+        qtySold: 143,
+        qtyRemaining: 57,
+        sellThroughPct: 72,
+        daysRemaining: 14,
+        status: "duesoon",
+      },
+      {
+        key: "mock-dangote-sugar",
+        productName: "Dangote Sugar (500g)",
+        buyerId: "mock-oga-emeka",
+        buyerName: "Oga Emeka Stores",
+        qtySent: 100,
+        qtySold: 18,
+        qtyRemaining: 82,
+        sellThroughPct: 18,
+        daysRemaining: -3,
+        status: "overdue",
+      },
+    ];
+    return [...mocks, ...rows];
+  }, [orders, products]);
 
   return (
     <div className="app-shell dark bg-background">
