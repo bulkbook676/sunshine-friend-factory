@@ -97,7 +97,6 @@ import DistributorNetProfitBreakdownPage from "./pages/distributor/DistributorNe
 import DistributorAccountSettingsPage from "./pages/distributor/DistributorAccountSettingsPage";
 import DistributorNotificationsSettingsPage from "./pages/distributor/DistributorNotificationsSettingsPage";
 import DistributorPartnersPage from "./pages/distributor/DistributorPartnersPage";
-import DistributorBillingPage from "./pages/distributor/DistributorBillingPage";
 import DistributorPrivacySecurityPage from "./pages/distributor/DistributorPrivacySecurityPage";
 import DistributorAboutPage from "./pages/distributor/DistributorAboutPage";
 
@@ -223,7 +222,6 @@ const App = () => (
                       <Route path="/distributor/settings/account" element={<DistributorAccountSettingsPage />} />
                       <Route path="/distributor/settings/notifications" element={<DistributorNotificationsSettingsPage />} />
                       <Route path="/distributor/settings/partners" element={<DistributorPartnersPage />} />
-                      <Route path="/distributor/settings/billing" element={<DistributorBillingPage />} />
                       <Route path="/distributor/settings/privacy" element={<DistributorPrivacySecurityPage />} />
                       <Route path="/distributor/settings/about" element={<DistributorAboutPage />} />
                       <Route path="/distributor/stock-audit" element={<StockAuditPage variant="distributor" />} />
